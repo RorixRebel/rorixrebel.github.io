@@ -52,6 +52,10 @@ nav > .pagination a.next {
   float: right;
 }
 
+li {
+  color: white;
+}
+
 .container > .title > .tag a:hover, .container > .title > .tag a:link, .container > .title > .tag a:visited {
   color: white;
 }
