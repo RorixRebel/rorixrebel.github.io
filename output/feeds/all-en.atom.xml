@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Dev-Mex</title><link href="/" rel="alternate"></link><link href="/feeds/all-en.atom.xml" rel="self"></link><id>/</id><updated>2019-01-21T00:00:00-06:00</updated><subtitle>IT mexicaning</subtitle><entry><title>Blog 2.0</title><link href="/blog-post-1.html" rel="alternate"></link><published>2019-01-21T00:00:00-06:00</published><updated>2019-01-21T00:00:00-06:00</updated><author><name>Miguel Valdes</name></author><id>tag:None,2019-01-21:/blog-post-1.html</id><summary type="html">&lt;p&gt;New Year, New blog? Why not&amp;#8230;.It&amp;#8217;s free so &lt;span class="caps"&gt;YOLO&lt;/span&gt;.&lt;/p&gt;</summary><content type="html">&lt;p&gt;&lt;strong&gt;./Launch&amp;nbsp;&amp;#8212;v=2.0&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;Sometime last year I was dead set on starting to blog but then life hit me hard in a positive way. My baby girl was born, got a new project in a different city so I had to move across the country&amp;#8230;that was an adventure on it&amp;#8217;s own. So between setting my life up again, getting to know people and learning all sorts of new things for my role I completely forgot about the blog not to mention that now that I&amp;#8217;m a dad I love spending my free time with my baby&amp;nbsp;girl.&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;
+Still the blog was still in the back of my mind so for this 2019 instead of making it part of my &amp;#8216;New Year Resolution&amp;#8217; which to be honest I never fullfil, decided to just &lt;span class="caps"&gt;YOLO&lt;/span&gt; do it. But this time it was going to be more &amp;#8220;me&amp;#8221; if it makes sense and since I now know more on how Python/&lt;span class="caps"&gt;HTML&lt;/span&gt;/&lt;span class="caps"&gt;CSS&lt;/span&gt;/&lt;span class="caps"&gt;JS&lt;/span&gt; work I came up with a new theme and everything customized to what I wanted (some things are still pending like mobile navigation but I&amp;#8217;ll get to it,&amp;nbsp;promise!).&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;
+There are a number of blog posts I will share with everyone and some of them include some of the new tools that I&amp;#8217;m using at work so it should be&amp;nbsp;fun.&lt;/p&gt;</content><category term="blog"></category></entry><entry><title>Ansible 101</title><link href="/ansible-101.html" rel="alternate"></link><published>2019-01-18T00:00:00-06:00</published><updated>2019-01-18T00:00:00-06:00</updated><author><name>Miguel Valdes</name></author><id>tag:None,2019-01-18:/ansible-101.html</id><summary type="html">&lt;p&gt;Ansible is my favorite configuration management tool, its uses &lt;span class="caps"&gt;YAML&lt;/span&gt; and Python, so you have a winning combo to begin with. One of the main things of why i enjoy using it, is basically that it doesn’t require an installation on the target servers and that is a big factor that in my opinion defeats other management tools like Chef or&amp;nbsp;Puppet&amp;#8230;..&lt;/p&gt;</summary><content type="html">&lt;p&gt;Ansible is my favorite configuration management tool, its uses &lt;span class="caps"&gt;YAML&lt;/span&gt; and Python, so you have a winning combo to begin with. One of the main things of why i enjoy using it, is basically that it doesn’t require an installation on the target servers and that is a big factor that in my opinion defeats other management tools like Chef or&amp;nbsp;Puppet.&lt;/p&gt;
+&lt;p&gt;The fact that you can run and configure servers without anything installed on them besides python (which is almost now standard on every single virtual/physical&amp;nbsp;machine).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Few things to&amp;nbsp;note:&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Requires python on both master and client&amp;nbsp;machine&lt;/li&gt;
+&lt;li&gt;Connects mostly over &lt;span class="caps"&gt;SSH&lt;/span&gt; so credential setup is&amp;nbsp;needed&lt;/li&gt;
+&lt;li&gt;Uses or executes in sequence (top to&amp;nbsp;bottom)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;As we talked before, Ansible relies on &lt;span class="caps"&gt;YAML&lt;/span&gt;.
+Yaml Aint Markup&amp;nbsp;Language&lt;/p&gt;
+&lt;p&gt;Meant to be “human readable” Perfect for the simplicity that involves ansible/python &lt;span class="caps"&gt;YAML&lt;/span&gt; uses a dictionary type of input information eg: key:value Name:&amp;nbsp;Mike&lt;/p&gt;
+&lt;p&gt;&lt;span class="caps"&gt;YAML&lt;/span&gt; Examples (not directly &lt;span class="caps"&gt;ANSIBLE&lt;/span&gt;&amp;nbsp;examples)&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nn"&gt;---&lt;/span&gt; &lt;span class="c1"&gt;#Pending Items&lt;/span&gt;
+&lt;span class="p p-Indicator"&gt;-&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;Visa Renewal&lt;/span&gt;
+&lt;span class="nt"&gt;Description&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;This is needed to renew your visa and this contains all of the information needed&lt;/span&gt;
+&lt;span class="nt"&gt;Type&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;Important&lt;/span&gt;
+&lt;span class="nt"&gt;Due&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;Today&lt;/span&gt;
+&lt;span class="nt"&gt;Followups&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="p p-Indicator"&gt;-&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;CAS Appointment&lt;/span&gt;
+        &lt;span class="l l-Scalar l-Scalar-Plain"&gt;Date&lt;/span&gt;&lt;span class="p p-Indicator"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;April 30th&lt;/span&gt;
+&lt;span class="p p-Indicator"&gt;-&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;Consulate&lt;/span&gt;
+        &lt;span class="l l-Scalar l-Scalar-Plain"&gt;Date&lt;/span&gt;&lt;span class="p p-Indicator"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;April 31st&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Same as with Python, indentation is critical for your &lt;span class="caps"&gt;YAML&lt;/span&gt;&amp;nbsp;files.&lt;/p&gt;
+&lt;p&gt;To use ansible its as simple as: (process may be different based on your&amp;nbsp;distribution)&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;sudo apt-get install ansible
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Once installed you can start creating what we call “playbooks”, which is basically &lt;span class="caps"&gt;YAML&lt;/span&gt; instructions for Ansible to execute something. We will begin with the classic hello word. Create a file named&amp;nbsp;hello.yml.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="l l-Scalar l-Scalar-Plain"&gt;hello.yml&lt;/span&gt;
+
+&lt;span class="nn"&gt;---&lt;/span&gt; &lt;span class="c1"&gt;# Hello World&lt;/span&gt;
+&lt;span class="p p-Indicator"&gt;-&lt;/span&gt; &lt;span class="nt"&gt;hosts&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;localhost&lt;/span&gt;
+&lt;span class="nt"&gt;tasks&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="p p-Indicator"&gt;-&lt;/span&gt; &lt;span class="nt"&gt;debug&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="nt"&gt;msg&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;Hello&lt;/span&gt;&lt;span class="nv"&gt; &lt;/span&gt;&lt;span class="s"&gt;World&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;To run your playbook execute the following&amp;nbsp;command:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="l l-Scalar l-Scalar-Plain"&gt;ansible-playbook hello.yml&lt;/span&gt;
+
+&lt;span class="l l-Scalar l-Scalar-Plain"&gt;Will produce the following output&lt;/span&gt;&lt;span class="p p-Indicator"&gt;:&lt;/span&gt;
+
+&lt;span class="l l-Scalar l-Scalar-Plain"&gt;PLAY [localhost] *****************************************************************&lt;/span&gt;
+
+&lt;span class="l l-Scalar l-Scalar-Plain"&gt;TASK [Gathering Facts] ***********************************************************&lt;/span&gt;
+&lt;span class="nt"&gt;ok&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p p-Indicator"&gt;[&lt;/span&gt;&lt;span class="nv"&gt;localhost&lt;/span&gt;&lt;span class="p p-Indicator"&gt;]&lt;/span&gt;
+
+&lt;span class="l l-Scalar l-Scalar-Plain"&gt;TASK [debug] *********************************************************************&lt;/span&gt;
+&lt;span class="nt"&gt;ok&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p p-Indicator"&gt;[&lt;/span&gt;&lt;span class="nv"&gt;localhost&lt;/span&gt;&lt;span class="p p-Indicator"&gt;]&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;=&amp;amp;gt; {&lt;/span&gt;
+    &lt;span class="l l-Scalar l-Scalar-Plain"&gt;&amp;quot;msg&amp;quot;&lt;/span&gt;&lt;span class="p p-Indicator"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;Hello&lt;/span&gt;&lt;span class="nv"&gt; &lt;/span&gt;&lt;span class="s"&gt;World&amp;quot;&lt;/span&gt;
+&lt;span class="err"&gt;}&lt;/span&gt;
+
+&lt;span class="l l-Scalar l-Scalar-Plain"&gt;PLAY RECAP ***********************************************************************&lt;/span&gt;
+&lt;span class="nt"&gt;localhost                  &lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;ok=2    changed=0    unreachable=0    failed=0&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;As you can see, running ansible playbooks is incredibly easy and of course there a lot more topics to cover for Ansible basics. If you want keep learning more, head over to the Ansible&amp;nbsp;Documentation.&lt;/p&gt;</content><category term="ansible"></category><category term="devops"></category><category term="automation"></category></entry><entry><title>Manage your virtualenvs with pipenv</title><link href="/python-pipenva.html" rel="alternate"></link><published>2019-01-15T00:00:00-06:00</published><updated>2019-01-15T00:00:00-06:00</updated><author><name>Miguel Valdes</name></author><id>tag:None,2019-01-15:/python-pipenva.html</id><summary type="html">&lt;p&gt;So not too long ago i wrote a post about how a lot of people manager their virtualenvs and for a long time this approach has been working fine, until i recently saw on twitter something called ‘pipenv’ so i was curious about it… so here we are&amp;nbsp;today..&lt;/p&gt;</summary><content type="html">&lt;p&gt;So not too long ago i wrote a post about how a lot of people manager their virtualenvs and for a long time this approach has been working fine, until i recently saw on twitter something called ‘pipenv’ so i was curious about it… so here we are&amp;nbsp;today.&lt;/p&gt;
+&lt;p&gt;Pipenv is another way of managing your virtual installations for packages/libraries so you don’t overload your current python installation and it does it in a super fancy and simple way. Also i should mention that now python.org suggest using this tool for managing libraries and&amp;nbsp;packages.&lt;/p&gt;
+&lt;p&gt;You will find a very nice screen-cast of the creator, legend Kenneth Reitz in their []main docs repo](https://docs.pipenv.org/). So please go ahead and check out the&amp;nbsp;video.&lt;/p&gt;
+&lt;p&gt;If you are done with it then let’s test it out. Most of us either start new repos or copy something from someone in GitHub, now based on what i can see almost everyone is still using the requirements.txt file to indicate what dependencies and libraries were used for a certain project. So we will do a quick test on how to tackle both&amp;nbsp;approaches.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Starting a new repo&lt;/strong&gt;
+So you have an idea of doing an application that will facilitate your life in some way, cool so now that we have pipenv we will create a folder with our project and start a virtualenv. We will be using python 3, because you know…. python 2 is going away so why are you still using it&amp;nbsp;fool?!&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;mkdir&lt;/span&gt; &lt;span class="n"&gt;new_cool_project&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;amp&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;amp&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;cd&lt;/span&gt; &lt;span class="n"&gt;new_cool_project&lt;/span&gt;
+&lt;span class="n"&gt;pipenv&lt;/span&gt; &lt;span class="o"&gt;--&lt;/span&gt;&lt;span class="n"&gt;three&lt;/span&gt;
+&lt;span class="n"&gt;Creating&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;virtualenv&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;this&lt;/span&gt; &lt;span class="n"&gt;project&lt;/span&gt;&lt;span class="err"&gt;…&lt;/span&gt;
+&lt;span class="n"&gt;Using&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;usr&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nb"&gt;bin&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;python3&lt;/span&gt; &lt;span class="n"&gt;to&lt;/span&gt; &lt;span class="n"&gt;create&lt;/span&gt; &lt;span class="n"&gt;virtualenv&lt;/span&gt;&lt;span class="err"&gt;…&lt;/span&gt;
+&lt;span class="err"&gt;⠋&lt;/span&gt;&lt;span class="n"&gt;Running&lt;/span&gt; &lt;span class="n"&gt;virtualenv&lt;/span&gt; &lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="n"&gt;interpreter&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;usr&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nb"&gt;bin&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;python3&lt;/span&gt;
+&lt;span class="n"&gt;Using&lt;/span&gt; &lt;span class="n"&gt;base&lt;/span&gt; &lt;span class="n"&gt;prefix&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;/usr&amp;#39;&lt;/span&gt;
+&lt;span class="n"&gt;New&lt;/span&gt; &lt;span class="n"&gt;python&lt;/span&gt; &lt;span class="n"&gt;executable&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;home&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="n"&gt;USER&lt;/span&gt;&lt;span class="o"&gt;/.&lt;/span&gt;&lt;span class="n"&gt;local&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;share&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;virtualenvs&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;new_cool_project&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;VeVqBp3O&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nb"&gt;bin&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;python3&lt;/span&gt;
+&lt;span class="n"&gt;Also&lt;/span&gt; &lt;span class="n"&gt;creating&lt;/span&gt; &lt;span class="n"&gt;executable&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;home&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="n"&gt;USER&lt;/span&gt;&lt;span class="o"&gt;/.&lt;/span&gt;&lt;span class="n"&gt;local&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;share&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;virtualenvs&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;new_cool_project&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;VeVqBp3O&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nb"&gt;bin&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;python&lt;/span&gt;
+&lt;span class="n"&gt;Installing&lt;/span&gt; &lt;span class="n"&gt;setuptools&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pip&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;wheel&lt;/span&gt;&lt;span class="o"&gt;...&lt;/span&gt;&lt;span class="n"&gt;done&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;As simple as that you have a virtualenv that is not currently hosted inside your repo folder, which is super nice cause you tend to either add it to your .gitignore or most people do actually upload it to their projects as well which adds a bunch of files that are not truly needed at&amp;nbsp;all.&lt;/p&gt;
+&lt;p&gt;&lt;span class="caps"&gt;NOTE&lt;/span&gt;: If you want to do some cleanup, all of your envs will be located in the following path assuming you are using&amp;nbsp;linux/mac:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;/home/$USER/.local/share/virtualenvs/&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Now, you will see a new file in your project repo called Pipfile. You can think of this as your requirements.txt sort of as it will contain your dependencies and python version&amp;nbsp;information.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="n"&gt;source&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;
+&lt;span class="n"&gt;url&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;https://pypi.python.org/simple&amp;quot;&lt;/span&gt;
+&lt;span class="n"&gt;verify_ssl&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;true&lt;/span&gt;
+&lt;span class="n"&gt;name&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;pypi&amp;quot;&lt;/span&gt;
+
+
+&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;packages&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+
+
+&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;dev&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;packages&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+
+
+&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;requires&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="n"&gt;python_version&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;3.6&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;So you are set, now if you want to install libraries simply&amp;nbsp;do:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;pipenv&lt;/span&gt; &lt;span class="n"&gt;package_name&lt;/span&gt; &lt;span class="n"&gt;example&lt;/span&gt;&lt;span class="o"&gt;....&lt;/span&gt;
+&lt;span class="n"&gt;pipenv&lt;/span&gt; &lt;span class="n"&gt;install&lt;/span&gt; &lt;span class="n"&gt;flask&lt;/span&gt;
+
+&lt;span class="n"&gt;Installing&lt;/span&gt; &lt;span class="n"&gt;flask&lt;/span&gt;&lt;span class="err"&gt;…&lt;/span&gt;
+&lt;span class="n"&gt;Collecting&lt;/span&gt; &lt;span class="n"&gt;flask&lt;/span&gt;
+&lt;span class="n"&gt;Using&lt;/span&gt; &lt;span class="n"&gt;cached&lt;/span&gt; &lt;span class="n"&gt;Flask&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mf"&gt;0.12&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;py2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;py3&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;none&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="nb"&gt;any&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;whl&lt;/span&gt;
+&lt;span class="n"&gt;Collecting&lt;/span&gt; &lt;span class="n"&gt;Jinja2&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;gt&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mf"&gt;2.4&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;flask&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;Using&lt;/span&gt; &lt;span class="n"&gt;cached&lt;/span&gt; &lt;span class="n"&gt;Jinja2&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mf"&gt;2.10&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;py2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;py3&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;none&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="nb"&gt;any&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;whl&lt;/span&gt;
+&lt;span class="n"&gt;Collecting&lt;/span&gt; &lt;span class="n"&gt;itsdangerous&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;gt&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mf"&gt;0.21&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;flask&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;Collecting&lt;/span&gt; &lt;span class="n"&gt;Werkzeug&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;gt&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mf"&gt;0.7&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;flask&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;Using&lt;/span&gt; &lt;span class="n"&gt;cached&lt;/span&gt; &lt;span class="n"&gt;Werkzeug&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mf"&gt;0.14&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;py2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;py3&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;none&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="nb"&gt;any&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;whl&lt;/span&gt;
+&lt;span class="n"&gt;Collecting&lt;/span&gt; &lt;span class="n"&gt;click&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;gt&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mf"&gt;2.0&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;flask&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;Using&lt;/span&gt; &lt;span class="n"&gt;cached&lt;/span&gt; &lt;span class="n"&gt;click&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mf"&gt;6.7&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;py2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;py3&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;none&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="nb"&gt;any&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;whl&lt;/span&gt;
+&lt;span class="n"&gt;Collecting&lt;/span&gt; &lt;span class="n"&gt;MarkupSafe&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;gt&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mf"&gt;0.23&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;Jinja2&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;gt&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mf"&gt;2.4&lt;/span&gt;&lt;span class="o"&gt;-&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;gt&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="n"&gt;flask&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;Installing&lt;/span&gt; &lt;span class="n"&gt;collected&lt;/span&gt; &lt;span class="n"&gt;packages&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;MarkupSafe&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Jinja2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;itsdangerous&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Werkzeug&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;click&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;flask&lt;/span&gt;
+&lt;span class="n"&gt;Successfully&lt;/span&gt; &lt;span class="n"&gt;installed&lt;/span&gt; &lt;span class="n"&gt;Jinja2&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mf"&gt;2.10&lt;/span&gt; &lt;span class="n"&gt;MarkupSafe&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mf"&gt;1.0&lt;/span&gt; &lt;span class="n"&gt;Werkzeug&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mf"&gt;0.14&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="n"&gt;click&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mf"&gt;6.7&lt;/span&gt; &lt;span class="n"&gt;flask&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mf"&gt;0.12&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="n"&gt;itsdangerous&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mf"&gt;0.24&lt;/span&gt;
+
+&lt;span class="n"&gt;Adding&lt;/span&gt; &lt;span class="n"&gt;flask&lt;/span&gt; &lt;span class="n"&gt;to&lt;/span&gt; &lt;span class="n"&gt;Pipfile&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;s [packages]…&lt;/span&gt;
+&lt;span class="n"&gt;Locking&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;dev&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;packages&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="n"&gt;dependencies&lt;/span&gt;&lt;span class="err"&gt;…&lt;/span&gt;
+&lt;span class="n"&gt;Locking&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;packages&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="n"&gt;dependencies&lt;/span&gt;&lt;span class="err"&gt;…&lt;/span&gt;
+&lt;span class="n"&gt;Updated&lt;/span&gt; &lt;span class="n"&gt;Pipfile&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lock&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mo"&gt;01117&lt;/span&gt;&lt;span class="mi"&gt;9&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="err"&gt;!&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Now you have another file Pipfile.lock which contains security and specific data tied to the libraries or packages you installed. This is a huge benefit compared to the regular old way of just simply pip installing everything as you can validate the hashes to make sure you indeed installed what you needed and not something that was altered by a third&amp;nbsp;party.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;flask&amp;quot;&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+            &lt;span class="nt"&gt;&amp;quot;hashes&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+                &lt;span class="s2"&gt;&amp;quot;sha256:0749df235e3ff61ac108f69ac178c9770caeaccad2509cb762ce1f65570a8856&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                &lt;span class="s2"&gt;&amp;quot;sha256:49f44461237b69ecd901cc7ce66feea0319b9158743dd27a2899962ab214dac1&amp;quot;&lt;/span&gt;
+            &lt;span class="p"&gt;],&lt;/span&gt;
+            &lt;span class="nt"&gt;&amp;quot;version&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;==0.12.2&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Installing a file also updates your original Pipfile with the new installed packages so you have everything ready and with less commands in your terminal. Now you can share your project information and people can install it from the data in your&amp;nbsp;pipfile.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Cloning a repo&lt;/strong&gt;
+So now what i believe is the most common scenario, you found a super cool project in Github/GitLab or whatever &lt;span class="caps"&gt;SCM&lt;/span&gt; you use and you want to use it, problem is, it contains a requirements.txt file…. not a problem for&amp;nbsp;pipenv!&lt;/p&gt;
+&lt;p&gt;git clone super_nice_project
+Once you have the project available, simply create your virtualenv and then install the dependencies in the requirements.txt file by letting pipenv know where to find&amp;nbsp;it.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;pipenv&lt;/span&gt; &lt;span class="o"&gt;--&lt;/span&gt;&lt;span class="n"&gt;three&lt;/span&gt;
+&lt;span class="n"&gt;pipenv&lt;/span&gt; &lt;span class="n"&gt;install&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;r&lt;/span&gt; &lt;span class="n"&gt;requirements&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;txt&lt;/span&gt;
+
+&lt;span class="n"&gt;Requirements&lt;/span&gt; &lt;span class="nb"&gt;file&lt;/span&gt; &lt;span class="n"&gt;provided&lt;/span&gt;&lt;span class="err"&gt;!&lt;/span&gt; &lt;span class="n"&gt;Importing&lt;/span&gt; &lt;span class="n"&gt;into&lt;/span&gt; &lt;span class="n"&gt;Pipfile&lt;/span&gt;&lt;span class="err"&gt;…&lt;/span&gt;
+&lt;span class="n"&gt;Pipfile&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lock&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;found&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;creating&lt;/span&gt;&lt;span class="err"&gt;…&lt;/span&gt;
+&lt;span class="n"&gt;Locking&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;dev&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;packages&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="n"&gt;dependencies&lt;/span&gt;&lt;span class="err"&gt;…&lt;/span&gt;
+&lt;span class="n"&gt;Locking&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;packages&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="n"&gt;dependencies&lt;/span&gt;&lt;span class="err"&gt;…&lt;/span&gt;
+&lt;span class="n"&gt;Updated&lt;/span&gt; &lt;span class="n"&gt;Pipfile&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lock&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;956749&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="err"&gt;!&lt;/span&gt;
+&lt;span class="n"&gt;Installing&lt;/span&gt; &lt;span class="n"&gt;dependencies&lt;/span&gt; &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;Pipfile.lock&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;956749&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;Conclusion&lt;/strong&gt;
+So now you know the basics on how to use pipenv so please go ahead and upgrade how you manage your projects, not only its easier to install and keep control of things but it also offers a lot of different cool concepts and features we didn’t cover here like spawning the virtualenv in a shell so you can run commands directly for things like Flask that demand you to launch it directly from the environment to test it out, which is similar to doing the good ol’ source env/bin/activate. Also having dev only dependencies,&amp;nbsp;etc.&lt;/p&gt;</content><category term="python"></category><category term="pipenv"></category></entry><entry><title>Use docker containers for your python flask apps</title><link href="/docker-flask-apps.html" rel="alternate"></link><published>2018-12-07T00:00:00-06:00</published><updated>2018-12-07T00:00:00-06:00</updated><author><name>Miguel Valdes</name></author><id>tag:None,2018-12-07:/docker-flask-apps.html</id><summary type="html">&lt;p&gt;’ve been recently using my work laptop to code while things are calm and I’m waiting for the next fire to pop up (I work in production support). So once i installed everything I needed…. python, git, vscode, nodejs, etc. Realized one big thing, everything works differently in windows and im already used to work in Linux &lt;span class="caps"&gt;OS&lt;/span&gt; systems and i cannot just switch the &lt;span class="caps"&gt;OS&lt;/span&gt; in my work laptop cause then the &lt;span class="caps"&gt;IT&lt;/span&gt; guys going to get me&amp;nbsp;fired..&lt;/p&gt;</summary><content type="html">&lt;p&gt;&lt;strong&gt;&lt;em&gt;Make your apps easier to deploy and carry with&amp;nbsp;you&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;I’ve been recently using my work laptop to code while things are calm and I’m waiting for the next fire to pop up (I work in production support). So once i installed everything I needed…. python, git, vscode, nodejs, etc. Realized one big thing, everything works differently in windows and im already used to work in Linux &lt;span class="caps"&gt;OS&lt;/span&gt; systems and i cannot just switch the &lt;span class="caps"&gt;OS&lt;/span&gt; in my work laptop cause then the &lt;span class="caps"&gt;IT&lt;/span&gt; guys going to get me&amp;nbsp;fired.&lt;/p&gt;
+&lt;p&gt;So while looking at solutions to mitigate my situation, decided to force myself to use something new and exciting because it would’ve been easy to just install Vagrant/VirtualBox and spin a machine to do my dev work but where is the fun in&amp;nbsp;that?&lt;/p&gt;
+&lt;p&gt;Enter Docker…
+In this new &lt;span class="caps"&gt;IT&lt;/span&gt; world where everything is moving towards containers and microservices, thought it would be a good idea to jump on the hype train and learn how to ‘dockerize’ my flask applications. So I watched some videos and tutorials, read some of the documentation and did a test on a dummy application, so here we&amp;nbsp;go.&lt;/p&gt;
+&lt;p&gt;Install Docker Engine First thing is of course installing Docker, now depending on your &lt;span class="caps"&gt;OS&lt;/span&gt; you can get it one way or another. Unless you have an enterprise need or license, go with the &lt;span class="caps"&gt;CE&lt;/span&gt; versions. Docker&amp;nbsp;install&lt;/p&gt;
+&lt;p&gt;Create or use your application In my case, most of my applications were either running on my local rasperby pi at home or on heroku so I just decided to create a super simple dummy app that would display a picture and some&amp;nbsp;text.&lt;/p&gt;
+&lt;p&gt;So once i created a new virtualenv using pipenv, my folder structure looked like&amp;nbsp;this.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
+&lt;span class="err"&gt;├──&lt;/span&gt; &lt;span class="n"&gt;Pipfile&lt;/span&gt;
+&lt;span class="err"&gt;├──&lt;/span&gt; &lt;span class="n"&gt;Pipfile&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lock&lt;/span&gt;
+&lt;span class="err"&gt;└──&lt;/span&gt; &lt;span class="n"&gt;python&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;flask&lt;/span&gt;
+    &lt;span class="err"&gt;├──&lt;/span&gt; &lt;span class="n"&gt;app&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;py&lt;/span&gt;
+    &lt;span class="err"&gt;├──&lt;/span&gt; &lt;span class="n"&gt;requirements&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;txt&lt;/span&gt;
+    &lt;span class="err"&gt;└──&lt;/span&gt; &lt;span class="n"&gt;templates&lt;/span&gt;
+        &lt;span class="err"&gt;└──&lt;/span&gt; &lt;span class="n"&gt;index&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;html&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;app.py&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;flask&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Flask&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;render_template&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;random&lt;/span&gt;
+
+&lt;span class="n"&gt;app&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Flask&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="vm"&gt;__name__&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;app&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;SECRET_KEY&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;random&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;randint&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="nd"&gt;@app.route&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;index&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;render_template&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;index.html&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="vm"&gt;__name__&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;app&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;debug&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;As you can see an incredibly simple app that returns an even simpler&amp;nbsp;‘index.html’.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;index.html&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;lt&lt;/span&gt;&lt;span class="o"&gt;;!&lt;/span&gt;&lt;span class="nt"&gt;DOCTYPE&lt;/span&gt; &lt;span class="nt"&gt;html&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;gt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;lt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;&lt;span class="nt"&gt;html&lt;/span&gt; &lt;span class="nt"&gt;lang&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;en&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;gt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;lt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;&lt;span class="nt"&gt;head&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;gt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+    &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;lt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;&lt;span class="nt"&gt;meta&lt;/span&gt; &lt;span class="nt"&gt;charset&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;UTF-8&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;gt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+    &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;lt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;&lt;span class="nt"&gt;meta&lt;/span&gt; &lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;viewport&amp;quot;&lt;/span&gt; &lt;span class="nt"&gt;content&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;width=device-width, initial-scale=1.0&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;gt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+    &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;lt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;&lt;span class="nt"&gt;meta&lt;/span&gt; &lt;span class="nt"&gt;http-equiv&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;X-UA-Compatible&amp;quot;&lt;/span&gt; &lt;span class="nt"&gt;content&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;ie=edge&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;gt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+    &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;lt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;&lt;span class="nt"&gt;style&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;gt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+        &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;body&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+            &lt;span class="k"&gt;background-color&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;magenta&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+            &lt;span class="k"&gt;margin&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="kt"&gt;px&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+            &lt;span class="k"&gt;padding&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="kt"&gt;px&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="p"&gt;}&lt;/span&gt;
+        &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;h1&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+            &lt;span class="k"&gt;color&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;pink&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;lt&lt;/span&gt;&lt;span class="o"&gt;;/&lt;/span&gt;&lt;span class="nt"&gt;style&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;gt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+    &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;lt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;&lt;span class="nt"&gt;title&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;gt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;&lt;span class="nt"&gt;Document&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;lt&lt;/span&gt;&lt;span class="o"&gt;;/&lt;/span&gt;&lt;span class="nt"&gt;title&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;gt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;lt&lt;/span&gt;&lt;span class="o"&gt;;/&lt;/span&gt;&lt;span class="nt"&gt;head&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;gt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;lt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;&lt;span class="nt"&gt;body&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;gt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+    &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;lt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;&lt;span class="nt"&gt;h1&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;gt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;&lt;span class="nt"&gt;Docker&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;lt&lt;/span&gt;&lt;span class="o"&gt;;/&lt;/span&gt;&lt;span class="nt"&gt;h1&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;gt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+        &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;lt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;&lt;span class="nt"&gt;p&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;gt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt; &lt;span class="nt"&gt;Container&lt;/span&gt; &lt;span class="nt"&gt;python&lt;/span&gt; &lt;span class="nt"&gt;app&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;lt&lt;/span&gt;&lt;span class="o"&gt;;/&lt;/span&gt;&lt;span class="nt"&gt;p&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;gt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+    &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;lt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;&lt;span class="nt"&gt;hr&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;gt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+    &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;lt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;&lt;span class="nt"&gt;img&lt;/span&gt; &lt;span class="nt"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;http://www.imagefully.com/wp-content/uploads/2015/08/Funny-Cats-Lol-Sup-Bro-Image.jpg&amp;quot;&lt;/span&gt; &lt;span class="nt"&gt;alt&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;gt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;lt&lt;/span&gt;&lt;span class="o"&gt;;/&lt;/span&gt;&lt;span class="nt"&gt;body&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;gt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;lt&lt;/span&gt;&lt;span class="o"&gt;;/&lt;/span&gt;&lt;span class="nt"&gt;html&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nt"&gt;gt&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt; Create your&amp;nbsp;Dockerfile &lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Now, in order for you to interact with the Docker Engine you need to instruct docker how to build your image. An image can be seen as a snapshot of how something should look like including configurations, files, environment variables,&amp;nbsp;etc.&lt;/p&gt;
+&lt;p&gt;This is the part were I got stuck the most since I had to read what the keywords do and how to interact with them, so if you want the reference for everything, check&amp;nbsp;here.&lt;/p&gt;
+&lt;p&gt;Will give you a summarized version of what I did for my personal&amp;nbsp;image.&lt;/p&gt;
+&lt;p&gt;All dockerfiles must either be using an existing base image or using something from&amp;nbsp;scratch.&lt;/p&gt;
+&lt;p&gt;Since the docker store already contains a bi-zillion images from official repos like Ubuntu, centos, nginx, mysql, etc. There should be no need for you to create something from scratch were you basically build the &lt;span class="caps"&gt;OS&lt;/span&gt; layers and everything. So in my case i went with a very simple Ubuntu&amp;nbsp;image.&lt;/p&gt;
+&lt;p&gt;This is how you ‘inherit’ or use the base image from the docker&amp;nbsp;store.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;FROM ubuntu:latest
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;If you want to see all of the images in your system simply run the command docker images. In my case i downloaded and played around postgress as well so my output looked&amp;nbsp;like.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;REPOSITORY           TAG                 IMAGE ID            CREATED             SIZE
+docker.io/ubuntu     latest              0458a4468cbc        12 days ago         111.7 MB
+docker.io/postgres   9.6-alpine          7470b931fc2e        4 weeks ago         37.82 MB
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;As you can see, an ubuntu image is 111.7 &lt;span class="caps"&gt;MB&lt;/span&gt; &lt;span class="caps"&gt;ONLY&lt;/span&gt;!!! - This to me is the beauty of the containers, incredibly light weight and super portable for you to carry around, if we were doing this with a Virtual Machine, we would be talking about gbs of&amp;nbsp;data.&lt;/p&gt;
+&lt;p&gt;Next command on a typical file are labels, which can contain anything you want, mostly used for&amp;nbsp;metadata.&lt;/p&gt;
+&lt;p&gt;&lt;span class="caps"&gt;LABEL&lt;/span&gt; maintainer=&amp;#8221;yourname&amp;#8221; version=&amp;#8221;1.0&amp;#8221; maintainer_email=&amp;#8221;youremail@mail.com&amp;#8221;
+&lt;span class="caps"&gt;NOTE&lt;/span&gt;: Most images still use the deprecated keyword &lt;span class="caps"&gt;MAINTAINER&lt;/span&gt;. Ideally you want to use LABELs&amp;nbsp;instead.&lt;/p&gt;
+&lt;p&gt;Next command is super important as it allows you to specify what you want docker to do while building your image, this is where you typically install or do things on top of base&amp;nbsp;images.&lt;/p&gt;
+&lt;p&gt;In my case I wanted to install pip and the build-essential bundle so I could run my flask&amp;nbsp;application.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;RUN apt-get update -y &amp;amp;amp;&amp;amp;amp; apt-get install -y python-pip python-dev build-essential
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ideally you want to ‘chain’ your commands using ‘&amp;amp;&amp;amp;’ so you reduce the amount of layers it&amp;nbsp;generates.&lt;/p&gt;
+&lt;p&gt;Once you have everything installed you want to move your application code into the image to be used, so in here based on what I read you can either use &lt;span class="caps"&gt;COPY&lt;/span&gt; or &lt;span class="caps"&gt;ADD&lt;/span&gt;. You might want to read the documentation to see which one to pick but based on this &lt;span class="caps"&gt;SO&lt;/span&gt; post. For basic data moving, either one will work just&amp;nbsp;fine.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;COPY ./python-flask/ /usr/src/app
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;As most python applications, we requires modules and packages to run things, unless you are using the built-in library of course. But we doing flask, we big boys now so we need to install the packages and its dependencies. We simply add another layer that you will most likely&amp;nbsp;recognize.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;RUN pip install -r /usr/src/app/requirements.txt
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;We run it at this point since the files were just copied a line above. Remember our requirements.txt was inside the application folder. You can modify the structure and alter the layers but you need to install your requirements at some&amp;nbsp;point.&lt;/p&gt;
+&lt;p&gt;Once everything is copied and installed we need to tell Docker where we will run our things, so we make use of &lt;span class="caps"&gt;WORKDIR&lt;/span&gt;. It basically sets the directory where you will run your commands from. If you are running a binary that is available in your $&lt;span class="caps"&gt;PATH&lt;/span&gt; then you may not need this but since i want to make sure my application launches and uses the code we copied above, I force the&amp;nbsp;location.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;WORKDIR /usr/src/app
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;A key thing with containers is that, they create and spawn the process you tell them to but if you need to interact with it, you need a port to talk to. So in our case, since by default all flask apps run on port 5000. We tell Docker that we want to expose that port in our image so we can actually interact with&amp;nbsp;it.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;EXPOSE 5000
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Finally, we run the&amp;nbsp;application.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;CMD [&amp;quot;flask&amp;quot;,&amp;quot;run&amp;quot;,&amp;quot;--host=0.0.0.0&amp;quot;]
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Do note we are using &lt;span class="caps"&gt;CMD&lt;/span&gt; instead of &lt;span class="caps"&gt;RUN&lt;/span&gt;. This is because we just want this command to be executed as soon as the container is launched, in our case we use the preferred form (called exec) of separating items into a list. You can also use it in a shell form (without the list [] and ”); Again for specifics the documentation does&amp;nbsp;wonders.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Build your image&lt;/strong&gt;
+Once we have our files and structure ready, we need to build our image using the Dockerfile we&amp;nbsp;created.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;.
+├── Dockerfile
+├── Pipfile
+├── Pipfile.lock
+└── python-flask
+    ├── app.py
+    ├── requirements.txt
+    └── templates
+        └── index.html
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;To build our image we interact with the docker &lt;span class="caps"&gt;API&lt;/span&gt;, or the &lt;span class="caps"&gt;CLI&lt;/span&gt; for mere mortals like me… By using the following&amp;nbsp;command:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;docker build -t flask .
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Things to note. -t &lt;span class="caps"&gt;TAG&lt;/span&gt; Name to use for your image, in my case I’m saying flask so its easy to remember. . With the dot we specify that we want to build using the Dockerfile available in our current location, if you want to use the file from a different place just specify the&amp;nbsp;path.&lt;/p&gt;
+&lt;p&gt;Once the process completes, if you re-run docker images you should see a new image in your&amp;nbsp;repository.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;REPOSITORY           TAG                 IMAGE ID            CREATED             SIZE
+flask                latest              5394dbc7f0eb        23 hours ago        424.6 MB
+docker.io/ubuntu     latest              0458a4468cbc        12 days ago         111.7 MB
+docker.io/postgres   9.6-alpine          7470b931fc2e        4 weeks ago         37.82 MB
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;As you can see, our image increased quite a bit, but even with that size it can be up and running in seconds. So remember, the more you install and add to it, the bigger it cause, duh logic&amp;nbsp;right?&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Run your image&lt;/strong&gt;
+If you made it this far, good for you mate. We are almost done. To run our image we again interact with the &lt;span class="caps"&gt;CLI&lt;/span&gt; but in here we need to add some specific parameters to tell it where to put our port and give it a&amp;nbsp;name.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;docker run -d \
+-p 80:5000 \
+--name flaskapp \
+-e FLASK_APP=&amp;#39;app.py&amp;#39; \
+flask
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The above command should give you a container id, validate it is actually running by doing docker ps. Additionally you can see the usual flask logs by running docker logs &lt;IMAGENAME&gt;.&lt;/p&gt;
+&lt;p&gt;Since we passed the &amp;#8212;name parameter, we just do docker logs flaskapp. And we get the&amp;nbsp;following.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;* Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+24.28.147.10 - - [14/Feb/2018 17:00:43] &amp;quot;GET / HTTP/1.1&amp;quot; 200 -
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;It is very important that the host is ‘0.0.0.0’ otherwise you will not be able to access it from the outside. If you want to know why, check out this&amp;nbsp;link.&lt;/p&gt;
+&lt;p&gt;Finally, if we hit the &lt;span class="caps"&gt;IP&lt;/span&gt; where the docker image is running, we should get our flask application. Questions? Concerns? Was this&amp;nbsp;cool?&lt;/p&gt;
+&lt;p&gt;Let me know in the section below. Next time we will use the image to do live testing in our&amp;nbsp;code.&lt;/p&gt;
+&lt;p&gt;Cheers!&lt;/p&gt;</content><category term="devops"></category><category term="docker"></category><category term="python"></category><category term="flask"></category></entry><entry><title>Reddit HWSwap Flask App</title><link href="/reddit-hwswap-flask-app.html" rel="alternate"></link><published>2018-11-20T00:00:00-06:00</published><updated>2018-11-20T00:00:00-06:00</updated><author><name>Miguel Valdes</name></author><id>tag:None,2018-11-20:/reddit-hwswap-flask-app.html</id><summary type="html">&lt;p&gt;The crazy shopping season is over so a lot of people will start selling a lot of their used hardware, in my case as a computer junkie (#PCMasterRace &lt;span class="caps"&gt;FTW&lt;/span&gt;) I always like to have my &lt;span class="caps"&gt;PC&lt;/span&gt; up to date and the best way is to buy cheap hardware. Now Reddit has this magical place called “Hardwareswap” where people sell their parts/rigs among other things like cameras, cell phones,&amp;nbsp;etc&amp;#8230;&lt;/p&gt;</summary><content type="html">&lt;p&gt;The crazy shopping season is over so a lot of people will start selling a lot of their used hardware, in my case as a computer junkie (#PCMasterRace &lt;span class="caps"&gt;FTW&lt;/span&gt;) I always like to have my &lt;span class="caps"&gt;PC&lt;/span&gt; up to date and the best way is to buy cheap hardware. Now Reddit has this magical place called “Hardwareswap” where people sell their parts/rigs among other things like cameras, cell phones,&amp;nbsp;etc.&lt;/p&gt;
+&lt;p&gt;So because of this I decided to create a simple flask app that would search in that subreddit, not to say that the built in function doesn’t work but sometimes its just hard to navigate and see the relevant information you want so instead my application presents the results in a cleaner&amp;nbsp;way.&lt;/p&gt;
+&lt;p&gt;Alright so first here is the finished&amp;nbsp;product.&lt;/p&gt;</content><category term="python"></category><category term="flask"></category></entry></feed>

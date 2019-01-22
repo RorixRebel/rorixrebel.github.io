@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<section class="hero">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title"> {{ article.title }} </h1>
+            <div class="breadcrumb">                
+                <ul>
+                    <strong>
+                        <span>In:&nbsp</span>
+                    </strong>
+                    <li>{{article.category | capitalize }}</li>
+                    <li class="is-active">{{article.date.strftime('%B %d, %Y')}}</li>
+                </ul>
+            </div>
+            {{ article.content }}
+        </div>
+    </div>
+
+</section>
+
+
+{% endblock %}
