@@ -2,12 +2,8 @@
 @import url("./pygments.css");
 body {
   font-family: 'Roboto', sans-serif;
-  font-size: 15px;
   margin: 0;
   padding: 0;
-  -webkit-box-sizing: content-box;
-          box-sizing: content-box;
-  text-decoration: none;
 }
 
 body a:hover, body a:link, body a:visited, body a:active {
@@ -40,6 +36,10 @@ nav .subtitle {
   color: #50fa7b;
 }
 
+nav .navbar-menu {
+  background-color: #282A36;
+}
+
 nav > .pagination {
   text-align: center;
 }
@@ -50,10 +50,6 @@ nav > .pagination a.previous {
 
 nav > .pagination a.next {
   float: right;
-}
-
-li {
-  color: white;
 }
 
 .container > .title > .tag a:hover, .container > .title > .tag a:link, .container > .title > .tag a:visited {
