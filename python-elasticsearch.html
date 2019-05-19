@@ -60,14 +60,14 @@
 
 <div class="container">
     <br><br>
-    <h1 class="title"> Twitter Sentiment Analysis with Python and Elasticsearch, Part&nbsp;1 </h1>
+    <h1 class="title"> Twitter Sentiment Analysis with Python and Elasticsearch Part&nbsp;1 </h1>
     <div class="breadcrumb">
         <ul>
             <strong>
                 <span>In:&nbsp</span>
             </strong>
             <li>Python</li>
-            <li class="is-active">January 30, 2019</li>
+            <li class="is-active">May 19, 2019</li>
         </ul>
     </div>
     <article class="content">
@@ -133,8 +133,7 @@ AQ<span class="o">}{</span><span class="m">127</span>.0.0.1<span class="o">}{</s
 </ol>
 <p><strong><span class="caps">NOTE</span>:</strong> If you want to run it in the background add parameters <code>-d</code> to daemonize&nbsp;it.</p>
 <p>Finally test to see if your node is ready by performing a request against your localhost in port 9200 which is the default used by ElasticSearch. In my case I named my node &#8220;node-1&#8221; and my cluster&nbsp;&#8220;home-cluster&#8221;</p>
-<div class="highlight"><pre><span></span>    :::<span class="nv">bash</span>
-    <span class="nv">curl</span> <span class="nv">localhost</span>:<span class="mi">9200</span>
+<div class="highlight"><pre><span></span>    <span class="nv">curl</span> <span class="nv">localhost</span>:<span class="mi">9200</span>
     {
     <span class="s2">&quot;</span><span class="s">name</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">node-1</span><span class="s2">&quot;</span>,
     <span class="s2">&quot;</span><span class="s">cluster_name</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">home-cluster</span><span class="s2">&quot;</span>,
@@ -150,9 +149,139 @@ AQ<span class="o">}{</span><span class="m">127</span>.0.0.1<span class="o">}{</s
         <span class="s2">&quot;</span><span class="s">minimum_wire_compatibility_version</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">5.6.0</span><span class="s2">&quot;</span>,
         <span class="s2">&quot;</span><span class="s">minimum_index_compatibility_version</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">5.0.0</span><span class="s2">&quot;</span>
     },
-    <span class="s2">&quot;</span><span class="s">tagline</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">You Know, for Search</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;</span><span class="s">tagline</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">You Know, for Search</span><span class="s2">&quot;</span>
     }
 </pre></div>
+
+
+<ol>
+<li>Ok so now you have your single node cluster set, next step would be to create a &#8220;model&#8221; for the data you will ingest, again since i don&#8217;t have unlimited storage or more nodes I will tweak the mapping for all of the indices that get created to just have 1 shard with no replicas. This is an elasticsearch type of deal so if you want to learn more, i would again point you to the documentation or you can ask me (social media stuff at the&nbsp;bottom).</li>
+</ol>
+<p>Now i could create the mapping everything i index the data but then again, that&#8217;s manual stuff which i kind of despise so i went ahead and created a template so that all indices that would match the pattern would adopt the&nbsp;settings.</p>
+<div class="highlight"><pre><span></span>     <span class="ss">&quot;trump_tweets&quot;</span> <span class="p">:</span> <span class="err">{</span>
+        <span class="ss">&quot;order&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="ss">&quot;index_patterns&quot;</span> <span class="p">:</span> <span class="p">[</span>
+        <span class="ss">&quot;trump-*&quot;</span>
+        <span class="p">],</span>
+        <span class="ss">&quot;settings&quot;</span> <span class="p">:</span> <span class="err">{</span>
+        <span class="ss">&quot;index&quot;</span> <span class="p">:</span> <span class="err">{</span>
+            <span class="ss">&quot;number_of_shards&quot;</span> <span class="p">:</span> <span class="ss">&quot;1&quot;</span><span class="p">,</span>
+            <span class="ss">&quot;number_of_replicas&quot;</span> <span class="p">:</span> <span class="ss">&quot;0&quot;</span>
+        <span class="err">}</span>
+        <span class="err">}</span><span class="p">,</span>
+        <span class="ss">&quot;mappings&quot;</span> <span class="p">:</span> <span class="err">{</span> <span class="err">}</span><span class="p">,</span>
+        <span class="ss">&quot;aliases&quot;</span> <span class="p">:</span> <span class="err">{</span>
+        <span class="ss">&quot;trump-data&quot;</span> <span class="p">:</span> <span class="err">{</span> <span class="err">}</span>
+        <span class="err">}</span>
+    <span class="err">}</span>
+</pre></div>
+
+
+<p>So once you have the mapping defined we are finally ready to push some data using&nbsp;Python!.</p>
+<h1 id="ingesting-data-with-python-elasticsearch">Ingesting data with&nbsp;python-elasticsearch</h1>
+<p>Alright so the first thing we have to do is acquire some twitter credentials and token so that we can make use of the libraries to retrieve tweets, to get those credentials go <a href="https://developer.twitter.com/en/docs/basics/authentication/guides/access-tokens.html">here</a>.</p>
+<p>First thin is to define the connection object that we will use to interact with Elasticsearch, also we will import the whole thing, since we are doing sentiment analysis we of course need those&nbsp;libraries.</p>
+<p>In the last portion we tell elasticsearch that if the index called &#8216;trump&#8217; does not&nbsp;exist</p>
+<div class="highlight"><pre><span></span>    <span class="kn">from</span> <span class="nn">textblob</span> <span class="kn">import</span> <span class="n">TextBlob</span>
+    <span class="kn">from</span> <span class="nn">elasticsearch</span> <span class="kn">import</span> <span class="n">Elasticsearch</span>
+    <span class="kn">import</span> <span class="nn">uuid</span>
+    <span class="kn">import</span> <span class="nn">json</span>
+    <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+    <span class="c1"># Elastic Connection</span>
+    <span class="n">es</span> <span class="o">=</span> <span class="n">Elasticsearch</span><span class="p">(</span><span class="n">hosts</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">)</span>
+    <span class="n">index_name</span> <span class="o">=</span> <span class="s1">&#39;trump-&#39;</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y.%m.</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>Next, we will define the data model used to describe each &#8216;tweet&#8217; or event and pass it down to elasticsearch, in here is where we do the sentiment analysis using library&nbsp;&#8216;TextBlob&#8217;.</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Tweet</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">realname</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">tweet_text</span><span class="p">,</span> <span class="n">hashtags</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">realname</span> <span class="o">=</span> <span class="n">realname</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="n">location</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tweet_text</span> <span class="o">=</span> <span class="n">tweet_text</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hashtags</span> <span class="o">=</span> <span class="p">[</span><span class="nb">hash</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="nb">hash</span> <span class="ow">in</span> <span class="n">hashtags</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sentiment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sentiment</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">get_sentiment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">TextBlob</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tweet_text</span><span class="p">)</span><span class="o">.</span><span class="n">sentiment</span><span class="o">.</span><span class="n">polarity</span>
+
+    <span class="k">def</span> <span class="nf">push_to_elastic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">es</span><span class="o">.</span><span class="n">index</span><span class="p">(</span>
+            <span class="n">index</span><span class="o">=</span><span class="n">index_name</span><span class="p">,</span>
+            <span class="n">doc_type</span><span class="o">=</span><span class="s2">&quot;tweets&quot;</span><span class="p">,</span>
+            <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">body</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;@timestamp&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span>
+                    <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span>
+                    <span class="s2">&quot;realname&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">realname</span><span class="p">,</span>
+                    <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">,</span>
+                    <span class="s2">&quot;tweet&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">tweet_text</span><span class="p">,</span>
+                    <span class="s2">&quot;hashtags&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">hashtags</span><span class="p">,</span>
+                    <span class="s2">&quot;sentiment&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sentiment</span><span class="p">,</span>
+                <span class="p">}</span>
+        <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">get_details</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tweet_text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hashtags</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sentiment</span><span class="p">)</span>
+</pre></div>
+
+
+<p>Finally we will make use of the client and data objects to start a stream that will push all of the tweets with our added data to the Elasticsearch index so that we can later do some searches and visualizations with it using&nbsp;Kibana.</p>
+<div class="highlight"><pre><span></span>    <span class="kn">from</span> <span class="nn">twython</span> <span class="kn">import</span> <span class="n">TwythonStreamer</span>
+    <span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">Tweet</span><span class="p">,</span> <span class="n">es</span>
+    <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+    <span class="n">CONSUMER_KEY</span> <span class="o">=</span> <span class="s2">&quot;YOURKEYGOESHERE&quot;</span>
+    <span class="n">CONSUMER_SECRET</span> <span class="o">=</span> <span class="s2">&quot;YOURKEYGOESHERE&quot;</span>
+    <span class="n">AUTH_TOKEN</span> <span class="o">=</span> <span class="s2">&quot;YOURKEYGOESHERE&quot;</span>
+    <span class="n">AUTH_SECRET</span> <span class="o">=</span> <span class="s2">&quot;YOURKEYGOESHERE&quot;</span>
+
+
+    <span class="k">class</span> <span class="nc">MyStreamer</span><span class="p">(</span><span class="n">TwythonStreamer</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">on_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">tweets</span> <span class="o">=</span> <span class="n">Tweet</span><span class="p">(</span>
+                    <span class="n">username</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">][</span><span class="s2">&quot;screen_name&quot;</span><span class="p">],</span>
+                    <span class="n">realname</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
+                    <span class="n">location</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">][</span><span class="s2">&quot;location&quot;</span><span class="p">],</span>
+                    <span class="n">tweet_text</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">],</span>
+                    <span class="n">hashtags</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;entities&quot;</span><span class="p">][</span><span class="s2">&quot;hashtags&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
+                <span class="n">tweets</span><span class="o">.</span><span class="n">push_to_elastic</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+
+        <span class="k">def</span> <span class="nf">on_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">status_code</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">status_code</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+            <span class="k">return</span> <span class="bp">False</span>
+
+        <span class="k">def</span> <span class="nf">on_timeout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Request timed out, try again later&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">start</span><span class="p">():</span>
+        <span class="n">stream</span> <span class="o">=</span> <span class="n">MyStreamer</span><span class="p">(</span><span class="n">CONSUMER_KEY</span><span class="p">,</span> <span class="n">CONSUMER_SECRET</span><span class="p">,</span> <span class="n">AUTH_TOKEN</span><span class="p">,</span> <span class="n">AUTH_SECRET</span><span class="p">)</span>
+        <span class="n">stream</span><span class="o">.</span><span class="n">statuses</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">track</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Trump&quot;</span><span class="p">,</span> <span class="s2">&quot;trump&quot;</span><span class="p">])</span>
+
+
+    <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+        <span class="n">start</span><span class="p">()</span>
+</pre></div>
+
+
+<p>Now that we have everything ready we can simply run the script and this should start pushing data to our single node&nbsp;cluster.</p>
+<p>To validate, you can hit the endpoint &#8216;http://localhost:9200/_cat/indices?v&#8217; and you should get something&nbsp;like.</p>
+<div class="highlight"><pre><span></span>    <span class="n">health</span> <span class="n">status</span> <span class="k">index</span>                              <span class="n">uuid</span>                   <span class="n">pri</span> <span class="n">rep</span> <span class="n">docs</span><span class="p">.</span><span class="k">count</span> <span class="n">docs</span><span class="p">.</span><span class="n">deleted</span> <span class="n">store</span><span class="p">.</span><span class="k">size</span> <span class="n">pri</span><span class="p">.</span><span class="n">store</span><span class="p">.</span><span class="k">size</span>
+    <span class="n">green</span>  <span class="k">open</span>   <span class="n">trump</span><span class="o">-</span><span class="mi">2019</span><span class="p">.</span><span class="mi">03</span><span class="p">.</span><span class="mi">09</span>                   <span class="n">yYHYloR5TEGlenfKjYe4PQ</span>   <span class="mi">1</span>   <span class="mi">0</span>     <span class="mi">139190</span>            <span class="mi">0</span>       <span class="mi">59</span><span class="n">mb</span>           <span class="mi">59</span><span class="n">mb</span>
+</pre></div>
+
+
+<p>In the next part we will start playing around with the data. If you have any questions, hit me up on social&nbsp;media.</p>
     </article>
 </div>
 
