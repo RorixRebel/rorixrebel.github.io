@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/styles.css">
+    <link rel="shortcut icon" href="/static/images/blog_logo.png" type="image/x-icon">
+    <title>Dev-Mex </title>
+</head>
+
+<body>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-title" href="/">
+                <strong class="title">
+                    <img src="/static/images/blog_logo.png" width=25px>
+                    Dev-Mex
+                </strong>
+                <span>
+                    <p class="subtitle">IT mexiCANing</p>
+                </span>
+            </a>
+            <a role="button" class="navbar-burger" data-target="navMenu" aria-label="menu" aria-expanded="false">
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+            </a>
+        </div>
+
+        <div class="navbar-menu" id="navMenu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a class="button is-dark has-text-success" href="/category/devops.html">
+                            <strong> devops</strong>
+                        </a>
+                    </div>
+                </div>
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a class="button is-dark has-text-success" href="/category/python.html">
+                            <strong> python</strong>
+                        </a>
+                    </div>
+                </div>
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a class="button is-dark has-text-success" href="/category/root.html">
+                            <strong> root</strong>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+<div class="container">
+    <br><br>
+    <h1 class="title"> Twitter Sentiment Analysis with Python and Elasticsearch, Part&nbsp;1 </h1>
+    <div class="breadcrumb">
+        <ul>
+            <strong>
+                <span>In:&nbsp</span>
+            </strong>
+            <li>Python</li>
+            <li class="is-active">January 30, 2019</li>
+        </ul>
+    </div>
+    <article class="content">
+        <p>Elasticsearch has become part of my daily routine so the more I use it, the more I think of ways of using it outside work so came up with the idea of why not creating my own ingestion with sentiment analysis so that data can be processed and tagged before being indexed into&nbsp;Elastic?.</p>
+<p>I know Logstash has already a plugin to ingest data from twitter but since i also wanted to add a bit of polarity to each tweet and also wanted to control the process since I truly don&#8217;t want to ingest a lot of data as I don&#8217;t have unlimited storage so i decided to make my own and turns out it was quite&nbsp;simple.</p>
+<p>Now to being, the dependencies I used for this&nbsp;were:</p>
+<ol>
+<li>Elasticsearch&nbsp;6.5</li>
+<li>python-elasticsearch</li>
+<li>twython</li>
+<li>textblob</li>
+</ol>
+<p>Elastic offers 2 libraries to interact with your node, so make sure you pip install <a href="https://elasticsearch-py.readthedocs.io/en/master/">this one</a>.</p>
+<h1 id="start-your-es-instance">Start your <span class="caps">ES</span>&nbsp;instance</h1>
+<p>Now setting an instance could be complicated so i&#8217;ll just go over some very basic setup, if you want something more ellaborate the elastic.co <a href="https://www.elastic.co/guide/en/elasticsearch/reference/6.5/getting-started.html">documentation</a> is quite&nbsp;good.</p>
+<ol>
+<li>
+<p>Make sure you have java&nbsp;installed.</p>
+<div class="highlight"><pre><span></span>java --version
+openjdk version <span class="s2">&quot;1.8.0_192&quot;</span>
+OpenJDK Runtime Environment <span class="o">(</span>build <span class="m">1</span>.8.0_192-b26<span class="o">)</span>
+OpenJDK <span class="m">64</span>-Bit Server VM <span class="o">(</span>build <span class="m">25</span>.192-b26, mixed mode<span class="o">)</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>Download Elasticsearch from <a href="https://www.elastic.co/downloads">here</a>. This will be different based on your <span class="caps">OS</span>/Distro. Again in my case I went with 6.5 since I run&nbsp;&#8220;Linux-Manjaro&#8221;.</p>
+</li>
+<li>Extract the&nbsp;contents.</li>
+<li>Locate and run the binary, it&#8217;s usually located inside <code>elasticsearch/bin/elasticsearch</code>. The process should start and you should see something like this.<div class="highlight"><pre><span></span><span class="o">[</span><span class="m">2018</span>-12-24T07:52:53,670<span class="o">][</span>INFO <span class="o">][</span>o.e.p.PluginsService     <span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> loaded module <span class="o">[</span>aggs-matrix-stats<span class="o">]</span>
+<span class="o">[</span><span class="m">2018</span>-12-24T07:52:53,670<span class="o">][</span>INFO <span class="o">][</span>o.e.p.PluginsService     <span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> loaded module <span class="o">[</span>analysis-common<span class="o">]</span>
+<span class="o">[</span><span class="m">2018</span>-12-24T07:52:53,671<span class="o">][</span>INFO <span class="o">][</span>o.e.p.PluginsService     <span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> loaded module <span class="o">[</span>ingest-common<span class="o">]</span>
+<span class="o">[</span><span class="m">2018</span>-12-24T07:52:53,671<span class="o">][</span>INFO <span class="o">][</span>o.e.p.PluginsService     <span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> loaded module <span class="o">[</span>lang-expression<span class="o">]</span>
+<span class="o">[</span><span class="m">2018</span>-12-24T07:52:53,671<span class="o">][</span>INFO <span class="o">][</span>o.e.p.PluginsService     <span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> loaded module <span class="o">[</span>lang-mustache<span class="o">]</span>
+<span class="o">[</span><span class="m">2018</span>-12-24T07:52:53,671<span class="o">][</span>INFO <span class="o">][</span>o.e.p.PluginsService     <span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> loaded module <span class="o">[</span>lang-painless<span class="o">]</span>
+<span class="o">[</span><span class="m">2018</span>-12-24T07:52:53,671<span class="o">][</span>INFO <span class="o">][</span>o.e.p.PluginsService     <span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> loaded module <span class="o">[</span>mapper-extras<span class="o">]</span>
+<span class="o">[</span><span class="m">2018</span>-12-24T07:52:53,671<span class="o">][</span>INFO <span class="o">][</span>o.e.p.PluginsService     <span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> loaded module <span class="o">[</span>parent-join<span class="o">]</span>
+<span class="o">[</span><span class="m">2018</span>-12-24T07:52:53,671<span class="o">][</span>INFO <span class="o">][</span>o.e.p.PluginsService     <span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> loaded module <span class="o">[</span>percolator<span class="o">]</span>
+<span class="o">[</span><span class="m">2018</span>-12-24T07:52:53,671<span class="o">][</span>INFO <span class="o">][</span>o.e.p.PluginsService     <span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> loaded module <span class="o">[</span>rank-eval<span class="o">]</span>
+<span class="o">[</span><span class="m">2018</span>-12-24T07:52:53,671<span class="o">][</span>INFO <span class="o">][</span>o.e.p.PluginsService     <span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> loaded module <span class="o">[</span>reindex<span class="o">]</span>
+<span class="o">[</span><span class="m">2018</span>-12-24T07:52:53,671<span class="o">][</span>INFO <span class="o">][</span>o.e.p.PluginsService     <span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> loaded module <span class="o">[</span>repository-url<span class="o">]</span>
+<span class="o">[</span><span class="m">2018</span>-12-24T07:52:53,671<span class="o">][</span>INFO <span class="o">][</span>o.e.p.PluginsService     <span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> loaded module <span class="o">[</span>transport-netty4<span class="o">]</span>
+<span class="o">[</span><span class="m">2018</span>-12-24T07:52:53,671<span class="o">][</span>INFO <span class="o">][</span>o.e.p.PluginsService     <span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> loaded module <span class="o">[</span>tribe<span class="o">]</span>
+<span class="o">[</span><span class="m">2018</span>-12-24T07:52:53,672<span class="o">][</span>INFO <span class="o">][</span>o.e.p.PluginsService     <span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> no plugins loaded
+<span class="o">[</span><span class="m">2018</span>-12-24T07:52:57,413<span class="o">][</span>INFO <span class="o">][</span>o.e.d.DiscoveryModule    <span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> using discovery <span class="nb">type</span> <span class="o">[</span>zen<span class="o">]</span> and host providers <span class="o">[</span>settings<span class="o">]</span>
+<span class="o">[</span><span class="m">2018</span>-12-24T07:52:58,116<span class="o">][</span>INFO <span class="o">][</span>o.e.n.Node               <span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> initialized
+<span class="o">[</span><span class="m">2018</span>-12-24T07:52:58,116<span class="o">][</span>INFO <span class="o">][</span>o.e.n.Node               <span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> starting ...
+<span class="o">[</span><span class="m">2018</span>-12-24T07:52:58,562<span class="o">][</span>INFO <span class="o">][</span>o.e.t.TransportService   <span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> publish_address <span class="o">{</span><span class="m">127</span>.0.0.1:9300<span class="o">}</span>, bound_addresses <span class="o">{[</span>::1<span class="o">]</span>:9300<span class="o">}</span>, <span class="o">{</span><span class="m">127</span>.
+<span class="m">0</span>.0.1:9300<span class="o">}</span>
+<span class="o">[</span><span class="m">2018</span>-12-24T07:53:01,689<span class="o">][</span>INFO <span class="o">][</span>o.e.c.s.MasterService    <span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> zen-disco-elected-as-master <span class="o">([</span><span class="m">0</span><span class="o">]</span> nodes joined<span class="o">)</span>, reason: new_master <span class="o">{</span>Y
+mQ2k-V<span class="o">}{</span>YmQ2k-VPQKGmDK_xcRSQuQ<span class="o">}{</span>yKFFqQ0xQHGmXjNxu89gAQ<span class="o">}{</span><span class="m">127</span>.0.0.1<span class="o">}{</span><span class="m">127</span>.0.0.1:9300<span class="o">}</span>
+<span class="o">[</span><span class="m">2018</span>-12-24T07:53:01,696<span class="o">][</span>INFO <span class="o">][</span>o.e.c.s.ClusterApplierService<span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> new_master <span class="o">{</span>YmQ2k-V<span class="o">}{</span>YmQ2k-VPQKGmDK_xcRSQuQ<span class="o">}{</span>yKFFqQ0xQHGmXjNxu89g
+AQ<span class="o">}{</span><span class="m">127</span>.0.0.1<span class="o">}{</span><span class="m">127</span>.0.0.1:9300<span class="o">}</span>, reason: apply cluster state <span class="o">(</span>from master <span class="o">[</span>master <span class="o">{</span>YmQ2k-V<span class="o">}{</span>YmQ2k-VPQKGmDK_xcRSQuQ<span class="o">}{</span>yKFFqQ0xQHGmXjNxu89gAQ<span class="o">}{</span>
+<span class="m">127</span>.0.0.1<span class="o">}{</span><span class="m">127</span>.0.0.1:9300<span class="o">}</span> committed version <span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="nb">source</span> <span class="o">[</span>zen-disco-elected-as-master <span class="o">([</span><span class="m">0</span><span class="o">]</span> nodes joined<span class="o">)]])</span>
+<span class="o">[</span><span class="m">2018</span>-12-24T07:53:01,714<span class="o">][</span>INFO <span class="o">][</span>o.e.h.n.Netty4HttpServerTransport<span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> publish_address <span class="o">{</span><span class="m">127</span>.0.0.1:9200<span class="o">}</span>, bound_addresses <span class="o">{[</span>::1<span class="o">]</span>:9200
+<span class="o">}</span>, <span class="o">{</span><span class="m">127</span>.0.0.1:9200<span class="o">}</span>
+<span class="o">[</span><span class="m">2018</span>-12-24T07:53:01,715<span class="o">][</span>INFO <span class="o">][</span>o.e.n.Node<span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> started
+</pre></div>
+
+
+</li>
+</ol>
+<p><strong><span class="caps">NOTE</span>:</strong> If you want to run it in the background add parameters <code>-d</code> to daemonize&nbsp;it.</p>
+<p>Finally test to see if your node is ready by performing a request against your localhost in port 9200 which is the default used by ElasticSearch. In my case I named my node &#8220;node-1&#8221; and my cluster&nbsp;&#8220;home-cluster&#8221;</p>
+<div class="highlight"><pre><span></span>    :::<span class="nv">bash</span>
+    <span class="nv">curl</span> <span class="nv">localhost</span>:<span class="mi">9200</span>
+    {
+    <span class="s2">&quot;</span><span class="s">name</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">node-1</span><span class="s2">&quot;</span>,
+    <span class="s2">&quot;</span><span class="s">cluster_name</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">home-cluster</span><span class="s2">&quot;</span>,
+    <span class="s2">&quot;</span><span class="s">cluster_uuid</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">Ma_eYy0UT1C5b0WwOhQshw</span><span class="s2">&quot;</span>,
+    <span class="s2">&quot;</span><span class="s">version</span><span class="s2">&quot;</span> : {
+        <span class="s2">&quot;</span><span class="s">number</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">6.5.4</span><span class="s2">&quot;</span>,
+        <span class="s2">&quot;</span><span class="s">build_flavor</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">default</span><span class="s2">&quot;</span>,
+        <span class="s2">&quot;</span><span class="s">build_type</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">tar</span><span class="s2">&quot;</span>,
+        <span class="s2">&quot;</span><span class="s">build_hash</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">d2ef93d</span><span class="s2">&quot;</span>,
+        <span class="s2">&quot;</span><span class="s">build_date</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">2018-12-17T21:17:40.758843Z</span><span class="s2">&quot;</span>,
+        <span class="s2">&quot;</span><span class="s">build_snapshot</span><span class="s2">&quot;</span> : <span class="nv">false</span>,
+        <span class="s2">&quot;</span><span class="s">lucene_version</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">7.5.0</span><span class="s2">&quot;</span>,
+        <span class="s2">&quot;</span><span class="s">minimum_wire_compatibility_version</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">5.6.0</span><span class="s2">&quot;</span>,
+        <span class="s2">&quot;</span><span class="s">minimum_index_compatibility_version</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">5.0.0</span><span class="s2">&quot;</span>
+    },
+    <span class="s2">&quot;</span><span class="s">tagline</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">You Know, for Search</span><span class="s2">&quot;</span>
+    }
+</pre></div>
+    </article>
+</div>
+
+
+    <footer>
+        <div class="has-text-centered">
+            <p>Social Media Contact:</p>
+            <a href="https://github.com/RorixRebel" target="blank">
+                <img class="footer-icon" src="/static/images/github-circle.png" width=30px>
+            </a>
+            <a href="https://twitter.com/rorixrebel" target="blank">
+                <img class="footer-icon" src="/static/images/twitter-circle.png" width=30px>
+            </a>
+            <a href="https://www.linkedin.com/in/miguel-valdes-0476155b/" target="blank">
+                <img class="footer-icon" src="/static/images/linkedin-box.png" width=30px>
+            </a>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get all "navbar-burger" elements
+            const navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+            // Check if there are any navbar burgers
+            if (navbarBurgers.length > 0) {
+
+                // Add a click event on each of them
+                navbarBurgers.forEach(el => {
+                    el.addEventListener('click', () => {
+
+                        // Get the target from the "data-target" attribute
+                        const target = el.dataset.target;
+                        const $target = document.getElementById(target);
+
+                        // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+                        el.classList.toggle('is-active');
+                        $target.classList.toggle('is-active');
+
+                    });
+                });
+            }
+        });
+    </script>
+
+</body>
+
+</html>

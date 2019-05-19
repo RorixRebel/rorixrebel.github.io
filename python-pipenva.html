@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/styles.css">
+    <link rel="shortcut icon" href="/static/images/blog_logo.png" type="image/x-icon">
+    <title>Dev-Mex </title>
+</head>
+
+<body>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-title" href="/">
+                <strong class="title">
+                    <img src="/static/images/blog_logo.png" width=25px>
+                    Dev-Mex
+                </strong>
+                <span>
+                    <p class="subtitle">IT mexiCANing</p>
+                </span>
+            </a>
+            <a role="button" class="navbar-burger" data-target="navMenu" aria-label="menu" aria-expanded="false">
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+            </a>
+        </div>
+
+        <div class="navbar-menu" id="navMenu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a class="button is-dark has-text-success" href="/category/devops.html">
+                            <strong> devops</strong>
+                        </a>
+                    </div>
+                </div>
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a class="button is-dark has-text-success" href="/category/python.html">
+                            <strong> python</strong>
+                        </a>
+                    </div>
+                </div>
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a class="button is-dark has-text-success" href="/category/root.html">
+                            <strong> root</strong>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+<div class="container">
+    <br><br>
+    <h1 class="title"> Manage your virtualenvs with&nbsp;pipenv </h1>
+    <div class="breadcrumb">
+        <ul>
+            <strong>
+                <span>In:&nbsp</span>
+            </strong>
+            <li>Python</li>
+            <li class="is-active">January 15, 2019</li>
+        </ul>
+    </div>
+    <article class="content">
+        <p>So not too long ago i wrote a post about how a lot of people manager their virtualenvs and for a long time this approach has been working fine, until i recently saw on twitter something called ‘pipenv’ so i was curious about it… so here we are&nbsp;today.</p>
+<p>Pipenv is another way of managing your virtual installations for packages/libraries so you don’t overload your current python installation and it does it in a super fancy and simple way. Also i should mention that now python.org suggest using this tool for managing libraries and&nbsp;packages.</p>
+<p>You will find a very nice screen-cast of the creator, legend Kenneth Reitz in their []main docs repo](https://docs.pipenv.org/). So please go ahead and check out the&nbsp;video.</p>
+<p>If you are done with it then let’s test it out. Most of us either start new repos or copy something from someone in GitHub, now based on what i can see almost everyone is still using the requirements.txt file to indicate what dependencies and libraries were used for a certain project. So we will do a quick test on how to tackle both&nbsp;approaches.</p>
+<p><strong>Starting a new repo</strong>
+So you have an idea of doing an application that will facilitate your life in some way, cool so now that we have pipenv we will create a folder with our project and start a virtualenv. We will be using python 3, because you know…. python 2 is going away so why are you still using it&nbsp;fool?!</p>
+<div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="n">new_cool_project</span> <span class="o">&amp;&amp;</span> <span class="n">cd</span> <span class="n">new_cool_project</span>
+<span class="n">pipenv</span> <span class="o">--</span><span class="n">three</span>
+<span class="n">Creating</span> <span class="n">a</span> <span class="n">virtualenv</span> <span class="k">for</span> <span class="n">this</span> <span class="n">project</span><span class="err">…</span>
+<span class="n">Using</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python3</span> <span class="n">to</span> <span class="n">create</span> <span class="n">virtualenv</span><span class="err">…</span>
+<span class="err">⠋</span><span class="n">Running</span> <span class="n">virtualenv</span> <span class="k">with</span> <span class="n">interpreter</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python3</span>
+<span class="n">Using</span> <span class="n">base</span> <span class="n">prefix</span> <span class="s1">&#39;/usr&#39;</span>
+<span class="n">New</span> <span class="n">python</span> <span class="n">executable</span> <span class="ow">in</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="err">$</span><span class="n">USER</span><span class="o">/.</span><span class="n">local</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">virtualenvs</span><span class="o">/</span><span class="n">new_cool_project</span><span class="o">-</span><span class="n">VeVqBp3O</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python3</span>
+<span class="n">Also</span> <span class="n">creating</span> <span class="n">executable</span> <span class="ow">in</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="err">$</span><span class="n">USER</span><span class="o">/.</span><span class="n">local</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">virtualenvs</span><span class="o">/</span><span class="n">new_cool_project</span><span class="o">-</span><span class="n">VeVqBp3O</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python</span>
+<span class="n">Installing</span> <span class="n">setuptools</span><span class="p">,</span> <span class="n">pip</span><span class="p">,</span> <span class="n">wheel</span><span class="o">...</span><span class="n">done</span><span class="o">.</span>
+</pre></div>
+
+
+<p>As simple as that you have a virtualenv that is not currently hosted inside your repo folder, which is super nice cause you tend to either add it to your .gitignore or most people do actually upload it to their projects as well which adds a bunch of files that are not truly needed at&nbsp;all.</p>
+<p><span class="caps">NOTE</span>: If you want to do some cleanup, all of your envs will be located in the following path assuming you are using&nbsp;linux/mac:</p>
+<p><code>/home/$USER/.local/share/virtualenvs/</code></p>
+<p>Now, you will see a new file in your project repo called Pipfile. You can think of this as your requirements.txt sort of as it will contain your dependencies and python version&nbsp;information.</p>
+<div class="highlight"><pre><span></span><span class="p">[[</span><span class="n">source</span><span class="p">]]</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://pypi.python.org/simple&quot;</span>
+<span class="n">verify_ssl</span> <span class="o">=</span> <span class="n">true</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;pypi&quot;</span>
+
+
+<span class="p">[</span><span class="n">packages</span><span class="p">]</span>
+
+
+<span class="p">[</span><span class="n">dev</span><span class="o">-</span><span class="n">packages</span><span class="p">]</span>
+
+
+<span class="p">[</span><span class="n">requires</span><span class="p">]</span>
+<span class="n">python_version</span> <span class="o">=</span> <span class="s2">&quot;3.6&quot;</span>
+</pre></div>
+
+
+<p>So you are set, now if you want to install libraries simply&nbsp;do:</p>
+<div class="highlight"><pre><span></span><span class="n">pipenv</span> <span class="n">package_name</span> <span class="n">example</span><span class="o">....</span>
+<span class="n">pipenv</span> <span class="n">install</span> <span class="n">flask</span>
+
+<span class="n">Installing</span> <span class="n">flask</span><span class="err">…</span>
+<span class="n">Collecting</span> <span class="n">flask</span>
+<span class="n">Using</span> <span class="n">cached</span> <span class="n">Flask</span><span class="o">-</span><span class="mf">0.12</span><span class="o">.</span><span class="mi">2</span><span class="o">-</span><span class="n">py2</span><span class="o">.</span><span class="n">py3</span><span class="o">-</span><span class="n">none</span><span class="o">-</span><span class="nb">any</span><span class="o">.</span><span class="n">whl</span>
+<span class="n">Collecting</span> <span class="n">Jinja2</span><span class="o">&gt;=</span><span class="mf">2.4</span> <span class="p">(</span><span class="kn">from</span> <span class="nn">flask</span><span class="p">)</span>
+<span class="n">Using</span> <span class="n">cached</span> <span class="n">Jinja2</span><span class="o">-</span><span class="mf">2.10</span><span class="o">-</span><span class="n">py2</span><span class="o">.</span><span class="n">py3</span><span class="o">-</span><span class="n">none</span><span class="o">-</span><span class="nb">any</span><span class="o">.</span><span class="n">whl</span>
+<span class="n">Collecting</span> <span class="n">itsdangerous</span><span class="o">&gt;=</span><span class="mf">0.21</span> <span class="p">(</span><span class="kn">from</span> <span class="nn">flask</span><span class="p">)</span>
+<span class="n">Collecting</span> <span class="n">Werkzeug</span><span class="o">&gt;=</span><span class="mf">0.7</span> <span class="p">(</span><span class="kn">from</span> <span class="nn">flask</span><span class="p">)</span>
+<span class="n">Using</span> <span class="n">cached</span> <span class="n">Werkzeug</span><span class="o">-</span><span class="mf">0.14</span><span class="o">.</span><span class="mi">1</span><span class="o">-</span><span class="n">py2</span><span class="o">.</span><span class="n">py3</span><span class="o">-</span><span class="n">none</span><span class="o">-</span><span class="nb">any</span><span class="o">.</span><span class="n">whl</span>
+<span class="n">Collecting</span> <span class="n">click</span><span class="o">&gt;=</span><span class="mf">2.0</span> <span class="p">(</span><span class="kn">from</span> <span class="nn">flask</span><span class="p">)</span>
+<span class="n">Using</span> <span class="n">cached</span> <span class="n">click</span><span class="o">-</span><span class="mf">6.7</span><span class="o">-</span><span class="n">py2</span><span class="o">.</span><span class="n">py3</span><span class="o">-</span><span class="n">none</span><span class="o">-</span><span class="nb">any</span><span class="o">.</span><span class="n">whl</span>
+<span class="n">Collecting</span> <span class="n">MarkupSafe</span><span class="o">&gt;=</span><span class="mf">0.23</span> <span class="p">(</span><span class="kn">from</span> <span class="nn">Jinja2</span><span class="o">&gt;=</span><span class="mf">2.4</span><span class="o">-&gt;</span><span class="n">flask</span><span class="p">)</span>
+<span class="n">Installing</span> <span class="n">collected</span> <span class="n">packages</span><span class="p">:</span> <span class="n">MarkupSafe</span><span class="p">,</span> <span class="n">Jinja2</span><span class="p">,</span> <span class="n">itsdangerous</span><span class="p">,</span> <span class="n">Werkzeug</span><span class="p">,</span> <span class="n">click</span><span class="p">,</span> <span class="n">flask</span>
+<span class="n">Successfully</span> <span class="n">installed</span> <span class="n">Jinja2</span><span class="o">-</span><span class="mf">2.10</span> <span class="n">MarkupSafe</span><span class="o">-</span><span class="mf">1.0</span> <span class="n">Werkzeug</span><span class="o">-</span><span class="mf">0.14</span><span class="o">.</span><span class="mi">1</span> <span class="n">click</span><span class="o">-</span><span class="mf">6.7</span> <span class="n">flask</span><span class="o">-</span><span class="mf">0.12</span><span class="o">.</span><span class="mi">2</span> <span class="n">itsdangerous</span><span class="o">-</span><span class="mf">0.24</span>
+
+<span class="n">Adding</span> <span class="n">flask</span> <span class="n">to</span> <span class="n">Pipfile</span><span class="s1">&#39;s [packages]…</span>
+<span class="n">Locking</span> <span class="p">[</span><span class="n">dev</span><span class="o">-</span><span class="n">packages</span><span class="p">]</span> <span class="n">dependencies</span><span class="err">…</span>
+<span class="n">Locking</span> <span class="p">[</span><span class="n">packages</span><span class="p">]</span> <span class="n">dependencies</span><span class="err">…</span>
+<span class="n">Updated</span> <span class="n">Pipfile</span><span class="o">.</span><span class="n">lock</span> <span class="p">(</span><span class="mo">01117</span><span class="mi">9</span><span class="p">)</span><span class="err">!</span>
+</pre></div>
+
+
+<p>Now you have another file Pipfile.lock which contains security and specific data tied to the libraries or packages you installed. This is a huge benefit compared to the regular old way of just simply pip installing everything as you can validate the hashes to make sure you indeed installed what you needed and not something that was altered by a third&nbsp;party.</p>
+<div class="highlight"><pre><span></span><span class="s2">&quot;flask&quot;</span><span class="err">:</span> <span class="p">{</span>
+            <span class="nt">&quot;hashes&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;sha256:0749df235e3ff61ac108f69ac178c9770caeaccad2509cb762ce1f65570a8856&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;sha256:49f44461237b69ecd901cc7ce66feea0319b9158743dd27a2899962ab214dac1&quot;</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;==0.12.2&quot;</span>
+</pre></div>
+
+
+<p>Installing a file also updates your original Pipfile with the new installed packages so you have everything ready and with less commands in your terminal. Now you can share your project information and people can install it from the data in your&nbsp;pipfile.</p>
+<p><strong>Cloning a repo</strong>
+So now what i believe is the most common scenario, you found a super cool project in Github/GitLab or whatever <span class="caps">SCM</span> you use and you want to use it, problem is, it contains a requirements.txt file…. not a problem for&nbsp;pipenv!</p>
+<p>git clone super_nice_project
+Once you have the project available, simply create your virtualenv and then install the dependencies in the requirements.txt file by letting pipenv know where to find&nbsp;it.</p>
+<div class="highlight"><pre><span></span><span class="n">pipenv</span> <span class="o">--</span><span class="n">three</span>
+<span class="n">pipenv</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
+
+<span class="n">Requirements</span> <span class="nb">file</span> <span class="n">provided</span><span class="err">!</span> <span class="n">Importing</span> <span class="n">into</span> <span class="n">Pipfile</span><span class="err">…</span>
+<span class="n">Pipfile</span><span class="o">.</span><span class="n">lock</span> <span class="ow">not</span> <span class="n">found</span><span class="p">,</span> <span class="n">creating</span><span class="err">…</span>
+<span class="n">Locking</span> <span class="p">[</span><span class="n">dev</span><span class="o">-</span><span class="n">packages</span><span class="p">]</span> <span class="n">dependencies</span><span class="err">…</span>
+<span class="n">Locking</span> <span class="p">[</span><span class="n">packages</span><span class="p">]</span> <span class="n">dependencies</span><span class="err">…</span>
+<span class="n">Updated</span> <span class="n">Pipfile</span><span class="o">.</span><span class="n">lock</span> <span class="p">(</span><span class="mi">956749</span><span class="p">)</span><span class="err">!</span>
+<span class="n">Installing</span> <span class="n">dependencies</span> <span class="kn">from</span> <span class="nn">Pipfile.lock</span> <span class="p">(</span><span class="mi">956749</span><span class="p">)</span>
+</pre></div>
+
+
+<p><strong>Conclusion</strong>
+So now you know the basics on how to use pipenv so please go ahead and upgrade how you manage your projects, not only its easier to install and keep control of things but it also offers a lot of different cool concepts and features we didn’t cover here like spawning the virtualenv in a shell so you can run commands directly for things like Flask that demand you to launch it directly from the environment to test it out, which is similar to doing the good ol’ source env/bin/activate. Also having dev only dependencies,&nbsp;etc.</p>
+    </article>
+</div>
+
+
+    <footer>
+        <div class="has-text-centered">
+            <p>Social Media Contact:</p>
+            <a href="https://github.com/RorixRebel" target="blank">
+                <img class="footer-icon" src="/static/images/github-circle.png" width=30px>
+            </a>
+            <a href="https://twitter.com/rorixrebel" target="blank">
+                <img class="footer-icon" src="/static/images/twitter-circle.png" width=30px>
+            </a>
+            <a href="https://www.linkedin.com/in/miguel-valdes-0476155b/" target="blank">
+                <img class="footer-icon" src="/static/images/linkedin-box.png" width=30px>
+            </a>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get all "navbar-burger" elements
+            const navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+            // Check if there are any navbar burgers
+            if (navbarBurgers.length > 0) {
+
+                // Add a click event on each of them
+                navbarBurgers.forEach(el => {
+                    el.addEventListener('click', () => {
+
+                        // Get the target from the "data-target" attribute
+                        const target = el.dataset.target;
+                        const $target = document.getElementById(target);
+
+                        // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+                        el.classList.toggle('is-active');
+                        $target.classList.toggle('is-active');
+
+                    });
+                });
+            }
+        });
+    </script>
+
+</body>
+
+</html>
