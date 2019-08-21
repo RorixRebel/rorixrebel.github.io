@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://mvaldes14.github.io/blog/static/css/styles.css"
+    />
+    <link
+      rel="shortcut icon"
+      href="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
+      type="image/x-icon"
+    />
+    <title>Dev-Mex </title>
+  </head>
+
+  <body>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a class="navbar-title" href="https://mvaldes14.github.io/blog">
+          <strong class="title">
+            <img
+              src="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
+              width="25px"
+            />
+            Dev-Mex
+          </strong>
+          <span>
+            <p class="subtitle">IT mexiCANing</p>
+          </span>
+        </a>
+        <a
+          role="button"
+          class="navbar-burger"
+          data-target="navMenu"
+          aria-label="menu"
+          aria-expanded="false"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div class="navbar-menu" id="navMenu">
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <div class="buttons">
+              <a
+                class="button is-dark has-text-success"
+                href="https://mvaldes14.github.io/blog/category/devops.html"
+              >
+                <strong> devops</strong>
+              </a>
+            </div>
+          </div>
+          <div class="navbar-item">
+            <div class="buttons">
+              <a
+                class="button is-dark has-text-success"
+                href="https://mvaldes14.github.io/blog/category/python.html"
+              >
+                <strong> python</strong>
+              </a>
+            </div>
+          </div>
+          <div class="navbar-item">
+            <div class="buttons">
+              <a
+                class="button is-dark has-text-success"
+                href="https://mvaldes14.github.io/blog/category/root.html"
+              >
+                <strong> root</strong>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+
+<div class="container">
+    <br><br>
+    <h1 class="title"> Bootstrap your system with&nbsp;ansible </h1>
+    <div class="breadcrumb">
+        <ul>
+            <strong>
+                <span>In:&nbsp</span>
+            </strong>
+            <li>Devops</li>
+            <li class="is-active">August 20, 2019</li>
+        </ul>
+    </div>
+    <article class="content">
+        <p>I&#8217;ve been distro hoping for a month or so now trying to find the perfect balance between productivity and ease of use as well as aesthetics so i could feel comfortable using my computer for more than just messing around (Ended up staying with Manjaro <span class="caps">KDE</span> in case you were&nbsp;curious).</p>
+<p>Anyways, doing so made me install over and over again some packages and apps every single time. I know I could&#8217;ve backed up the entire <code>/home</code> partition but there were still some dependencies and libraries needed so instead of doing this repetitive process, figured I&#8217;d use automation tools, like&nbsp;ansible.</p>
+<ol>
+<li>First, i came up with a list of everything i had installed already. Depending on your distro you can check your <code>/var/log/pacman.log</code> or do an extract using <code>pacman -Ql.</code></li>
+<li>Next was to create a repo that would hold my special application configuration files as well as the playbooks so I can simply copy those into my new system and just run&nbsp;them.</li>
+<li>Finally, create an ansible role structure for all the different things I&#8217;ve wanted to install, I&#8217;m a fan of keeping things tagged and organized as well as having some specific things installed in specific devices, like steam and my games are useless in my personal laptop so having things separated by roles helps a&nbsp;ton.</li>
+</ol>
+<p>With the list and structure ready, ended up with something like&nbsp;this.</p>
+<div class="highlight"><pre><span></span><span class="gd">--- # Main playbook</span>
+<span class="gd">- hosts: local</span>
+  gather_facts: no
+  connection: local
+  roles:
+    - aur
+    - base
+    - python
+    - games
+    - pi
+    - snaps
+</pre></div>
+
+
+<p>So all my tasks were separated based on the source or module being used by them. Do note that in my case since I&#8217;m an Arch user, had to install a module for ansible in order for me to get things from the <span class="caps">AUR</span>. Ended up using <a href="https://github.com/kewlfft/ansible-aur"><code>https://github.com/kewlfft/ansible-aur</code></a>. The rest of the modules are built-in assuming you have Ansible&nbsp;v2.8.</p>
+<p>All that was left was to define the tasks inside each role and start running things. If you want to see the full thing, refer to my &#8220;dotfiles&#8221;. But heres a brief example of what I consider my base&nbsp;packages.</p>
+<div class="highlight"><pre><span></span><span class="gd">--- # tasks file for base items</span>
+<span class="gd">- name : Install applications from pacaur</span>
+  become: yes
+  become_method: sudo
+  pacman:
+      name: &#39;{{ item }}&#39;
+      state: present
+  loop:
+      - rofi
+      - imagemagick
+      - docker
+      - jq
+      - neovim
+      - nodejs
+      - npm
+      - playerctl
+      - vagrant
+      - virtualbox
+      - lxappearance
+      - chromium
+      - neofetch
+      - postman-bin
+      - rsync
+      - rclone
+      - spotify
+      - visual-studio-code-bin
+      - mpv
+      - xclip
+      - redshift
+      - fzf
+      - httpie
+      - zeal
+      - lastpass-cli
+      - nmap
+      - prettyping
+      - bat
+      - ncdu
+      - python-pip
+      - pavucontrol
+      - pulseaudio-alsa
+      - adobe-source-code-pro-fonts
+      - noto-fonts-emoji
+      - yay
+      - dropbox
+      - konsole
+      - transmission-gtk
+      - clementine
+      - krusader
+      - wps-office
+      - zsh
+      - go
+      - terraform
+      - firefox
+      - filezilla
+  tags:
+      - arch-base
+</pre></div>
+
+
+<p>One thing I would&#8217;ve loved would be a way to run just specific roles but that seems to be not doable right now so we use the next best thing, tags in the playbook&nbsp;tasks.</p>
+<p>So for example if i just want to run the playbook to install things from <span class="caps">AUR</span>.</p>
+<div class="highlight"><pre><span></span><span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">Install</span> <span class="k">from</span> <span class="n">AUR</span>
+  <span class="n">aur</span><span class="p">:</span>
+      <span class="n">use</span><span class="p">:</span> <span class="n">yay</span>
+      <span class="n">skip_installed</span><span class="p">:</span> <span class="n">yes</span>
+      <span class="n">aur_only</span><span class="p">:</span> <span class="n">yes</span>
+      <span class="n">name</span><span class="p">:</span>
+      <span class="o">-</span> <span class="n">ttf</span><span class="o">-</span><span class="n">font</span><span class="o">-</span><span class="n">awesome</span><span class="o">-</span><span class="mi">4</span>
+      <span class="o">-</span> <span class="n">snapd</span>
+      <span class="o">-</span> <span class="n">ttf</span><span class="o">-</span><span class="n">material</span><span class="o">-</span><span class="n">design</span><span class="o">-</span><span class="n">icons</span>
+      <span class="o">-</span> <span class="n">mailspring</span>
+      <span class="o">-</span> <span class="n">wireshark</span><span class="o">-</span><span class="n">gtk</span>
+      <span class="o">-</span> <span class="n">android</span><span class="o">-</span><span class="n">studio</span>
+      <span class="o">-</span> <span class="n">bind</span>
+      <span class="o">-</span> <span class="n">slack</span><span class="o">-</span><span class="n">desktop</span>
+      <span class="o">-</span> <span class="n">discord</span>
+      <span class="o">-</span> <span class="n">tor</span><span class="o">-</span><span class="n">browser</span>
+  <span class="n">tags</span><span class="p">:</span>
+      <span class="o">-</span> <span class="n">arch</span><span class="o">-</span><span class="n">aur</span>
+</pre></div>
+
+
+<p>It can be run with something&nbsp;like..</p>
+<div class="highlight"><pre><span></span><span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="n">main</span><span class="p">.</span><span class="n">yml</span> <span class="o">-</span><span class="n">t</span> <span class="n">arch</span><span class="o">-</span><span class="n">aur</span> <span class="o">-</span><span class="n">K</span>
+</pre></div>
+
+
+<p>Breaking it&nbsp;down:</p>
+<ul>
+<li><code>main.yml</code>: The name of the principal <span class="caps">YML</span> file that contains all&nbsp;roles.</li>
+<li><code>-t</code> arch-aur: We specify that we only want to run the portion where the tag is&nbsp;arch-aur.</li>
+<li><code>-K</code>: to provide our root password so that the administrative actions can take&nbsp;place.</li>
+</ul>
+<p>Simple as that i can have a fully bootstrapped system ready to go in minutes, this project was extremely helpful for the distro hoping portion as mentioned in the beginning but since i moved away from windows on my laptop and honestly didn&#8217;t want to spend a lot of time doing the whole thing, the playbook schema worked out perfectly. Also having the tags for different systems i could specify what to run&nbsp;where.</p>
+<p>At this stage, the execution of those filters is done manually by using tags but you can improve on the playbook by comparing the name of the system and just executing certain roles based on conditions, in my case since i don&#8217;t plan to do the installation for a while now i can live with manual portion. Next stop would be to find a way for me to keep the list updated every time i install something from either pacman, aur, snap, etc. Guess that will be the next project for the&nbsp;future.</p>
+<p>Hope you liked it, see you next&nbsp;time.</p>
+    </article>
+</div>
+
+
+    <footer>
+      <div class="has-text-centered">
+        <p>Social Media Contact:</p>
+        <a href="https://github.com/RorixRebel" target="blank">
+          <img
+            class="footer-icon"
+            src="https://mvaldes14.github.io/blog/static/images/github-circle.png"
+            width="30px"
+          />
+        </a>
+        <a href="https://twitter.com/rorixrebel" target="blank">
+          <img
+            class="footer-icon"
+            src="https://mvaldes14.github.io/blog/static/images/twitter-circle.png"
+            width="30px"
+          />
+        </a>
+        <a
+          href="https://www.linkedin.com/in/miguel-valdes-0476155b/"
+          target="blank"
+        >
+          <img
+            class="footer-icon"
+            src="https://mvaldes14.github.io/blog/static/images/linkedin-box.png"
+            width="30px"
+          />
+        </a>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Get all "navbar-burger" elements
+        const navbarBurgers = Array.prototype.slice.call(
+          document.querySelectorAll(".navbar-burger"),
+          0
+        );
+
+        // Check if there are any navbar burgers
+        if (navbarBurgers.length > 0) {
+          // Add a click event on each of them
+          navbarBurgers.forEach(el => {
+            el.addEventListener("click", () => {
+              // Get the target from the "data-target" attribute
+              const target = el.dataset.target;
+              const $target = document.getElementById(target);
+
+              // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+              el.classList.toggle("is-active");
+              $target.classList.toggle("is-active");
+            });
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
