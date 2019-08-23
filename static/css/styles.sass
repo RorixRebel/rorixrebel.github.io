@@ -45,6 +45,9 @@ nav > .pagination
 
 .articles > .hero
     background-color: #282A36
+    width: 80%
+    margin: auto
+    border: 3px solid #49D970
 
 .articles
     padding: 20px
@@ -55,9 +58,7 @@ nav > .pagination
     color: white
 
 .hero
-    width: 80%
-    margin: auto
-    border: 3px solid #49D970
+
 
 .pagination-next, .pagination-previous 
     padding-left: .75em;
@@ -68,7 +69,9 @@ nav > .pagination
 
 
 @media screen and (max-width: 768px)
-    .hero
+    .articles > .hero
+        background-color: #282A36
+        width: 100%
         margin: auto
         border: 3px solid #49D970
     .article-page
