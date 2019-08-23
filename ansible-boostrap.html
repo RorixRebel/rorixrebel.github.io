@@ -80,20 +80,20 @@
     </nav>
 
 
-<div class="container">
-    <br><br>
-    <h1 class="title"> Bootstrap your system with&nbsp;ansible </h1>
-    <div class="breadcrumb">
-        <ul>
-            <strong>
-                <span>In:&nbsp</span>
-            </strong>
-            <li>Devops</li>
-            <li class="is-active">August 20, 2019</li>
-        </ul>
-    </div>
-    <article class="content">
-        <p>I&#8217;ve been distro hoping for a month or so now trying to find the perfect balance between productivity and ease of use as well as aesthetics so i could feel comfortable using my computer for more than just messing around (Ended up staying with Manjaro <span class="caps">KDE</span> in case you were&nbsp;curious).</p>
+<div class="container article-page">
+  <hr />
+  <h1 class="title">Bootstrap your system with&nbsp;ansible</h1>
+  <div class="breadcrumb">
+    <ul>
+      <strong>
+        <span>In:&nbsp</span>
+      </strong>
+      <li>Devops</li>
+      <li class="is-active">August 20, 2019</li>
+    </ul>
+  </div>
+  <article class="content">
+    <p>I&#8217;ve been distro hoping for a month or so now trying to find the perfect balance between productivity and ease of use as well as aesthetics so i could feel comfortable using my computer for more than just messing around (Ended up staying with Manjaro <span class="caps">KDE</span> in case you were&nbsp;curious).</p>
 <p>Anyways, doing so made me install over and over again some packages and apps every single time. I know I could&#8217;ve backed up the entire <code>/home</code> partition but there were still some dependencies and libraries needed so instead of doing this repetitive process, figured I&#8217;d use automation tools, like&nbsp;ansible.</p>
 <ol>
 <li>First, i came up with a list of everything i had installed already. Depending on your distro you can check your <code>/var/log/pacman.log</code> or do an extract using <code>pacman -Ql.</code></li>
@@ -213,7 +213,7 @@
 <p>Simple as that i can have a fully bootstrapped system ready to go in minutes, this project was extremely helpful for the distro hoping portion as mentioned in the beginning but since i moved away from windows on my laptop and honestly didn&#8217;t want to spend a lot of time doing the whole thing, the playbook schema worked out perfectly. Also having the tags for different systems i could specify what to run&nbsp;where.</p>
 <p>At this stage, the execution of those filters is done manually by using tags but you can improve on the playbook by comparing the name of the system and just executing certain roles based on conditions, in my case since i don&#8217;t plan to do the installation for a while now i can live with manual portion. Next stop would be to find a way for me to keep the list updated every time i install something from either pacman, aur, snap, etc. Guess that will be the next project for the&nbsp;future.</p>
 <p>Hope you liked it, see you next&nbsp;time.</p>
-    </article>
+  </article>
 </div>
 
 
