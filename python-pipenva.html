@@ -18,7 +18,7 @@
       href="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
       type="image/x-icon"
     />
-    <title>Dev-Mex </title>
+    <title>Dev-Mex</title>
   </head>
 
   <body>
@@ -99,7 +99,7 @@
 <p>If you are done with it then let’s test it out. Most of us either start new repos or copy something from someone in GitHub, now based on what i can see almost everyone is still using the requirements.txt file to indicate what dependencies and libraries were used for a certain project. So we will do a quick test on how to tackle both&nbsp;approaches.</p>
 <p><strong>Starting a new repo</strong>
 So you have an idea of doing an application that will facilitate your life in some way, cool so now that we have pipenv we will create a folder with our project and start a virtualenv. We will be using python 3, because you know…. python 2 is going away so why are you still using it&nbsp;fool?!</p>
-<div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="n">new_cool_project</span> <span class="o">&amp;&amp;</span> <span class="n">cd</span> <span class="n">new_cool_project</span>
+<div class="highlight"><pre><span></span><code><span class="n">mkdir</span> <span class="n">new_cool_project</span> <span class="o">&amp;&amp;</span> <span class="n">cd</span> <span class="n">new_cool_project</span>
 <span class="n">pipenv</span> <span class="o">--</span><span class="n">three</span>
 <span class="n">Creating</span> <span class="n">a</span> <span class="n">virtualenv</span> <span class="k">for</span> <span class="n">this</span> <span class="n">project</span><span class="err">…</span>
 <span class="n">Using</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python3</span> <span class="n">to</span> <span class="n">create</span> <span class="n">virtualenv</span><span class="err">…</span>
@@ -108,14 +108,14 @@ So you have an idea of doing an application that will facilitate your life in so
 <span class="n">New</span> <span class="n">python</span> <span class="n">executable</span> <span class="ow">in</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="err">$</span><span class="n">USER</span><span class="o">/.</span><span class="n">local</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">virtualenvs</span><span class="o">/</span><span class="n">new_cool_project</span><span class="o">-</span><span class="n">VeVqBp3O</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python3</span>
 <span class="n">Also</span> <span class="n">creating</span> <span class="n">executable</span> <span class="ow">in</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="err">$</span><span class="n">USER</span><span class="o">/.</span><span class="n">local</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">virtualenvs</span><span class="o">/</span><span class="n">new_cool_project</span><span class="o">-</span><span class="n">VeVqBp3O</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python</span>
 <span class="n">Installing</span> <span class="n">setuptools</span><span class="p">,</span> <span class="n">pip</span><span class="p">,</span> <span class="n">wheel</span><span class="o">...</span><span class="n">done</span><span class="o">.</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>As simple as that you have a virtualenv that is not currently hosted inside your repo folder, which is super nice cause you tend to either add it to your .gitignore or most people do actually upload it to their projects as well which adds a bunch of files that are not truly needed at&nbsp;all.</p>
 <p><span class="caps">NOTE</span>: If you want to do some cleanup, all of your envs will be located in the following path assuming you are using&nbsp;linux/mac:</p>
 <p><code>/home/$USER/.local/share/virtualenvs/</code></p>
 <p>Now, you will see a new file in your project repo called Pipfile. You can think of this as your requirements.txt sort of as it will contain your dependencies and python version&nbsp;information.</p>
-<div class="highlight"><pre><span></span><span class="p">[[</span><span class="n">source</span><span class="p">]]</span>
+<div class="highlight"><pre><span></span><code><span class="p">[[</span><span class="n">source</span><span class="p">]]</span>
 <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://pypi.python.org/simple&quot;</span>
 <span class="n">verify_ssl</span> <span class="o">=</span> <span class="n">true</span>
 <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;pypi&quot;</span>
@@ -129,11 +129,11 @@ So you have an idea of doing an application that will facilitate your life in so
 
 <span class="p">[</span><span class="n">requires</span><span class="p">]</span>
 <span class="n">python_version</span> <span class="o">=</span> <span class="s2">&quot;3.6&quot;</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>So you are set, now if you want to install libraries simply&nbsp;do:</p>
-<div class="highlight"><pre><span></span><span class="n">pipenv</span> <span class="n">package_name</span> <span class="n">example</span><span class="o">....</span>
+<div class="highlight"><pre><span></span><code><span class="n">pipenv</span> <span class="n">package_name</span> <span class="n">example</span><span class="o">....</span>
 <span class="n">pipenv</span> <span class="n">install</span> <span class="n">flask</span>
 
 <span class="n">Installing</span> <span class="n">flask</span><span class="err">…</span>
@@ -153,18 +153,18 @@ So you have an idea of doing an application that will facilitate your life in so
 <span class="n">Adding</span> <span class="n">flask</span> <span class="n">to</span> <span class="n">Pipfile</span><span class="s1">&#39;s [packages]…</span>
 <span class="n">Locking</span> <span class="p">[</span><span class="n">dev</span><span class="o">-</span><span class="n">packages</span><span class="p">]</span> <span class="n">dependencies</span><span class="err">…</span>
 <span class="n">Locking</span> <span class="p">[</span><span class="n">packages</span><span class="p">]</span> <span class="n">dependencies</span><span class="err">…</span>
-<span class="n">Updated</span> <span class="n">Pipfile</span><span class="o">.</span><span class="n">lock</span> <span class="p">(</span><span class="mo">01117</span><span class="mi">9</span><span class="p">)</span><span class="err">!</span>
-</pre></div>
+<span class="n">Updated</span> <span class="n">Pipfile</span><span class="o">.</span><span class="n">lock</span> <span class="p">(</span><span class="mi">011179</span><span class="p">)</span><span class="err">!</span>
+</code></pre></div>
 
 
 <p>Now you have another file Pipfile.lock which contains security and specific data tied to the libraries or packages you installed. This is a huge benefit compared to the regular old way of just simply pip installing everything as you can validate the hashes to make sure you indeed installed what you needed and not something that was altered by a third&nbsp;party.</p>
-<div class="highlight"><pre><span></span><span class="s2">&quot;flask&quot;</span><span class="err">:</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><code><span class="s2">&quot;flask&quot;</span><span class="err">:</span> <span class="p">{</span>
             <span class="nt">&quot;hashes&quot;</span><span class="p">:</span> <span class="p">[</span>
                 <span class="s2">&quot;sha256:0749df235e3ff61ac108f69ac178c9770caeaccad2509cb762ce1f65570a8856&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;sha256:49f44461237b69ecd901cc7ce66feea0319b9158743dd27a2899962ab214dac1&quot;</span>
             <span class="p">],</span>
             <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;==0.12.2&quot;</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>Installing a file also updates your original Pipfile with the new installed packages so you have everything ready and with less commands in your terminal. Now you can share your project information and people can install it from the data in your&nbsp;pipfile.</p>
@@ -172,21 +172,22 @@ So you have an idea of doing an application that will facilitate your life in so
 So now what i believe is the most common scenario, you found a super cool project in Github/GitLab or whatever <span class="caps">SCM</span> you use and you want to use it, problem is, it contains a requirements.txt file…. not a problem for&nbsp;pipenv!</p>
 <p>git clone super_nice_project
 Once you have the project available, simply create your virtualenv and then install the dependencies in the requirements.txt file by letting pipenv know where to find&nbsp;it.</p>
-<div class="highlight"><pre><span></span><span class="n">pipenv</span> <span class="o">--</span><span class="n">three</span>
+<div class="highlight"><pre><span></span><code><span class="n">pipenv</span> <span class="o">--</span><span class="n">three</span>
 <span class="n">pipenv</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
 
-<span class="n">Requirements</span> <span class="nb">file</span> <span class="n">provided</span><span class="err">!</span> <span class="n">Importing</span> <span class="n">into</span> <span class="n">Pipfile</span><span class="err">…</span>
+<span class="n">Requirements</span> <span class="n">file</span> <span class="n">provided</span><span class="err">!</span> <span class="n">Importing</span> <span class="n">into</span> <span class="n">Pipfile</span><span class="err">…</span>
 <span class="n">Pipfile</span><span class="o">.</span><span class="n">lock</span> <span class="ow">not</span> <span class="n">found</span><span class="p">,</span> <span class="n">creating</span><span class="err">…</span>
 <span class="n">Locking</span> <span class="p">[</span><span class="n">dev</span><span class="o">-</span><span class="n">packages</span><span class="p">]</span> <span class="n">dependencies</span><span class="err">…</span>
 <span class="n">Locking</span> <span class="p">[</span><span class="n">packages</span><span class="p">]</span> <span class="n">dependencies</span><span class="err">…</span>
 <span class="n">Updated</span> <span class="n">Pipfile</span><span class="o">.</span><span class="n">lock</span> <span class="p">(</span><span class="mi">956749</span><span class="p">)</span><span class="err">!</span>
 <span class="n">Installing</span> <span class="n">dependencies</span> <span class="kn">from</span> <span class="nn">Pipfile.lock</span> <span class="p">(</span><span class="mi">956749</span><span class="p">)</span>
-</pre></div>
+</code></pre></div>
 
 
 <p><strong>Conclusion</strong>
 So now you know the basics on how to use pipenv so please go ahead and upgrade how you manage your projects, not only its easier to install and keep control of things but it also offers a lot of different cool concepts and features we didn’t cover here like spawning the virtualenv in a shell so you can run commands directly for things like Flask that demand you to launch it directly from the environment to test it out, which is similar to doing the good ol’ source env/bin/activate. Also having dev only dependencies,&nbsp;etc.</p>
   </article>
+  <hr />
 </div>
 
 

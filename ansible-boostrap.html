@@ -18,7 +18,7 @@
       href="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
       type="image/x-icon"
     />
-    <title>Dev-Mex </title>
+    <title>Dev-Mex</title>
   </head>
 
   <body>
@@ -101,7 +101,7 @@
 <li>Finally, create an ansible role structure for all the different things I&#8217;ve wanted to install, I&#8217;m a fan of keeping things tagged and organized as well as having some specific things installed in specific devices, like steam and my games are useless in my personal laptop so having things separated by roles helps a&nbsp;ton.</li>
 </ol>
 <p>With the list and structure ready, ended up with something like&nbsp;this.</p>
-<div class="highlight"><pre><span></span><span class="gd">--- # Main playbook</span>
+<div class="highlight"><pre><span></span><code><span class="gd">--- # Main playbook</span>
 <span class="gd">- hosts: local</span>
   gather_facts: no
   connection: local
@@ -112,12 +112,12 @@
     - games
     - pi
     - snaps
-</pre></div>
+</code></pre></div>
 
 
 <p>So all my tasks were separated based on the source or module being used by them. Do note that in my case since I&#8217;m an Arch user, had to install a module for ansible in order for me to get things from the <span class="caps">AUR</span>. Ended up using <a href="https://github.com/kewlfft/ansible-aur"><code>https://github.com/kewlfft/ansible-aur</code></a>. The rest of the modules are built-in assuming you have Ansible&nbsp;v2.8.</p>
-<p>All that was left was to define the tasks inside each role and start running things. If you want to see the full thing, refer to my <a href="https://github.com/mvaldes14/dotfiles">&#8220;dotfiles&#8221;</a>. But heres a brief example of what I consider my base&nbsp;packages.</p>
-<div class="highlight"><pre><span></span><span class="gd">--- # tasks file for base items</span>
+<p>All that was left was to define the tasks inside each role and start running things. If you want to see the full thing, refer to my <a href="https://github.com/mvaldes14/dotfiles">dotfiles</a>. But heres a brief example of what I consider my base&nbsp;packages.</p>
+<div class="highlight"><pre><span></span><code><span class="gd">--- # tasks file for base items</span>
 <span class="gd">- name : Install applications from pacaur</span>
   become: yes
   become_method: sudo
@@ -173,35 +173,35 @@
       - filezilla
   tags:
       - arch-base
-</pre></div>
+</code></pre></div>
 
 
 <p>One thing I would&#8217;ve loved would be a way to run just specific roles but that seems to be not doable right now so we use the next best thing, tags in the playbook&nbsp;tasks.</p>
 <p>So for example if i just want to run the playbook to install things from <span class="caps">AUR</span>.</p>
-<div class="highlight"><pre><span></span><span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">Install</span> <span class="k">from</span> <span class="n">AUR</span>
-  <span class="n">aur</span><span class="p">:</span>
-      <span class="n">use</span><span class="p">:</span> <span class="n">yay</span>
-      <span class="n">skip_installed</span><span class="p">:</span> <span class="n">yes</span>
-      <span class="n">aur_only</span><span class="p">:</span> <span class="n">yes</span>
-      <span class="n">name</span><span class="p">:</span>
-      <span class="o">-</span> <span class="n">ttf</span><span class="o">-</span><span class="n">font</span><span class="o">-</span><span class="n">awesome</span><span class="o">-</span><span class="mi">4</span>
-      <span class="o">-</span> <span class="n">snapd</span>
-      <span class="o">-</span> <span class="n">ttf</span><span class="o">-</span><span class="n">material</span><span class="o">-</span><span class="n">design</span><span class="o">-</span><span class="n">icons</span>
-      <span class="o">-</span> <span class="n">mailspring</span>
-      <span class="o">-</span> <span class="n">wireshark</span><span class="o">-</span><span class="n">gtk</span>
-      <span class="o">-</span> <span class="n">android</span><span class="o">-</span><span class="n">studio</span>
-      <span class="o">-</span> <span class="n">bind</span>
-      <span class="o">-</span> <span class="n">slack</span><span class="o">-</span><span class="n">desktop</span>
-      <span class="o">-</span> <span class="n">discord</span>
-      <span class="o">-</span> <span class="n">tor</span><span class="o">-</span><span class="n">browser</span>
-  <span class="n">tags</span><span class="p">:</span>
-      <span class="o">-</span> <span class="n">arch</span><span class="o">-</span><span class="n">aur</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">- name: Install from AUR</span>
+<span class="err">  aur:</span>
+<span class="err">      use: yay</span>
+<span class="err">      skip_installed: yes</span>
+<span class="err">      aur_only: yes</span>
+<span class="err">      name:</span>
+<span class="err">      - ttf-font-awesome-4</span>
+<span class="err">      - snapd</span>
+<span class="err">      - ttf-material-design-icons</span>
+<span class="err">      - mailspring</span>
+<span class="err">      - wireshark-gtk</span>
+<span class="err">      - android-studio</span>
+<span class="err">      - bind</span>
+<span class="err">      - slack-desktop</span>
+<span class="err">      - discord</span>
+<span class="err">      - tor-browser</span>
+<span class="err">  tags:</span>
+<span class="err">      - arch-aur</span>
+</code></pre></div>
 
 
 <p>It can be run with something&nbsp;like..</p>
-<div class="highlight"><pre><span></span><span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="n">main</span><span class="p">.</span><span class="n">yml</span> <span class="o">-</span><span class="n">t</span> <span class="n">arch</span><span class="o">-</span><span class="n">aur</span> <span class="o">-</span><span class="n">K</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">ansible-playbook main.yml -t arch-aur -K</span>
+</code></pre></div>
 
 
 <p>Breaking it&nbsp;down:</p>
@@ -214,6 +214,7 @@
 <p>At this stage, the execution of those filters is done manually by using tags but you can improve on the playbook by comparing the name of the system and just executing certain roles based on conditions, in my case since i don&#8217;t plan to do the installation for a while now i can live with manual portion. Next stop would be to find a way for me to keep the list updated every time i install something from either pacman, aur, snap, etc. Guess that will be the next project for the&nbsp;future.</p>
 <p>Hope you liked it, see you next&nbsp;time.</p>
   </article>
+  <hr />
 </div>
 
 

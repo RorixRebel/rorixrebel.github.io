@@ -18,7 +18,7 @@
       href="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
       type="image/x-icon"
     />
-    <title>Dev-Mex </title>
+    <title>Dev-Mex</title>
   </head>
 
   <body>
@@ -108,11 +108,11 @@
 <ol>
 <li>
 <p>Make sure you have java&nbsp;installed.</p>
-<div class="highlight"><pre><span></span>java --version
+<div class="highlight"><pre><span></span><code>java --version
 openjdk version <span class="s2">&quot;1.8.0_192&quot;</span>
 OpenJDK Runtime Environment <span class="o">(</span>build <span class="m">1</span>.8.0_192-b26<span class="o">)</span>
 OpenJDK <span class="m">64</span>-Bit Server VM <span class="o">(</span>build <span class="m">25</span>.192-b26, mixed mode<span class="o">)</span>
-</pre></div>
+</code></pre></div>
 
 
 </li>
@@ -120,7 +120,7 @@ OpenJDK <span class="m">64</span>-Bit Server VM <span class="o">(</span>build <s
 <p>Download Elasticsearch from <a href="https://www.elastic.co/downloads">here</a>. This will be different based on your <span class="caps">OS</span>/Distro. Again in my case I went with 6.5 since I run&nbsp;&#8220;Linux-Manjaro&#8221;.</p>
 </li>
 <li>Extract the&nbsp;contents.</li>
-<li>Locate and run the binary, it&#8217;s usually located inside <code>elasticsearch/bin/elasticsearch</code>. The process should start and you should see something like this.<div class="highlight"><pre><span></span><span class="o">[</span><span class="m">2018</span>-12-24T07:52:53,670<span class="o">][</span>INFO <span class="o">][</span>o.e.p.PluginsService     <span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> loaded module <span class="o">[</span>aggs-matrix-stats<span class="o">]</span>
+<li>Locate and run the binary, it&#8217;s usually located inside <code>elasticsearch/bin/elasticsearch</code>. The process should start and you should see something like this.<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="m">2018</span>-12-24T07:52:53,670<span class="o">][</span>INFO <span class="o">][</span>o.e.p.PluginsService     <span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> loaded module <span class="o">[</span>aggs-matrix-stats<span class="o">]</span>
 <span class="o">[</span><span class="m">2018</span>-12-24T07:52:53,670<span class="o">][</span>INFO <span class="o">][</span>o.e.p.PluginsService     <span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> loaded module <span class="o">[</span>analysis-common<span class="o">]</span>
 <span class="o">[</span><span class="m">2018</span>-12-24T07:52:53,671<span class="o">][</span>INFO <span class="o">][</span>o.e.p.PluginsService     <span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> loaded module <span class="o">[</span>ingest-common<span class="o">]</span>
 <span class="o">[</span><span class="m">2018</span>-12-24T07:52:53,671<span class="o">][</span>INFO <span class="o">][</span>o.e.p.PluginsService     <span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> loaded module <span class="o">[</span>lang-expression<span class="o">]</span>
@@ -148,55 +148,55 @@ AQ<span class="o">}{</span><span class="m">127</span>.0.0.1<span class="o">}{</s
 <span class="o">[</span><span class="m">2018</span>-12-24T07:53:01,714<span class="o">][</span>INFO <span class="o">][</span>o.e.h.n.Netty4HttpServerTransport<span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> publish_address <span class="o">{</span><span class="m">127</span>.0.0.1:9200<span class="o">}</span>, bound_addresses <span class="o">{[</span>::1<span class="o">]</span>:9200
 <span class="o">}</span>, <span class="o">{</span><span class="m">127</span>.0.0.1:9200<span class="o">}</span>
 <span class="o">[</span><span class="m">2018</span>-12-24T07:53:01,715<span class="o">][</span>INFO <span class="o">][</span>o.e.n.Node<span class="o">]</span> <span class="o">[</span>YmQ2k-V<span class="o">]</span> started
-</pre></div>
+</code></pre></div>
 
 
 </li>
 </ol>
 <p><strong><span class="caps">NOTE</span>:</strong> If you want to run it in the background add parameters <code>-d</code> to daemonize&nbsp;it.</p>
 <p>Finally test to see if your node is ready by performing a request against your localhost in port 9200 which is the default used by ElasticSearch. In my case I named my node &#8220;node-1&#8221; and my cluster&nbsp;&#8220;home-cluster&#8221;</p>
-<div class="highlight"><pre><span></span>    <span class="nv">curl</span> <span class="nv">localhost</span>:<span class="mi">9200</span>
-    {
-    <span class="s2">&quot;</span><span class="s">name</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">node-1</span><span class="s2">&quot;</span>,
-    <span class="s2">&quot;</span><span class="s">cluster_name</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">home-cluster</span><span class="s2">&quot;</span>,
-    <span class="s2">&quot;</span><span class="s">cluster_uuid</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">Ma_eYy0UT1C5b0WwOhQshw</span><span class="s2">&quot;</span>,
-    <span class="s2">&quot;</span><span class="s">version</span><span class="s2">&quot;</span> : {
-        <span class="s2">&quot;</span><span class="s">number</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">6.5.4</span><span class="s2">&quot;</span>,
-        <span class="s2">&quot;</span><span class="s">build_flavor</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">default</span><span class="s2">&quot;</span>,
-        <span class="s2">&quot;</span><span class="s">build_type</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">tar</span><span class="s2">&quot;</span>,
-        <span class="s2">&quot;</span><span class="s">build_hash</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">d2ef93d</span><span class="s2">&quot;</span>,
-        <span class="s2">&quot;</span><span class="s">build_date</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">2018-12-17T21:17:40.758843Z</span><span class="s2">&quot;</span>,
-        <span class="s2">&quot;</span><span class="s">build_snapshot</span><span class="s2">&quot;</span> : <span class="nv">false</span>,
-        <span class="s2">&quot;</span><span class="s">lucene_version</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">7.5.0</span><span class="s2">&quot;</span>,
-        <span class="s2">&quot;</span><span class="s">minimum_wire_compatibility_version</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">5.6.0</span><span class="s2">&quot;</span>,
-        <span class="s2">&quot;</span><span class="s">minimum_index_compatibility_version</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">5.0.0</span><span class="s2">&quot;</span>
-    },
-        <span class="s2">&quot;</span><span class="s">tagline</span><span class="s2">&quot;</span> : <span class="s2">&quot;</span><span class="s">You Know, for Search</span><span class="s2">&quot;</span>
-    }
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">    curl localhost:9200</span>
+<span class="err">    {</span>
+<span class="err">    &quot;name&quot; : &quot;node-1&quot;,</span>
+<span class="err">    &quot;cluster_name&quot; : &quot;home-cluster&quot;,</span>
+<span class="err">    &quot;cluster_uuid&quot; : &quot;Ma_eYy0UT1C5b0WwOhQshw&quot;,</span>
+<span class="err">    &quot;version&quot; : {</span>
+<span class="err">        &quot;number&quot; : &quot;6.5.4&quot;,</span>
+<span class="err">        &quot;build_flavor&quot; : &quot;default&quot;,</span>
+<span class="err">        &quot;build_type&quot; : &quot;tar&quot;,</span>
+<span class="err">        &quot;build_hash&quot; : &quot;d2ef93d&quot;,</span>
+<span class="err">        &quot;build_date&quot; : &quot;2018-12-17T21:17:40.758843Z&quot;,</span>
+<span class="err">        &quot;build_snapshot&quot; : false,</span>
+<span class="err">        &quot;lucene_version&quot; : &quot;7.5.0&quot;,</span>
+<span class="err">        &quot;minimum_wire_compatibility_version&quot; : &quot;5.6.0&quot;,</span>
+<span class="err">        &quot;minimum_index_compatibility_version&quot; : &quot;5.0.0&quot;</span>
+<span class="err">    },</span>
+<span class="err">        &quot;tagline&quot; : &quot;You Know, for Search&quot;</span>
+<span class="err">    }</span>
+</code></pre></div>
 
 
 <ol>
 <li>Ok so now you have your single node cluster set, next step would be to create a &#8220;model&#8221; for the data you will ingest, again since i don&#8217;t have unlimited storage or more nodes I will tweak the mapping for all of the indices that get created to just have 1 shard with no replicas. This is an elasticsearch type of deal so if you want to learn more, i would again point you to the documentation or you can ask me (social media stuff at the&nbsp;bottom).</li>
 </ol>
 <p>Now i could create the mapping everything i index the data but then again, that&#8217;s manual stuff which i kind of despise so i went ahead and created a template so that all indices that would match the pattern would adopt the&nbsp;settings.</p>
-<div class="highlight"><pre><span></span>     <span class="ss">&quot;trump_tweets&quot;</span> <span class="p">:</span> <span class="err">{</span>
-        <span class="ss">&quot;order&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="ss">&quot;index_patterns&quot;</span> <span class="p">:</span> <span class="p">[</span>
-        <span class="ss">&quot;trump-*&quot;</span>
-        <span class="p">],</span>
-        <span class="ss">&quot;settings&quot;</span> <span class="p">:</span> <span class="err">{</span>
-        <span class="ss">&quot;index&quot;</span> <span class="p">:</span> <span class="err">{</span>
-            <span class="ss">&quot;number_of_shards&quot;</span> <span class="p">:</span> <span class="ss">&quot;1&quot;</span><span class="p">,</span>
-            <span class="ss">&quot;number_of_replicas&quot;</span> <span class="p">:</span> <span class="ss">&quot;0&quot;</span>
-        <span class="err">}</span>
-        <span class="err">}</span><span class="p">,</span>
-        <span class="ss">&quot;mappings&quot;</span> <span class="p">:</span> <span class="err">{</span> <span class="err">}</span><span class="p">,</span>
-        <span class="ss">&quot;aliases&quot;</span> <span class="p">:</span> <span class="err">{</span>
-        <span class="ss">&quot;trump-data&quot;</span> <span class="p">:</span> <span class="err">{</span> <span class="err">}</span>
-        <span class="err">}</span>
-    <span class="err">}</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">     &quot;trump_tweets&quot; : {</span>
+<span class="err">        &quot;order&quot; : 0,</span>
+<span class="err">        &quot;index_patterns&quot; : [</span>
+<span class="err">        &quot;trump-*&quot;</span>
+<span class="err">        ],</span>
+<span class="err">        &quot;settings&quot; : {</span>
+<span class="err">        &quot;index&quot; : {</span>
+<span class="err">            &quot;number_of_shards&quot; : &quot;1&quot;,</span>
+<span class="err">            &quot;number_of_replicas&quot; : &quot;0&quot;</span>
+<span class="err">        }</span>
+<span class="err">        },</span>
+<span class="err">        &quot;mappings&quot; : { },</span>
+<span class="err">        &quot;aliases&quot; : {</span>
+<span class="err">        &quot;trump-data&quot; : { }</span>
+<span class="err">        }</span>
+<span class="err">    }</span>
+</code></pre></div>
 
 
 <p>So once you have the mapping defined we are finally ready to push some data using&nbsp;Python!.</p>
@@ -204,7 +204,7 @@ AQ<span class="o">}{</span><span class="m">127</span>.0.0.1<span class="o">}{</s
 <p>Alright so the first thing we have to do is acquire some twitter credentials and token so that we can make use of the libraries to retrieve tweets, to get those credentials go <a href="https://developer.twitter.com/en/docs/basics/authentication/guides/access-tokens.html">here</a>.</p>
 <p>First thin is to define the connection object that we will use to interact with Elasticsearch, also we will import the whole thing, since we are doing sentiment analysis we of course need those&nbsp;libraries.</p>
 <p>In the last portion we tell elasticsearch that if the index called &#8216;trump&#8217; does not&nbsp;exist</p>
-<div class="highlight"><pre><span></span>    <span class="kn">from</span> <span class="nn">textblob</span> <span class="kn">import</span> <span class="n">TextBlob</span>
+<div class="highlight"><pre><span></span><code>    <span class="kn">from</span> <span class="nn">textblob</span> <span class="kn">import</span> <span class="n">TextBlob</span>
     <span class="kn">from</span> <span class="nn">elasticsearch</span> <span class="kn">import</span> <span class="n">Elasticsearch</span>
     <span class="kn">import</span> <span class="nn">uuid</span>
     <span class="kn">import</span> <span class="nn">json</span>
@@ -213,11 +213,11 @@ AQ<span class="o">}{</span><span class="m">127</span>.0.0.1<span class="o">}{</s
     <span class="c1"># Elastic Connection</span>
     <span class="n">es</span> <span class="o">=</span> <span class="n">Elasticsearch</span><span class="p">(</span><span class="n">hosts</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">)</span>
     <span class="n">index_name</span> <span class="o">=</span> <span class="s1">&#39;trump-&#39;</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y.%m.</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>Next, we will define the data model used to describe each &#8216;tweet&#8217; or event and pass it down to elasticsearch, in here is where we do the sentiment analysis using library&nbsp;&#8216;TextBlob&#8217;.</p>
-<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Tweet</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Tweet</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">realname</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">tweet_text</span><span class="p">,</span> <span class="n">hashtags</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
@@ -247,12 +247,12 @@ AQ<span class="o">}{</span><span class="m">127</span>.0.0.1<span class="o">}{</s
                 <span class="p">}</span>
         <span class="p">)</span>
     <span class="k">def</span> <span class="nf">get_details</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tweet_text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hashtags</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sentiment</span><span class="p">)</span>
-</pre></div>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tweet_text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hashtags</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sentiment</span><span class="p">)</span>
+</code></pre></div>
 
 
 <p>Finally we will make use of the client and data objects to start a stream that will push all of the tweets with our added data to the Elasticsearch index so that we can later do some searches and visualizations with it using&nbsp;Kibana.</p>
-<div class="highlight"><pre><span></span>    <span class="kn">from</span> <span class="nn">twython</span> <span class="kn">import</span> <span class="n">TwythonStreamer</span>
+<div class="highlight"><pre><span></span><code>    <span class="kn">from</span> <span class="nn">twython</span> <span class="kn">import</span> <span class="n">TwythonStreamer</span>
     <span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">Tweet</span><span class="p">,</span> <span class="n">es</span>
     <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 
@@ -293,18 +293,19 @@ AQ<span class="o">}{</span><span class="m">127</span>.0.0.1<span class="o">}{</s
 
     <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
         <span class="n">start</span><span class="p">()</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>Now that we have everything ready we can simply run the script and this should start pushing data to our single node&nbsp;cluster.</p>
 <p>To validate, you can hit the endpoint &#8216;http://localhost:9200/_cat/indices?v&#8217; and you should get something&nbsp;like.</p>
-<div class="highlight"><pre><span></span>    <span class="n">health</span> <span class="n">status</span> <span class="k">index</span>                              <span class="n">uuid</span>                   <span class="n">pri</span> <span class="n">rep</span> <span class="n">docs</span><span class="p">.</span><span class="k">count</span> <span class="n">docs</span><span class="p">.</span><span class="n">deleted</span> <span class="n">store</span><span class="p">.</span><span class="k">size</span> <span class="n">pri</span><span class="p">.</span><span class="n">store</span><span class="p">.</span><span class="k">size</span>
-    <span class="n">green</span>  <span class="k">open</span>   <span class="n">trump</span><span class="o">-</span><span class="mi">2019</span><span class="p">.</span><span class="mi">03</span><span class="p">.</span><span class="mi">09</span>                   <span class="n">yYHYloR5TEGlenfKjYe4PQ</span>   <span class="mi">1</span>   <span class="mi">0</span>     <span class="mi">139190</span>            <span class="mi">0</span>       <span class="mi">59</span><span class="n">mb</span>           <span class="mi">59</span><span class="n">mb</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">    health status index                              uuid                   pri rep docs.count docs.deleted store.size pri.store.size</span>
+<span class="err">    green  open   trump-2019.03.09                   yYHYloR5TEGlenfKjYe4PQ   1   0     139190            0       59mb           59mb</span>
+</code></pre></div>
 
 
 <p>In the next part we will start playing around with the data. If you have any questions, hit me up on social&nbsp;media.</p>
   </article>
+  <hr />
 </div>
 
 

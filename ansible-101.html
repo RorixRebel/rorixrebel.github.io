@@ -18,7 +18,7 @@
       href="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
       type="image/x-icon"
     />
-    <title>Dev-Mex </title>
+    <title>Dev-Mex</title>
   </head>
 
   <body>
@@ -105,7 +105,7 @@
 Yaml Aint Markup&nbsp;Language</p>
 <p>Meant to be “human readable” Perfect for the simplicity that involves ansible/python <span class="caps">YAML</span> uses a dictionary type of input information eg: key:value Name:&nbsp;Mike</p>
 <p><span class="caps">YAML</span> Examples (not directly <span class="caps">ANSIBLE</span>&nbsp;examples)</p>
-<div class="highlight"><pre><span></span><span class="nn">---</span> <span class="c1">#Pending Items</span>
+<div class="highlight"><pre><span></span><code><span class="nn">---</span> <span class="c1">#Pending Items</span>
 <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">Visa Renewal</span>
 <span class="nt">Description</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">This is needed to renew your visa and this contains all of the information needed</span>
 <span class="nt">Type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Important</span>
@@ -115,28 +115,28 @@ Yaml Aint Markup&nbsp;Language</p>
         <span class="l l-Scalar l-Scalar-Plain">Date</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">April 30th</span>
 <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">Consulate</span>
         <span class="l l-Scalar l-Scalar-Plain">Date</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">April 31st</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>Same as with Python, indentation is critical for your <span class="caps">YAML</span>&nbsp;files.</p>
 <p>To use ansible its as simple as: (process may be different based on your&nbsp;distribution)</p>
-<div class="highlight"><pre><span></span>sudo apt-get install ansible
-</pre></div>
+<div class="highlight"><pre><span></span><code>sudo apt-get install ansible
+</code></pre></div>
 
 
 <p>Once installed you can start creating what we call “playbooks”, which is basically <span class="caps">YAML</span> instructions for Ansible to execute something. We will begin with the classic hello word. Create a file named&nbsp;hello.yml.</p>
-<div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">hello.yml</span>
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">hello.yml</span>
 
 <span class="nn">---</span> <span class="c1"># Hello World</span>
 <span class="p p-Indicator">-</span> <span class="nt">hosts</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">localhost</span>
 <span class="nt">tasks</span><span class="p">:</span>
     <span class="p p-Indicator">-</span> <span class="nt">debug</span><span class="p">:</span>
         <span class="nt">msg</span><span class="p">:</span> <span class="s">&quot;Hello</span><span class="nv"> </span><span class="s">World&quot;</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>To run your playbook execute the following&nbsp;command:</p>
-<div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ansible-playbook hello.yml</span>
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">ansible-playbook hello.yml</span>
 
 <span class="l l-Scalar l-Scalar-Plain">Will produce the following output</span><span class="p p-Indicator">:</span>
 
@@ -152,11 +152,12 @@ Yaml Aint Markup&nbsp;Language</p>
 
 <span class="l l-Scalar l-Scalar-Plain">PLAY RECAP ***********************************************************************</span>
 <span class="nt">localhost                  </span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ok=2    changed=0    unreachable=0    failed=0</span>
-</pre></div>
+</code></pre></div>
 
 
 <p>As you can see, running ansible playbooks is incredibly easy and of course there a lot more topics to cover for Ansible basics. If you want keep learning more, head over to the Ansible&nbsp;Documentation.</p>
   </article>
+  <hr />
 </div>
 
 
