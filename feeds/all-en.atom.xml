@@ -203,7 +203,7 @@
 
 
 &lt;p&gt;If you run your own &lt;span class="caps"&gt;DNS&lt;/span&gt; server like me you can simply add a &lt;span class="caps"&gt;CNAME&lt;/span&gt; record that points to the server that hosts the service, done properly you should&amp;nbsp;see.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="grafana-dashboard" src="grafana-dashboard.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="grafana-dashboard" src="https://mvaldes14.github.io/blog/images/grafana-dashboard.png"&gt;&lt;/p&gt;
 &lt;h2 id="conclusion"&gt;Conclusion&lt;/h2&gt;
 &lt;p&gt;Hope the mini-guide helped you out on how to set up your services, once you have one running it should be easy to replicate by simply copying the configuration and replacing couple values. The traefik documentation also provides a couple of examples in case you wanted to have your routes setup like &lt;code&gt;domain-name.com/grafana&lt;/code&gt;. Finally, you could also have some middleware for your services in case you want to put some authentication before a user can get to your service which is always a good idea if you end up running things for a bigger group or &lt;span class="caps"&gt;PROD&lt;/span&gt;.&lt;/p&gt;
 &lt;p&gt;Then again I&amp;#8217;m the only one that uses these at home so why bother&amp;nbsp;right?&lt;/p&gt;
