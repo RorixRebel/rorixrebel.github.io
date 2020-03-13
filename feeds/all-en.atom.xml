@@ -1,5 +1,213 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Dev-Mex</title><link href="https://mvaldes14.github.io/blog/" rel="alternate"></link><link href="https://mvaldes14.github.io/blog/feeds/all-en.atom.xml" rel="self"></link><id>https://mvaldes14.github.io/blog/</id><updated>2020-03-04T00:00:00-06:00</updated><subtitle>IT Things.</subtitle><entry><title>My Home Docker Setup</title><link href="https://mvaldes14.github.io/blog/docker-home-setup.html" rel="alternate"></link><published>2020-03-04T00:00:00-06:00</published><updated>2020-03-04T00:00:00-06:00</updated><author><name>Miguel Valdes</name></author><id>tag:mvaldes14.github.io,2020-03-04:/blog/docker-home-setup.html</id><summary type="html">&lt;p&gt;Recently decided to migrate all of the things that I run on my personal computer and a little server I got for Xmas (originally for &lt;span class="caps"&gt;PLEX&lt;/span&gt;) as well as my raspberry pi to docker containers so that I could experiment more with it and boy, not as easy as I thought it was going to&amp;nbsp;be.&lt;/p&gt;</summary><content type="html">&lt;p&gt;Recently decided to migrate all of the things that I run on my personal computer and a little server I got for Xmas (originally for &lt;span class="caps"&gt;PLEX&lt;/span&gt;) as well as my raspberry pi to docker containers so that I could experiment more with it and boy, not as easy as I thought it was going to&amp;nbsp;be.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Dev-Mex</title><link href="https://mvaldes14.github.io/blog/" rel="alternate"></link><link href="https://mvaldes14.github.io/blog/feeds/all-en.atom.xml" rel="self"></link><id>https://mvaldes14.github.io/blog/</id><updated>2020-03-13T00:00:00-05:00</updated><subtitle>IT Things.</subtitle><entry><title>Quickstart Traefik</title><link href="https://mvaldes14.github.io/blog/traefik-quickstart.html" rel="alternate"></link><published>2020-03-13T00:00:00-05:00</published><updated>2020-03-13T00:00:00-05:00</updated><author><name>Miguel Valdes</name></author><id>tag:mvaldes14.github.io,2020-03-13:/blog/traefik-quickstart.html</id><summary type="html">&lt;p&gt;In my previous post talked about how I ended up using Traefik instead of the good ol&amp;#8217; reliable &lt;span class="caps"&gt;NGINX&lt;/span&gt;, so wanted to expand a bit more for people that may want to test this out and not want to spend hours as i did testing and reading documentation, not saying you shouldn&amp;#8217;t cause you definitely will but if you want something quick, then this guide is for&amp;nbsp;you.&lt;/p&gt;</summary><content type="html">&lt;p&gt;In my previous &lt;a href="https://mvaldes14.github.io/blog/docker-home-setup.html"&gt;post&lt;/a&gt; talked about how i ended up using Traefik instead of the good ol&amp;#8217; reliable &lt;span class="caps"&gt;NGINX&lt;/span&gt;, so wanted to expand a bit more for people that may want to test this out and not want to spend hours like i did testing and reading documentation, not saying you shouldn&amp;#8217;t cause you definitely will but if you want something quick, then this guide is for&amp;nbsp;you.&lt;/p&gt;
+&lt;h2 id="create-your-network"&gt;Create your&amp;nbsp;network&lt;/h2&gt;
+&lt;p&gt;All containers that Traefik will expose need to be on the same network so if you are using something like swarm or compose, make sure you have an &amp;#8220;external&amp;#8221; network that all containers can&amp;nbsp;reach.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;span class="caps"&gt;NOTE&lt;/span&gt;&lt;/strong&gt;: By default, all compose files that do not define a network will end up generating a network that will have the name of the first service in your file, this is useful so that everything in that compose file can talk to each other but in our case, it just pollutes our docker engine with more stuff to&amp;nbsp;manage.&lt;/p&gt;
+&lt;p&gt;Create your overlay or bridged&amp;nbsp;network&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="o"&gt;#&lt;/span&gt; &lt;span class="n"&gt;SWARM&lt;/span&gt;
+&lt;span class="n"&gt;docker&lt;/span&gt; &lt;span class="n"&gt;network&lt;/span&gt; &lt;span class="k"&gt;create&lt;/span&gt; &lt;span class="n"&gt;traefik&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;proxy&lt;/span&gt; &lt;span class="c1"&gt;--driver overlay&lt;/span&gt;
+
+&lt;span class="o"&gt;#&lt;/span&gt; &lt;span class="k"&gt;No&lt;/span&gt; &lt;span class="n"&gt;SWARM&lt;/span&gt;
+&lt;span class="n"&gt;docker&lt;/span&gt; &lt;span class="n"&gt;network&lt;/span&gt; &lt;span class="k"&gt;create&lt;/span&gt; &lt;span class="n"&gt;traefik&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;proxy&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2 id="setup-traefik"&gt;Setup&amp;nbsp;Traefik&lt;/h2&gt;
+&lt;p&gt;Traefik relies heavily configurations on either a static file that you can mount to it or by using labels, which I honestly prefer (this is referred to as dynamic configuration by&amp;nbsp;them).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="k"&gt;version&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;3.7&amp;quot;&lt;/span&gt;
+&lt;span class="n"&gt;services&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+  &lt;span class="n"&gt;traefik&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;image&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;traefik&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;v2&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;
+    &lt;span class="n"&gt;networks&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;traefik&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;proxy&lt;/span&gt;
+    &lt;span class="n"&gt;command&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="c1"&gt;--entrypoints.metrics.address=:8082&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="c1"&gt;--entrypoints.http.address=:80&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="c1"&gt;--api.dashboard=true&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="c1"&gt;--api.insecure=true&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="c1"&gt;--providers.docker&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="c1"&gt;--providers.docker.swarmMode=true&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="c1"&gt;--providers.docker.exposedByDefault=false&lt;/span&gt;
+    &lt;span class="n"&gt;ports&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;80&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;80&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;8080&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;8080&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;8082&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;8082&lt;/span&gt;
+    &lt;span class="n"&gt;volumes&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;var&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;docker&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sock&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;var&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;docker&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sock&lt;/span&gt;
+    &lt;span class="n"&gt;deploy&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="n"&gt;placement&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="k"&gt;constraints&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+          &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;node&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="k"&gt;role&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;manager&lt;/span&gt;
+
+&lt;span class="n"&gt;networks&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+  &lt;span class="n"&gt;traefik&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;proxy&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="k"&gt;external&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="k"&gt;true&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;A quick breakdown of what these mean. A more detailed explanation can be found on the documentation - &lt;a href="https://docs.traefik.io/"&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Indicates that the service will use the network called&amp;nbsp;&amp;#8220;traefik-proxy&amp;#8221;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="c"&gt;networks: - traefik-proxy&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;We define an &amp;#8220;entrypoint&amp;#8221; aka a port that we can hit to reach a service, and we name it &amp;#8220;http&amp;#8221; since its using port&amp;nbsp;80.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;- --entrypoints.http.address=:80&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Traefik comes with a nice dashboard that helps you visualize what is running and the health of the services behind it, I recommend using it. So this line just enables it and allows you to reach it without using&amp;nbsp;authentication&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;- --api.dashboard=true`&lt;/span&gt;
+&lt;span class="err"&gt;- --api.insecure=true`&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Since we are running this in a docker container we need to tell traefik to listen to events in the engine, so we enable&amp;nbsp;it.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;- --providers.docker&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;In my case I run everything in &lt;span class="caps"&gt;SWARM&lt;/span&gt; mode so I need to enable the mode, if you are not, you can skip&amp;nbsp;it.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;- --providers.docker.swarmMode=true&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Finally, by default Traefik will try to match the containers against certain rules so it can expose those services, and since I didn&amp;#8217;t want to expose everything I had to turn this off. If you don&amp;#8217;t do this you will see warning messages in your container logs about not having default rules set for every&amp;nbsp;service.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;- --providers.docker.exposedByDefault=false&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;To allow Traefik to listen in to the events for all of your containers we need to share the docker&amp;nbsp;socket.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="c"&gt;volumes: - /var/run/docker.sock:/var/run/docker.sock&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Finally since we have an external network created we need to indicate that we want to use&amp;nbsp;it.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;networks&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;traefik&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;proxy&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;external&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;With that, we have our configuration set, now to configure a&amp;nbsp;service&lt;/p&gt;
+&lt;h2 id="setup-your-services"&gt;Setup your&amp;nbsp;services&lt;/h2&gt;
+&lt;p&gt;In the example, we will be setting up a Grafana&amp;nbsp;instance.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="k"&gt;version&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;3.3&amp;quot;&lt;/span&gt;
+&lt;span class="n"&gt;services&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+  &lt;span class="n"&gt;grafana&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;image&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;grafana&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;grafana&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;latest&lt;/span&gt;
+    &lt;span class="n"&gt;environment&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;GF_SECURITY_ADMIN_PASSWORD=SuperSecretPasswordMan&amp;quot;&lt;/span&gt;
+    &lt;span class="n"&gt;networks&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;traefik&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;proxy&lt;/span&gt;
+    &lt;span class="n"&gt;volumes&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;opt&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;grafana&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;var&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;grafana&lt;/span&gt;
+    &lt;span class="n"&gt;deploy&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="n"&gt;placement&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="k"&gt;constraints&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+          &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;node&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;labels&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;pi&lt;/span&gt;
+      &lt;span class="n"&gt;labels&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;traefik.enable=true&amp;quot;&lt;/span&gt;
+        &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;traefik.http.routers.grafana.entrypoints=http&amp;quot;&lt;/span&gt;
+        &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;traefik.http.routers.grafana.rule=Host(`grafana.local.net`)&amp;quot;&lt;/span&gt;
+        &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;traefik.http.services.grafana.loadbalancer.server.port=3000&amp;quot;&lt;/span&gt;
+        &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;traefik.docker.network=traefik-proxy&amp;quot;&lt;/span&gt;
+
+&lt;span class="n"&gt;networks&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+  &lt;span class="n"&gt;traefik&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;proxy&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="k"&gt;external&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="k"&gt;true&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Another breakdown. Same as before all of the configuration can be done via labels, which makes traefik so cool to&amp;nbsp;use.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;First thing, we run the service in the network where traefik can reach&amp;nbsp;it.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="c"&gt;networks: - traefik-proxy&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;We allow traefik to route the traffic for this&amp;nbsp;service.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;- &amp;quot;traefik.enable=true&amp;quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Indicate which entrypoint your service will use, do note that each route you define must be unique, in the example I called the route &amp;#8220;grafana&amp;#8221; so replace it in your configuration as&amp;nbsp;needed.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;&amp;quot;traefik.http.routers.grafana.entrypoints=http&amp;quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;The name of the route that will be used to redirect your request to the service, in my case i have a &amp;#8220;local.net&amp;#8221; domain running so i ended up just giving each service a naming convention of&amp;nbsp;&amp;#8220;service_name.local.net&amp;#8221;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;&amp;quot;traefik.http.routers.grafana.rule=Host(`grafana.local.net`)&amp;quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Most services expose a port so we have to tell traefik which port will be used to redirect the traffic to, Grafana does it at port&amp;nbsp;3000.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;&amp;quot;traefik.http.services.grafana.loadbalancer.server.port=3000&amp;quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;A bit redundant but we indicate the network we are using this one as a&amp;nbsp;label.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;&amp;quot;traefik.docker.network=traefik-proxy&amp;quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Finally, force the entire service to use an already defined external&amp;nbsp;network.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;networks&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;traefik&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;proxy&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;external&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="validation"&gt;Validation&lt;/h2&gt;
+&lt;p&gt;With traefik and our grafana service deployed and running, we can now validate with the built-in dashboard to see if our instance was picked up properly as&amp;nbsp;below.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="traefik-dashboard" src="traefik-dashboard.png"&gt;&lt;/p&gt;
+&lt;p&gt;Our service in detail, the route and the&amp;nbsp;service.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="grafana-traefik" src="grafana-traefik.png"&gt;&lt;/p&gt;
+&lt;p&gt;In our browser, if we navigate to &lt;code&gt;http://grafana.local.net&lt;/code&gt; we should in theory now be presented with the default grafana setup. In case you don&amp;#8217;t see it you might have &lt;span class="caps"&gt;DNS&lt;/span&gt; problems, the easy workaround is to add the name of the site to your &lt;code&gt;http://localhost&lt;/code&gt; so it resolves the&amp;nbsp;traffic.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;# /etc/hosts&lt;/span&gt;
+&lt;span class="err"&gt;127.0.0.1 localhost grafana.local.net&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;If you run your own &lt;span class="caps"&gt;DNS&lt;/span&gt; server like me you can simply add a &lt;span class="caps"&gt;CNAME&lt;/span&gt; record that points to the server that hosts the service, done properly you should&amp;nbsp;see.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="grafana-dashboard" src="grafana-dashboard.png"&gt;&lt;/p&gt;
+&lt;h2 id="conclusion"&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;Hope the mini-guide helped you out on how to set up your services, once you have one running it should be easy to replicate by simply copying the configuration and replacing couple values. The traefik documentation also provides a couple of examples in case you wanted to have your routes setup like &lt;code&gt;domain-name.com/grafana&lt;/code&gt;. Finally, you could also have some middleware for your services in case you want to put some authentication before a user can get to your service which is always a good idea if you end up running things for a bigger group or &lt;span class="caps"&gt;PROD&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;Then again I&amp;#8217;m the only one that uses these at home so why bother&amp;nbsp;right?&lt;/p&gt;
+&lt;p&gt;As always if you have questions you can reach out to me on social&amp;nbsp;media.&lt;/p&gt;</content><category term="devops"></category><category term="docker"></category></entry><entry><title>My Home Docker Setup</title><link href="https://mvaldes14.github.io/blog/docker-home-setup.html" rel="alternate"></link><published>2020-03-04T00:00:00-06:00</published><updated>2020-03-04T00:00:00-06:00</updated><author><name>Miguel Valdes</name></author><id>tag:mvaldes14.github.io,2020-03-04:/blog/docker-home-setup.html</id><summary type="html">&lt;p&gt;Recently decided to migrate all of the things that I run on my personal computer and a little server I got for Xmas (originally for &lt;span class="caps"&gt;PLEX&lt;/span&gt;) as well as my raspberry pi to docker containers so that I could experiment more with it and boy, not as easy as I thought it was going to&amp;nbsp;be.&lt;/p&gt;</summary><content type="html">&lt;p&gt;Recently decided to migrate all of the things that I run on my personal computer and a little server I got for Xmas (originally for &lt;span class="caps"&gt;PLEX&lt;/span&gt;) as well as my raspberry pi to docker containers so that I could experiment more with it and boy, not as easy as I thought it was going to&amp;nbsp;be.&lt;/p&gt;
 &lt;p&gt;Most of the applications had specific configuration files in a location that needed to be mounted somewhere, then I had to think of which apps to move to which node cause of the resources on each node, setup the permissions and respective volumes depending on the usage, all in all, it was fun and I learned a&amp;nbsp;lot.&lt;/p&gt;
 &lt;p&gt;One last thing was that I knew very little how the networking aspect worked so I had to create networks between some of these so that I could have communication between them. For instance, the Kibana instance for my elastic cluster has a cross-cluster search so I can visualize the data from both clusters in a single pane so I had to figure out how to make these connections to each&amp;nbsp;other.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&lt;span class="caps"&gt;NOTE&lt;/span&gt;: Everything in here is using Docker &lt;span class="caps"&gt;SWARM&lt;/span&gt;, so make sure you have your swarm&amp;nbsp;setup.&lt;/strong&gt;&lt;/p&gt;

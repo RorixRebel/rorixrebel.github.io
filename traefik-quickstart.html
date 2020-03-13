@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://mvaldes14.github.io/blog/static/css/styles.css"
+    />
+    <link
+      rel="shortcut icon"
+      href="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
+      type="image/x-icon"
+    />
+    <title>Dev-Mex</title>
+  </head>
+
+  <body>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a class="navbar-title" href="https://mvaldes14.github.io/blog">
+          <strong class="title">
+            <img
+              src="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
+              width="25px"
+            />
+            Dev-Mex
+          </strong>
+          <span>
+            <p class="subtitle">IT Things.</p>
+          </span>
+        </a>
+        <a
+          role="button"
+          class="navbar-burger"
+          data-target="navMenu"
+          aria-label="menu"
+          aria-expanded="false"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div class="navbar-menu" id="navMenu">
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <a
+              class="button is-dark has-text-success"
+              href="https://mvaldes14.github.io/blog/category/devops.html"
+            >
+              <strong> devops</strong>
+            </a>
+          </div>
+          <div class="navbar-item">
+            <a
+              class="button is-dark has-text-success"
+              href="https://mvaldes14.github.io/blog/category/python.html"
+            >
+              <strong> python</strong>
+            </a>
+          </div>
+          <div class="navbar-item">
+            <a
+              class="button is-dark has-text-success"
+              href="https://mvaldes14.github.io/blog/category/root.html"
+            >
+              <strong> root</strong>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+
+<div class="container article-page">
+  <hr />
+  <h1 class="title">Quickstart&nbsp;Traefik</h1>
+  <div class="breadcrumb">
+    <ul>
+      <strong>
+        <span>In:&nbsp</span>
+      </strong>
+      <li>Devops</li>
+      <li class="is-active">March 13, 2020</li>
+    </ul>
+  </div>
+  <article class="content">
+    <p>In my previous <a href="https://mvaldes14.github.io/blog/docker-home-setup.html">post</a> talked about how i ended up using Traefik instead of the good ol&#8217; reliable <span class="caps">NGINX</span>, so wanted to expand a bit more for people that may want to test this out and not want to spend hours like i did testing and reading documentation, not saying you shouldn&#8217;t cause you definitely will but if you want something quick, then this guide is for&nbsp;you.</p>
+<h2 id="create-your-network">Create your&nbsp;network</h2>
+<p>All containers that Traefik will expose need to be on the same network so if you are using something like swarm or compose, make sure you have an &#8220;external&#8221; network that all containers can&nbsp;reach.</p>
+<p><strong><span class="caps">NOTE</span></strong>: By default, all compose files that do not define a network will end up generating a network that will have the name of the first service in your file, this is useful so that everything in that compose file can talk to each other but in our case, it just pollutes our docker engine with more stuff to&nbsp;manage.</p>
+<p>Create your overlay or bridged&nbsp;network</p>
+<div class="highlight"><pre><span></span><code><span class="o">#</span> <span class="n">SWARM</span>
+<span class="n">docker</span> <span class="n">network</span> <span class="k">create</span> <span class="n">traefik</span><span class="o">-</span><span class="n">proxy</span> <span class="c1">--driver overlay</span>
+
+<span class="o">#</span> <span class="k">No</span> <span class="n">SWARM</span>
+<span class="n">docker</span> <span class="n">network</span> <span class="k">create</span> <span class="n">traefik</span><span class="o">-</span><span class="n">proxy</span>
+</code></pre></div>
+
+
+<h2 id="setup-traefik">Setup&nbsp;Traefik</h2>
+<p>Traefik relies heavily configurations on either a static file that you can mount to it or by using labels, which I honestly prefer (this is referred to as dynamic configuration by&nbsp;them).</p>
+<div class="highlight"><pre><span></span><code><span class="k">version</span><span class="p">:</span> <span class="ss">&quot;3.7&quot;</span>
+<span class="n">services</span><span class="p">:</span>
+  <span class="n">traefik</span><span class="p">:</span>
+    <span class="n">image</span><span class="p">:</span> <span class="n">traefik</span><span class="p">:</span><span class="n">v2</span><span class="p">.</span><span class="mi">0</span>
+    <span class="n">networks</span><span class="p">:</span>
+      <span class="o">-</span> <span class="n">traefik</span><span class="o">-</span><span class="n">proxy</span>
+    <span class="n">command</span><span class="p">:</span>
+      <span class="o">-</span> <span class="c1">--entrypoints.metrics.address=:8082</span>
+      <span class="o">-</span> <span class="c1">--entrypoints.http.address=:80</span>
+      <span class="o">-</span> <span class="c1">--api.dashboard=true</span>
+      <span class="o">-</span> <span class="c1">--api.insecure=true</span>
+      <span class="o">-</span> <span class="c1">--providers.docker</span>
+      <span class="o">-</span> <span class="c1">--providers.docker.swarmMode=true</span>
+      <span class="o">-</span> <span class="c1">--providers.docker.exposedByDefault=false</span>
+    <span class="n">ports</span><span class="p">:</span>
+      <span class="o">-</span> <span class="mi">80</span><span class="p">:</span><span class="mi">80</span>
+      <span class="o">-</span> <span class="mi">8080</span><span class="p">:</span><span class="mi">8080</span>
+      <span class="o">-</span> <span class="mi">8082</span><span class="p">:</span><span class="mi">8082</span>
+    <span class="n">volumes</span><span class="p">:</span>
+      <span class="o">-</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">docker</span><span class="p">.</span><span class="n">sock</span><span class="p">:</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">docker</span><span class="p">.</span><span class="n">sock</span>
+    <span class="n">deploy</span><span class="p">:</span>
+      <span class="n">placement</span><span class="p">:</span>
+        <span class="k">constraints</span><span class="p">:</span>
+          <span class="o">-</span> <span class="n">node</span><span class="p">.</span><span class="k">role</span> <span class="o">==</span> <span class="n">manager</span>
+
+<span class="n">networks</span><span class="p">:</span>
+  <span class="n">traefik</span><span class="o">-</span><span class="n">proxy</span><span class="p">:</span>
+    <span class="k">external</span><span class="p">:</span> <span class="k">true</span>
+</code></pre></div>
+
+
+<p>A quick breakdown of what these mean. A more detailed explanation can be found on the documentation - <a href="https://docs.traefik.io/">here</a>.</p>
+<ol>
+<li>
+<p>Indicates that the service will use the network called&nbsp;&#8220;traefik-proxy&#8221;.</p>
+<div class="highlight"><pre><span></span><code><span class="c">networks: - traefik-proxy</span>
+</code></pre></div>
+
+
+</li>
+<li>
+<p>We define an &#8220;entrypoint&#8221; aka a port that we can hit to reach a service, and we name it &#8220;http&#8221; since its using port&nbsp;80.</p>
+<div class="highlight"><pre><span></span><code><span class="err">- --entrypoints.http.address=:80</span>
+</code></pre></div>
+
+
+</li>
+<li>
+<p>Traefik comes with a nice dashboard that helps you visualize what is running and the health of the services behind it, I recommend using it. So this line just enables it and allows you to reach it without using&nbsp;authentication</p>
+<div class="highlight"><pre><span></span><code><span class="err">- --api.dashboard=true`</span>
+<span class="err">- --api.insecure=true`</span>
+</code></pre></div>
+
+
+</li>
+<li>
+<p>Since we are running this in a docker container we need to tell traefik to listen to events in the engine, so we enable&nbsp;it.</p>
+<div class="highlight"><pre><span></span><code><span class="err">- --providers.docker</span>
+</code></pre></div>
+
+
+</li>
+<li>
+<p>In my case I run everything in <span class="caps">SWARM</span> mode so I need to enable the mode, if you are not, you can skip&nbsp;it.</p>
+<div class="highlight"><pre><span></span><code><span class="err">- --providers.docker.swarmMode=true</span>
+</code></pre></div>
+
+
+</li>
+<li>
+<p>Finally, by default Traefik will try to match the containers against certain rules so it can expose those services, and since I didn&#8217;t want to expose everything I had to turn this off. If you don&#8217;t do this you will see warning messages in your container logs about not having default rules set for every&nbsp;service.</p>
+<div class="highlight"><pre><span></span><code><span class="err">- --providers.docker.exposedByDefault=false</span>
+</code></pre></div>
+
+
+</li>
+<li>
+<p>To allow Traefik to listen in to the events for all of your containers we need to share the docker&nbsp;socket.</p>
+<div class="highlight"><pre><span></span><code><span class="c">volumes: - /var/run/docker.sock:/var/run/docker.sock</span>
+</code></pre></div>
+
+
+</li>
+<li>
+<p>Finally since we have an external network created we need to indicate that we want to use&nbsp;it.</p>
+<div class="highlight"><pre><span></span><code><span class="n">networks</span><span class="o">:</span>
+    <span class="n">traefik</span><span class="o">-</span><span class="n">proxy</span><span class="o">:</span>
+        <span class="n">external</span><span class="o">:</span> <span class="kc">true</span>
+</code></pre></div>
+
+
+</li>
+</ol>
+<p>With that, we have our configuration set, now to configure a&nbsp;service</p>
+<h2 id="setup-your-services">Setup your&nbsp;services</h2>
+<p>In the example, we will be setting up a Grafana&nbsp;instance.</p>
+<div class="highlight"><pre><span></span><code><span class="k">version</span><span class="p">:</span> <span class="ss">&quot;3.3&quot;</span>
+<span class="n">services</span><span class="p">:</span>
+  <span class="n">grafana</span><span class="p">:</span>
+    <span class="n">image</span><span class="p">:</span> <span class="n">grafana</span><span class="o">/</span><span class="n">grafana</span><span class="p">:</span><span class="n">latest</span>
+    <span class="n">environment</span><span class="p">:</span>
+      <span class="o">-</span> <span class="ss">&quot;GF_SECURITY_ADMIN_PASSWORD=SuperSecretPasswordMan&quot;</span>
+    <span class="n">networks</span><span class="p">:</span>
+      <span class="o">-</span> <span class="n">traefik</span><span class="o">-</span><span class="n">proxy</span>
+    <span class="n">volumes</span><span class="p">:</span>
+      <span class="o">-</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">grafana</span><span class="p">:</span><span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">grafana</span>
+    <span class="n">deploy</span><span class="p">:</span>
+      <span class="n">placement</span><span class="p">:</span>
+        <span class="k">constraints</span><span class="p">:</span>
+          <span class="o">-</span> <span class="n">node</span><span class="p">.</span><span class="n">labels</span><span class="p">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">pi</span>
+      <span class="n">labels</span><span class="p">:</span>
+        <span class="o">-</span> <span class="ss">&quot;traefik.enable=true&quot;</span>
+        <span class="o">-</span> <span class="ss">&quot;traefik.http.routers.grafana.entrypoints=http&quot;</span>
+        <span class="o">-</span> <span class="ss">&quot;traefik.http.routers.grafana.rule=Host(`grafana.local.net`)&quot;</span>
+        <span class="o">-</span> <span class="ss">&quot;traefik.http.services.grafana.loadbalancer.server.port=3000&quot;</span>
+        <span class="o">-</span> <span class="ss">&quot;traefik.docker.network=traefik-proxy&quot;</span>
+
+<span class="n">networks</span><span class="p">:</span>
+  <span class="n">traefik</span><span class="o">-</span><span class="n">proxy</span><span class="p">:</span>
+    <span class="k">external</span><span class="p">:</span> <span class="k">true</span>
+</code></pre></div>
+
+
+<p>Another breakdown. Same as before all of the configuration can be done via labels, which makes traefik so cool to&nbsp;use.</p>
+<ol>
+<li>
+<p>First thing, we run the service in the network where traefik can reach&nbsp;it.</p>
+<div class="highlight"><pre><span></span><code><span class="c">networks: - traefik-proxy</span>
+</code></pre></div>
+
+
+</li>
+<li>
+<p>We allow traefik to route the traffic for this&nbsp;service.</p>
+<div class="highlight"><pre><span></span><code><span class="err">- &quot;traefik.enable=true&quot;</span>
+</code></pre></div>
+
+
+</li>
+<li>
+<p>Indicate which entrypoint your service will use, do note that each route you define must be unique, in the example I called the route &#8220;grafana&#8221; so replace it in your configuration as&nbsp;needed.</p>
+<div class="highlight"><pre><span></span><code><span class="err">&quot;traefik.http.routers.grafana.entrypoints=http&quot;</span>
+</code></pre></div>
+
+
+</li>
+<li>
+<p>The name of the route that will be used to redirect your request to the service, in my case i have a &#8220;local.net&#8221; domain running so i ended up just giving each service a naming convention of&nbsp;&#8220;service_name.local.net&#8221;</p>
+<div class="highlight"><pre><span></span><code><span class="err">&quot;traefik.http.routers.grafana.rule=Host(`grafana.local.net`)&quot;</span>
+</code></pre></div>
+
+
+</li>
+<li>
+<p>Most services expose a port so we have to tell traefik which port will be used to redirect the traffic to, Grafana does it at port&nbsp;3000.</p>
+<div class="highlight"><pre><span></span><code><span class="err">&quot;traefik.http.services.grafana.loadbalancer.server.port=3000&quot;</span>
+</code></pre></div>
+
+
+</li>
+<li>
+<p>A bit redundant but we indicate the network we are using this one as a&nbsp;label.</p>
+<div class="highlight"><pre><span></span><code><span class="err">&quot;traefik.docker.network=traefik-proxy&quot;</span>
+</code></pre></div>
+
+
+</li>
+<li>
+<p>Finally, force the entire service to use an already defined external&nbsp;network.</p>
+<div class="highlight"><pre><span></span><code><span class="n">networks</span><span class="o">:</span>
+    <span class="n">traefik</span><span class="o">-</span><span class="n">proxy</span><span class="o">:</span>
+        <span class="n">external</span><span class="o">:</span> <span class="kc">true</span>
+</code></pre></div>
+
+
+</li>
+</ol>
+<h2 id="validation">Validation</h2>
+<p>With traefik and our grafana service deployed and running, we can now validate with the built-in dashboard to see if our instance was picked up properly as&nbsp;below.</p>
+<p><img alt="traefik-dashboard" src="traefik-dashboard.png"></p>
+<p>Our service in detail, the route and the&nbsp;service.</p>
+<p><img alt="grafana-traefik" src="grafana-traefik.png"></p>
+<p>In our browser, if we navigate to <code>http://grafana.local.net</code> we should in theory now be presented with the default grafana setup. In case you don&#8217;t see it you might have <span class="caps">DNS</span> problems, the easy workaround is to add the name of the site to your <code>http://localhost</code> so it resolves the&nbsp;traffic.</p>
+<div class="highlight"><pre><span></span><code><span class="err"># /etc/hosts</span>
+<span class="err">127.0.0.1 localhost grafana.local.net</span>
+</code></pre></div>
+
+
+<p>If you run your own <span class="caps">DNS</span> server like me you can simply add a <span class="caps">CNAME</span> record that points to the server that hosts the service, done properly you should&nbsp;see.</p>
+<p><img alt="grafana-dashboard" src="grafana-dashboard.png"></p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Hope the mini-guide helped you out on how to set up your services, once you have one running it should be easy to replicate by simply copying the configuration and replacing couple values. The traefik documentation also provides a couple of examples in case you wanted to have your routes setup like <code>domain-name.com/grafana</code>. Finally, you could also have some middleware for your services in case you want to put some authentication before a user can get to your service which is always a good idea if you end up running things for a bigger group or <span class="caps">PROD</span>.</p>
+<p>Then again I&#8217;m the only one that uses these at home so why bother&nbsp;right?</p>
+<p>As always if you have questions you can reach out to me on social&nbsp;media.</p>
+  </article>
+  <hr />
+</div>
+
+
+    <footer>
+      <div class="has-text-centered">
+        <a href="https://github.com/mvaldes14" target="blank">
+          <img
+            class="footer-icon"
+            src="https://mvaldes14.github.io/blog/static/images/github-circle.png"
+            width="50px"
+          />
+        </a>
+        <a href="https://twitter.com/rorixrebel" target="blank">
+          <img
+            class="footer-icon"
+            src="https://mvaldes14.github.io/blog/static/images/twitter-circle.png"
+            width="50px"
+          />
+        </a>
+        <a
+          href="https://www.linkedin.com/in/miguel-valdes-0476155b/"
+          target="blank"
+        >
+          <img
+            class="footer-icon"
+            src="https://mvaldes14.github.io/blog/static/images/linkedin-box.png"
+            width="50px"
+          />
+        </a>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Get all "navbar-burger" elements
+        const navbarBurgers = Array.prototype.slice.call(
+          document.querySelectorAll(".navbar-burger"),
+          0
+        );
+
+        // Check if there are any navbar burgers
+        if (navbarBurgers.length > 0) {
+          // Add a click event on each of them
+          navbarBurgers.forEach(el => {
+            el.addEventListener("click", () => {
+              // Get the target from the "data-target" attribute
+              const target = el.dataset.target;
+              const $target = document.getElementById(target);
+
+              // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+              el.classList.toggle("is-active");
+              $target.classList.toggle("is-active");
+            });
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
