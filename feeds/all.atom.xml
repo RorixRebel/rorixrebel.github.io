@@ -193,9 +193,9 @@
 &lt;/ol&gt;
 &lt;h2 id="validation"&gt;Validation&lt;/h2&gt;
 &lt;p&gt;With traefik and our grafana service deployed and running, we can now validate with the built-in dashboard to see if our instance was picked up properly as&amp;nbsp;below.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="traefik-dashboard" src="traefik-dashboard.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="traefik-dashboard" src="https://mvaldes14.github.io/blog/images/traefik-dashboard.png"&gt;&lt;/p&gt;
 &lt;p&gt;Our service in detail, the route and the&amp;nbsp;service.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="grafana-traefik" src="grafana-traefik.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="grafana-traefik" src="https://mvaldes14.github.io/blog/images/grafana-traefik.png"&gt;&lt;/p&gt;
 &lt;p&gt;In our browser, if we navigate to &lt;code&gt;http://grafana.local.net&lt;/code&gt; we should in theory now be presented with the default grafana setup. In case you don&amp;#8217;t see it you might have &lt;span class="caps"&gt;DNS&lt;/span&gt; problems, the easy workaround is to add the name of the site to your &lt;code&gt;http://localhost&lt;/code&gt; so it resolves the&amp;nbsp;traffic.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;# /etc/hosts&lt;/span&gt;
 &lt;span class="err"&gt;127.0.0.1 localhost grafana.local.net&lt;/span&gt;

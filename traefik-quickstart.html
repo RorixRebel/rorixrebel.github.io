@@ -287,9 +287,9 @@
 </ol>
 <h2 id="validation">Validation</h2>
 <p>With traefik and our grafana service deployed and running, we can now validate with the built-in dashboard to see if our instance was picked up properly as&nbsp;below.</p>
-<p><img alt="traefik-dashboard" src="traefik-dashboard.png"></p>
+<p><img alt="traefik-dashboard" src="https://mvaldes14.github.io/blog/images/traefik-dashboard.png"></p>
 <p>Our service in detail, the route and the&nbsp;service.</p>
-<p><img alt="grafana-traefik" src="grafana-traefik.png"></p>
+<p><img alt="grafana-traefik" src="https://mvaldes14.github.io/blog/images/grafana-traefik.png"></p>
 <p>In our browser, if we navigate to <code>http://grafana.local.net</code> we should in theory now be presented with the default grafana setup. In case you don&#8217;t see it you might have <span class="caps">DNS</span> problems, the easy workaround is to add the name of the site to your <code>http://localhost</code> so it resolves the&nbsp;traffic.</p>
 <div class="highlight"><pre><span></span><code><span class="err"># /etc/hosts</span>
 <span class="err">127.0.0.1 localhost grafana.local.net</span>
