@@ -1,5 +1,170 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Dev-Mex - devops</title><link href="https://mvaldes14.github.io/blog/" rel="alternate"></link><link href="https://mvaldes14.github.io/blog/feeds/devops.atom.xml" rel="self"></link><id>https://mvaldes14.github.io/blog/</id><updated>2020-03-13T00:00:00-05:00</updated><subtitle>IT Things.</subtitle><entry><title>Traefik Quick Start</title><link href="https://mvaldes14.github.io/blog/traefik-quickstart.html" rel="alternate"></link><published>2020-03-13T00:00:00-05:00</published><updated>2020-03-13T00:00:00-05:00</updated><author><name>Miguel Valdes</name></author><id>tag:mvaldes14.github.io,2020-03-13:/blog/traefik-quickstart.html</id><summary type="html">&lt;p&gt;In my previous post talked about how I ended up using Traefik instead of the good ol&amp;#8217; reliable &lt;span class="caps"&gt;NGINX&lt;/span&gt;, so wanted to expand a bit more for people that may want to test this out and not want to spend hours as i did testing and reading documentation, not saying you shouldn&amp;#8217;t cause you definitely will but if you want something quick, then this guide is for&amp;nbsp;you.&lt;/p&gt;</summary><content type="html">&lt;p&gt;In my previous &lt;a href="https://mvaldes14.github.io/blog/docker-home-setup.html"&gt;post&lt;/a&gt; talked about how i ended up using Traefik instead of the good ol&amp;#8217; reliable &lt;span class="caps"&gt;NGINX&lt;/span&gt;, so wanted to expand a bit more for people that may want to test this out and not want to spend hours like i did testing and reading documentation, not saying you shouldn&amp;#8217;t cause you definitely will but if you want something quick, then this guide is for&amp;nbsp;you.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Dev-Mex - devops</title><link href="https://mvaldes14.github.io/blog/" rel="alternate"></link><link href="https://mvaldes14.github.io/blog/feeds/devops.atom.xml" rel="self"></link><id>https://mvaldes14.github.io/blog/</id><updated>2020-03-18T00:00:00-05:00</updated><subtitle>IT Things.</subtitle><entry><title>COVID Data in Elasticsearch &amp; Kibana</title><link href="https://mvaldes14.github.io/blog/covid-elk.html" rel="alternate"></link><published>2020-03-18T00:00:00-05:00</published><updated>2020-03-18T00:00:00-05:00</updated><author><name>Miguel Valdes</name></author><id>tag:mvaldes14.github.io,2020-03-18:/blog/covid-elk.html</id><summary type="html">&lt;p&gt;So as most people I&amp;#8217;ve been stuck at home so it gave me some extra time to tinker around the&amp;nbsp;dataset&lt;/p&gt;</summary><content type="html">&lt;p&gt;So as most people I&amp;#8217;ve been stuck at home so it gave me some extra time to tinker around the dataset on the excellent dashboard by &lt;a href="[https://www.arcgis.com/apps/opsdashboard/index.html#/bda7594740fd40299423467b48e9ecf6](https://www.arcgis.com/apps/opsdashboard/index.html#/bda7594740fd40299423467b48e9ecf6)"&gt;Johns Hopkins &lt;span class="caps"&gt;CSSE&lt;/span&gt;&lt;/a&gt; you should check that out if you haven&amp;#8217;t already, it&amp;#8217;s quite popular. Anyways found out that they publish all of the data behind the dashboard to their &lt;a href="[https://github.com/CSSEGISandData/COVID-19](https://github.com/CSSEGISandData/COVID-19)"&gt;Github&lt;/a&gt; so wrote a quick script to pull the csv files for March, transform the data via Logstash and push it into my local Elasticsearch&amp;nbsp;instance.&lt;/p&gt;
+&lt;h2 id="getting-and-formatting-data"&gt;Getting and formatting&amp;nbsp;data&lt;/h2&gt;
+&lt;h3 id="pulling-data"&gt;Pulling&amp;nbsp;data&lt;/h3&gt;
+&lt;p&gt;With the help of the python &lt;code&gt;requests&lt;/code&gt; library it was simple to pull the data for each day and just dump it into a file so that i could later tweak&amp;nbsp;it.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;get_files&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;day&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="c1"&gt;# Downloads the files from the REPO and places them in the data/raw folder&lt;/span&gt;
+    &lt;span class="n"&gt;r&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;requests&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sa"&gt;f&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/&lt;/span&gt;&lt;span class="si"&gt;{day}&lt;/span&gt;&lt;span class="s2"&gt;.csv&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;file&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;
+    &lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="nb"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sa"&gt;f&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;./data/raw/&lt;/span&gt;&lt;span class="si"&gt;{day}&lt;/span&gt;&lt;span class="s1"&gt;-raw.csv&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;w&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;infile&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;file&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+            &lt;span class="n"&gt;infile&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;line&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3 id="formatting-the-data"&gt;Formatting the&amp;nbsp;data&lt;/h3&gt;
+&lt;p&gt;While reviewing the csv data, I noticed that there were &amp;#8220;gaps&amp;#8221; in between lines for some records, mostly missing states or province so I just read each line and if the province was missing, I copied whatever the line had for&amp;nbsp;Country.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="covid-github" src="https://mvaldes14.github.io/blog/images/posts/covid-github.png"&gt;&lt;/p&gt;
+&lt;p&gt;Quite simple to do with the csv DictReader&amp;nbsp;function.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;format_files&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;day&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="c1"&gt;# Swaps the column order and fills out missing data for countries and states&lt;/span&gt;
+    &lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="nb"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sa"&gt;f&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;./data/raw/&lt;/span&gt;&lt;span class="si"&gt;{day}&lt;/span&gt;&lt;span class="s1"&gt;-raw.csv&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;encoding&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;utf-8-sig&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;infile&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sa"&gt;f&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;./data/&lt;/span&gt;&lt;span class="si"&gt;{day}&lt;/span&gt;&lt;span class="s1"&gt;.csv&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;w&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;outfile&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;reader&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;csv&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;DictReader&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;infile&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;headers&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Country/Region&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Province/State&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Last Update&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Confirmed&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Deaths&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Recovered&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Latitude&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Longitude&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+        &lt;span class="n"&gt;writer&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;csv&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;DictWriter&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;outfile&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;fieldnames&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;headers&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;writer&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;writeheader&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+        &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;reader&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+                      &lt;span class="c1"&gt;# Add Country if it doesn&amp;#39;t exist&lt;/span&gt;
+            &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Province/State&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt;
+               &lt;span class="n"&gt;line&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Province/State&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Country/Region&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+            &lt;span class="n"&gt;writer&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;writerow&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;line&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;With the columns swapped and consistent, I had something nice and&amp;nbsp;manageable.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;Country/Region,Province/State,LastUpdate,Confirmed,Deaths,Recovered,Latitude,Longitude&lt;/span&gt;
+&lt;span class="err"&gt;China,Hubei,2020-03-17T11:53:10,67799,3111,56003,30.9756,112.2707&lt;/span&gt;
+&lt;span class="err"&gt;Italy,Italy,2020-03-17T18:33:02,31506,2503,2941,41.8719,12.5674&lt;/span&gt;
+&lt;span class="err"&gt;Iran,Iran,2020-03-17T15:13:09,16169,988,5389,32.4279,53.6880&lt;/span&gt;
+&lt;span class="err"&gt;Spain,Spain,2020-03-17T20:53:02,11748,533,1028,40.4637,-3.7492&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3 id="pushing-the-data-to-elasticsearch"&gt;Pushing the data to&amp;nbsp;Elasticsearch&lt;/h3&gt;
+&lt;p&gt;There are multiple ways to push data into an Elasticsearch instance, in previous posts I&amp;#8217;ve done it with the python library but I had a Logstash instance up and running so figured it was easier to use it to read all csv files in my desired location, run it through some of the filters and push it into the cluster for me if you are familiar with how Logstash work you can skip the&amp;nbsp;breakdown.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;span class="caps"&gt;ELI5&lt;/span&gt; Logstash - Tool used to transform data, it basically consists of 3 blocks. An input to read data from. A filter to transform or alter the data. An output to send the transformed data&amp;nbsp;to.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;First, we have to tell Logstash what we want to read since we had static files all I had to do was use the file module, all it requires is a path to read from. To prevent it from reading the files over and over it employs a &amp;#8220;tracker&amp;#8221; that keeps a record of which files were read up until what position. Filebeat does exactly the same and it keeps an internal&amp;nbsp;registry.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;input&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+ &lt;span class="n"&gt;file&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+   &lt;span class="n"&gt;path&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/home/&amp;lt;user&amp;gt;/projects/covid-dashboard/data/*.csv&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+   &lt;span class="n"&gt;start_position&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;beginning&amp;quot;&lt;/span&gt;
+   &lt;span class="n"&gt;tags&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;covid&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;dataset&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+   &lt;span class="n"&gt;sincedb_path&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/home/&amp;lt;user&amp;gt;/projects/covid-dashboard/tracker&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+ &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Next up we have to run every single record from each file through a series of filters, from decoding to changing the type of data so it can be used in&amp;nbsp;Elasticsearch.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;filter&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="n"&gt;csv&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+   &lt;span class="n"&gt;columns&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Country&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;State&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;LastUpdate&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Confirmed&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Deaths&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Recovered&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Latitude&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Longitude&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+   &lt;span class="n"&gt;skip_header&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="kp"&gt;true&lt;/span&gt;
+   &lt;span class="n"&gt;convert&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="s2"&gt;&amp;quot;Confirmed&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;integer&amp;quot;&lt;/span&gt;
+      &lt;span class="s2"&gt;&amp;quot;Deaths&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;integer&amp;quot;&lt;/span&gt;
+      &lt;span class="s2"&gt;&amp;quot;LastUpdate&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;date_time&amp;quot;&lt;/span&gt;
+      &lt;span class="s2"&gt;&amp;quot;Recovered&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;integer&amp;quot;&lt;/span&gt;
+      &lt;span class="s2"&gt;&amp;quot;Longitude&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;float&amp;quot;&lt;/span&gt;
+      &lt;span class="s2"&gt;&amp;quot;Latitude&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;float&amp;quot;&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="n"&gt;mutate&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;rename&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="s2"&gt;&amp;quot;Longitude&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;[Location][lon]&amp;quot;&lt;/span&gt;
+      &lt;span class="s2"&gt;&amp;quot;Latitude&amp;quot;&lt;/span&gt;  &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;[Location][lat]&amp;quot;&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="n"&gt;remove_field&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;message&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;host&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;path&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;@timestamp&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;@version&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The &lt;span class="caps"&gt;CSV&lt;/span&gt; block simply decodes each line and turns all of the records into Key-Value pairs, then uses the custom headers I wanted to name those keys. The second part turns some of the fields into integers and dates, I do want to point out that this didn&amp;#8217;t work 100% of the time so I had to do a workaround at Elasticsearch which will be posted in here as well.
+The mutate block creates a &amp;#8220;geo_point&amp;#8221; object that is a nested object that contains a latitude and longitude. It also removes some fields I didn&amp;#8217;t feel were&amp;nbsp;needed.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;output&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="n"&gt;elasticsearch&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="n"&gt;hosts&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;http://localhost:9200&amp;#39;&lt;/span&gt;
+      &lt;span class="n"&gt;index&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;covid&amp;#39;&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Finally, we push out the data to Elasticsearch to an index called&amp;nbsp;&amp;#8220;covid&amp;#8221;.&lt;/p&gt;
+&lt;h3 id="adjust-the-data-in-elasticsearch"&gt;Adjust the data in&amp;nbsp;Elasticsearch&lt;/h3&gt;
+&lt;p&gt;As mentioned above, I kept running into issues where some records could not be indexed cause of data type mismatch so after trying for couple hours ended up forcing Elasticsearch to do what I wanted by creating the mapping directly and applying it to the &amp;#8220;covid&amp;#8221; index. Templates are an Elasticsearch concept that&amp;#8217;s incredibly powerful and everyone using it should know about&amp;nbsp;it.&lt;/p&gt;
+&lt;p&gt;My template ends up looking&amp;nbsp;like&amp;#8230;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;PUT&lt;/span&gt; &lt;span class="err"&gt;_template/covid&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;quot;order&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;quot;index_patterns&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;covid&amp;quot;&lt;/span&gt;
+  &lt;span class="p"&gt;],&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;quot;settings&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;quot;number_of_replicas&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;
+  &lt;span class="p"&gt;},&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;quot;mappings&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;quot;properties&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:{&lt;/span&gt;
+      &lt;span class="nt"&gt;&amp;quot;Location&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="nt"&gt;&amp;quot;type&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;geo_point&amp;quot;&lt;/span&gt;
+      &lt;span class="p"&gt;},&lt;/span&gt;
+      &lt;span class="nt"&gt;&amp;quot;Confirmed&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:{&lt;/span&gt;
+        &lt;span class="nt"&gt;&amp;quot;type&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;double&amp;quot;&lt;/span&gt;
+      &lt;span class="p"&gt;},&lt;/span&gt;
+      &lt;span class="nt"&gt;&amp;quot;Deaths&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="nt"&gt;&amp;quot;type&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;double&amp;quot;&lt;/span&gt;
+      &lt;span class="p"&gt;},&lt;/span&gt;
+      &lt;span class="nt"&gt;&amp;quot;LastUpdate&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="nt"&gt;&amp;quot;type&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;date&amp;quot;&lt;/span&gt;
+      &lt;span class="p"&gt;},&lt;/span&gt;
+      &lt;span class="nt"&gt;&amp;quot;Recovered&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="nt"&gt;&amp;quot;type&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;double&amp;quot;&lt;/span&gt;
+      &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;As you can see I&amp;#8217;m merely indicating how the data should look like in terms of the&amp;nbsp;types.&lt;/p&gt;
+&lt;p&gt;With that in place, it was time to run Logstash and start pushing all 3k+ records, each record ended up looking&amp;nbsp;like.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="s2"&gt;&amp;quot;_index&amp;quot;&lt;/span&gt; &lt;span class="err"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;covid&amp;quot;&lt;/span&gt;&lt;span class="err"&gt;,&lt;/span&gt;
+&lt;span class="s2"&gt;&amp;quot;_type&amp;quot;&lt;/span&gt; &lt;span class="err"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;_doc&amp;quot;&lt;/span&gt;&lt;span class="err"&gt;,&lt;/span&gt;
+&lt;span class="s2"&gt;&amp;quot;_id&amp;quot;&lt;/span&gt; &lt;span class="err"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;9O8I73ABTHN1r9G_vStK&amp;quot;&lt;/span&gt;&lt;span class="err"&gt;,&lt;/span&gt;
+&lt;span class="s2"&gt;&amp;quot;_score&amp;quot;&lt;/span&gt; &lt;span class="err"&gt;:&lt;/span&gt; &lt;span class="mf"&gt;1.0&lt;/span&gt;&lt;span class="err"&gt;,&lt;/span&gt;
+&lt;span class="s2"&gt;&amp;quot;_source&amp;quot;&lt;/span&gt; &lt;span class="err"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;quot;Confirmed&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;990&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;quot;Recovered&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;917&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;quot;State&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Anhui&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;quot;Deaths&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;quot;LastUpdate&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;2020-03-02T15:03:23&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;quot;tags&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;covid&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;dataset&amp;quot;&lt;/span&gt;
+  &lt;span class="p"&gt;],&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;quot;Country&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Mainland China&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;quot;Location&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;quot;lat&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mf"&gt;31.8257&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;quot;lon&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mf"&gt;117.2264&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2 id="exploring-the-data"&gt;Exploring the&amp;nbsp;data&lt;/h2&gt;
+&lt;p&gt;With all of March records so far we can now start exploring the data, in my case I consume things visually so the first thing I did was to start plotting.
+I was curious to see how the number of confirmed cases spike in Italy so why not put it in a line chart?. It took off incredibly&amp;nbsp;fast.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="coivd-italy" src="https://mvaldes14.github.io/blog/static/posts/covid-italy.png"&gt;&lt;/p&gt;
+&lt;p&gt;I know that most of the casualties occurred in Washington State so the data in a&amp;nbsp;heatmap.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="covid-deaths" src="https://mvaldes14.github.io/blog/static/posts/covid-deaths.png"&gt;&lt;/p&gt;
+&lt;p&gt;Finally, since we have coordinate we could, in theory, replicate some of the dashboards from Johns Hopkins, I&amp;#8217;m aware the data needs tweaking to fully be a copy but this sort of gives us an&amp;nbsp;idea.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="covid-map" src="https://mvaldes14.github.io/blog/static/posts/covid-map.png"&gt;&lt;/p&gt;
+&lt;p&gt;With all records, you can explore further and ask all sorts of questions on which states have more cases, which ones are &amp;#8220;safe&amp;#8221; or quiet. If you are smart you could, use the data to start predicting how the numbers will look like in the coming&amp;nbsp;weeks.&lt;/p&gt;
+&lt;h1 id="conclusion"&gt;Conclusion&lt;/h1&gt;
+&lt;p&gt;As always, hoped this kept you busy for a bit, I know it took me a couple hours to bootstrap this whole thing and play with the&amp;nbsp;data/script.&lt;/p&gt;
+&lt;p&gt;If you have any questions reach out on social media - the repo for everything in this post can be found in &lt;a href="[https://github.com/mvaldes14/covid-dashboard](https://github.com/mvaldes14/covid-dashboard)"&gt;Github&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;One last thing&amp;#8230; &lt;strong&gt;Stay at home folks and tend to your families, don&amp;#8217;t be a&amp;nbsp;dick.&lt;/strong&gt;&lt;/p&gt;</content><category term="devops"></category><category term="elasticsearch"></category><category term="kibana"></category></entry><entry><title>Traefik Quick Start</title><link href="https://mvaldes14.github.io/blog/traefik-quickstart.html" rel="alternate"></link><published>2020-03-13T00:00:00-05:00</published><updated>2020-03-13T00:00:00-05:00</updated><author><name>Miguel Valdes</name></author><id>tag:mvaldes14.github.io,2020-03-13:/blog/traefik-quickstart.html</id><summary type="html">&lt;p&gt;In my previous post talked about how I ended up using Traefik instead of the good ol&amp;#8217; reliable &lt;span class="caps"&gt;NGINX&lt;/span&gt;, so wanted to expand a bit more for people that may want to test this out and not want to spend hours as i did testing and reading documentation, not saying you shouldn&amp;#8217;t cause you definitely will but if you want something quick, then this guide is for&amp;nbsp;you.&lt;/p&gt;</summary><content type="html">&lt;p&gt;In my previous &lt;a href="https://mvaldes14.github.io/blog/docker-home-setup.html"&gt;post&lt;/a&gt; talked about how i ended up using Traefik instead of the good ol&amp;#8217; reliable &lt;span class="caps"&gt;NGINX&lt;/span&gt;, so wanted to expand a bit more for people that may want to test this out and not want to spend hours like i did testing and reading documentation, not saying you shouldn&amp;#8217;t cause you definitely will but if you want something quick, then this guide is for&amp;nbsp;you.&lt;/p&gt;
 &lt;h2 id="create-your-network"&gt;Create your&amp;nbsp;network&lt;/h2&gt;
 &lt;p&gt;All containers that Traefik will expose need to be on the same network so if you are using something like swarm or compose, make sure you have an &amp;#8220;external&amp;#8221; network that all containers can&amp;nbsp;reach.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&lt;span class="caps"&gt;NOTE&lt;/span&gt;&lt;/strong&gt;: By default, all compose files that do not define a network will end up generating a network that will have the name of the first service in your file, this is useful so that everything in that compose file can talk to each other but in our case, it just pollutes our docker engine with more stuff to&amp;nbsp;manage.&lt;/p&gt;
@@ -193,9 +358,9 @@
 &lt;/ol&gt;
 &lt;h2 id="validation"&gt;Validation&lt;/h2&gt;
 &lt;p&gt;With traefik and our grafana service deployed and running, we can now validate with the built-in dashboard to see if our instance was picked up properly as&amp;nbsp;below.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="traefik-dashboard" src="https://mvaldes14.github.io/blog/images/traefik-dashboard.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="traefik-dashboard" src="https://mvaldes14.github.io/blog/images/posts/traefik-dashboard.png"&gt;&lt;/p&gt;
 &lt;p&gt;Our service in detail, the route and the&amp;nbsp;service.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="grafana-traefik" src="https://mvaldes14.github.io/blog/images/grafana-traefik.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="grafana-traefik" src="https://mvaldes14.github.io/blog/images/posts/grafana-traefik.png"&gt;&lt;/p&gt;
 &lt;p&gt;In our browser, if we navigate to &lt;code&gt;http://grafana.local.net&lt;/code&gt; we should in theory now be presented with the default grafana setup. In case you don&amp;#8217;t see it you might have &lt;span class="caps"&gt;DNS&lt;/span&gt; problems, the easy workaround is to add the name of the site to your &lt;code&gt;http://localhost&lt;/code&gt; so it resolves the&amp;nbsp;traffic.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;# /etc/hosts&lt;/span&gt;
 &lt;span class="err"&gt;127.0.0.1 localhost grafana.local.net&lt;/span&gt;
@@ -203,7 +368,7 @@
 
 
 &lt;p&gt;If you run your own &lt;span class="caps"&gt;DNS&lt;/span&gt; server like me you can simply add a &lt;span class="caps"&gt;CNAME&lt;/span&gt; record that points to the server that hosts the service, done properly you should&amp;nbsp;see.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="grafana-dashboard" src="https://mvaldes14.github.io/blog/images/grafana-dashboard.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="grafana-dashboard" src="https://mvaldes14.github.io/blog/images/posts/grafana-dashboard.png"&gt;&lt;/p&gt;
 &lt;h2 id="conclusion"&gt;Conclusion&lt;/h2&gt;
 &lt;p&gt;Hope the mini-guide helped you out on how to set up your services, once you have one running it should be easy to replicate by simply copying the configuration and replacing couple values. The traefik documentation also provides a couple of examples in case you wanted to have your routes setup like &lt;code&gt;domain-name.com/grafana&lt;/code&gt;. Finally, you could also have some middleware for your services in case you want to put some authentication before a user can get to your service which is always a good idea if you end up running things for a bigger group or &lt;span class="caps"&gt;PROD&lt;/span&gt;.&lt;/p&gt;
 &lt;p&gt;Then again I&amp;#8217;m the only one that uses these at home so why bother&amp;nbsp;right?&lt;/p&gt;

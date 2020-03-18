@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://mvaldes14.github.io/blog/static/css/styles.css"
+    />
+    <link
+      rel="shortcut icon"
+      href="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
+      type="image/x-icon"
+    />
+    <title>Dev-Mex</title>
+  </head>
+
+  <body>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a class="navbar-title" href="https://mvaldes14.github.io/blog">
+          <strong class="title">
+            <img
+              src="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
+              width="25px"
+            />
+            Dev-Mex
+          </strong>
+          <span>
+            <p class="subtitle">IT Things.</p>
+          </span>
+        </a>
+        <a
+          role="button"
+          class="navbar-burger"
+          data-target="navMenu"
+          aria-label="menu"
+          aria-expanded="false"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div class="navbar-menu" id="navMenu">
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <a
+              class="button is-dark has-text-success"
+              href="https://mvaldes14.github.io/blog/category/devops.html"
+            >
+              <strong> devops</strong>
+            </a>
+          </div>
+          <div class="navbar-item">
+            <a
+              class="button is-dark has-text-success"
+              href="https://mvaldes14.github.io/blog/category/python.html"
+            >
+              <strong> python</strong>
+            </a>
+          </div>
+          <div class="navbar-item">
+            <a
+              class="button is-dark has-text-success"
+              href="https://mvaldes14.github.io/blog/category/root.html"
+            >
+              <strong> root</strong>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+
+<div class="container article-page">
+  <hr />
+  <h1 class="title"><span class="caps">COVID</span> Data in Elasticsearch <span class="amp">&amp;</span>&nbsp;Kibana</h1>
+  <div class="breadcrumb">
+    <ul>
+      <strong>
+        <span>In:&nbsp</span>
+      </strong>
+      <li>Devops</li>
+      <li class="is-active">March 18, 2020</li>
+    </ul>
+  </div>
+  <article class="content">
+    <p>So as most people I&#8217;ve been stuck at home so it gave me some extra time to tinker around the dataset on the excellent dashboard by <a href="[https://www.arcgis.com/apps/opsdashboard/index.html#/bda7594740fd40299423467b48e9ecf6](https://www.arcgis.com/apps/opsdashboard/index.html#/bda7594740fd40299423467b48e9ecf6)">Johns Hopkins <span class="caps">CSSE</span></a> you should check that out if you haven&#8217;t already, it&#8217;s quite popular. Anyways found out that they publish all of the data behind the dashboard to their <a href="[https://github.com/CSSEGISandData/COVID-19](https://github.com/CSSEGISandData/COVID-19)">Github</a> so wrote a quick script to pull the csv files for March, transform the data via Logstash and push it into my local Elasticsearch&nbsp;instance.</p>
+<h2 id="getting-and-formatting-data">Getting and formatting&nbsp;data</h2>
+<h3 id="pulling-data">Pulling&nbsp;data</h3>
+<p>With the help of the python <code>requests</code> library it was simple to pull the data for each day and just dump it into a file so that i could later tweak&nbsp;it.</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_files</span><span class="p">(</span><span class="n">day</span><span class="p">):</span>
+    <span class="c1"># Downloads the files from the REPO and places them in the data/raw folder</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/</span><span class="si">{day}</span><span class="s2">.csv&quot;</span><span class="p">)</span>
+    <span class="n">file</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./data/raw/</span><span class="si">{day}</span><span class="s1">-raw.csv&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">infile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+</code></pre></div>
+
+
+<h3 id="formatting-the-data">Formatting the&nbsp;data</h3>
+<p>While reviewing the csv data, I noticed that there were &#8220;gaps&#8221; in between lines for some records, mostly missing states or province so I just read each line and if the province was missing, I copied whatever the line had for&nbsp;Country.</p>
+<p><img alt="covid-github" src="https://mvaldes14.github.io/blog/images/posts/covid-github.png"></p>
+<p>Quite simple to do with the csv DictReader&nbsp;function.</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">format_files</span><span class="p">(</span><span class="n">day</span><span class="p">):</span>
+    <span class="c1"># Swaps the column order and fills out missing data for countries and states</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./data/raw/</span><span class="si">{day}</span><span class="s1">-raw.csv&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8-sig&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;./data/</span><span class="si">{day}</span><span class="s1">.csv&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+        <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Country/Region&quot;</span><span class="p">,</span><span class="s2">&quot;Province/State&quot;</span><span class="p">,</span><span class="s2">&quot;Last Update&quot;</span><span class="p">,</span><span class="s2">&quot;Confirmed&quot;</span><span class="p">,</span><span class="s2">&quot;Deaths&quot;</span><span class="p">,</span><span class="s2">&quot;Recovered&quot;</span><span class="p">,</span><span class="s2">&quot;Latitude&quot;</span><span class="p">,</span><span class="s2">&quot;Longitude&quot;</span><span class="p">]</span>
+        <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictWriter</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span><span class="n">fieldnames</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">writeheader</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+                      <span class="c1"># Add Country if it doesn&#39;t exist</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">[</span><span class="s2">&quot;Province/State&quot;</span><span class="p">]:</span>
+               <span class="n">line</span><span class="p">[</span><span class="s2">&quot;Province/State&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="s2">&quot;Country/Region&quot;</span><span class="p">]</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+</code></pre></div>
+
+
+<p>With the columns swapped and consistent, I had something nice and&nbsp;manageable.</p>
+<div class="highlight"><pre><span></span><code><span class="err">Country/Region,Province/State,LastUpdate,Confirmed,Deaths,Recovered,Latitude,Longitude</span>
+<span class="err">China,Hubei,2020-03-17T11:53:10,67799,3111,56003,30.9756,112.2707</span>
+<span class="err">Italy,Italy,2020-03-17T18:33:02,31506,2503,2941,41.8719,12.5674</span>
+<span class="err">Iran,Iran,2020-03-17T15:13:09,16169,988,5389,32.4279,53.6880</span>
+<span class="err">Spain,Spain,2020-03-17T20:53:02,11748,533,1028,40.4637,-3.7492</span>
+</code></pre></div>
+
+
+<h3 id="pushing-the-data-to-elasticsearch">Pushing the data to&nbsp;Elasticsearch</h3>
+<p>There are multiple ways to push data into an Elasticsearch instance, in previous posts I&#8217;ve done it with the python library but I had a Logstash instance up and running so figured it was easier to use it to read all csv files in my desired location, run it through some of the filters and push it into the cluster for me if you are familiar with how Logstash work you can skip the&nbsp;breakdown.</p>
+<p><strong><span class="caps">ELI5</span> Logstash - Tool used to transform data, it basically consists of 3 blocks. An input to read data from. A filter to transform or alter the data. An output to send the transformed data&nbsp;to.</strong></p>
+<p>First, we have to tell Logstash what we want to read since we had static files all I had to do was use the file module, all it requires is a path to read from. To prevent it from reading the files over and over it employs a &#8220;tracker&#8221; that keeps a record of which files were read up until what position. Filebeat does exactly the same and it keeps an internal&nbsp;registry.</p>
+<div class="highlight"><pre><span></span><code><span class="n">input</span> <span class="p">{</span>
+ <span class="n">file</span> <span class="p">{</span>
+   <span class="n">path</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s2">&quot;/home/&lt;user&gt;/projects/covid-dashboard/data/*.csv&quot;</span><span class="o">]</span>
+   <span class="n">start_position</span> <span class="o">=&gt;</span> <span class="s2">&quot;beginning&quot;</span>
+   <span class="n">tags</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">&#39;covid&#39;</span><span class="p">,</span><span class="s1">&#39;dataset&#39;</span><span class="o">]</span>
+   <span class="n">sincedb_path</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s2">&quot;/home/&lt;user&gt;/projects/covid-dashboard/tracker&quot;</span><span class="o">]</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+<p>Next up we have to run every single record from each file through a series of filters, from decoding to changing the type of data so it can be used in&nbsp;Elasticsearch.</p>
+<div class="highlight"><pre><span></span><code><span class="n">filter</span> <span class="p">{</span>
+  <span class="n">csv</span> <span class="p">{</span>
+   <span class="n">columns</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s2">&quot;Country&quot;</span><span class="p">,</span><span class="s2">&quot;State&quot;</span><span class="p">,</span><span class="s2">&quot;LastUpdate&quot;</span><span class="p">,</span><span class="s2">&quot;Confirmed&quot;</span><span class="p">,</span><span class="s2">&quot;Deaths&quot;</span><span class="p">,</span><span class="s2">&quot;Recovered&quot;</span><span class="p">,</span><span class="s2">&quot;Latitude&quot;</span><span class="p">,</span><span class="s2">&quot;Longitude&quot;</span><span class="o">]</span>
+   <span class="n">skip_header</span> <span class="o">=&gt;</span> <span class="kp">true</span>
+   <span class="n">convert</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="s2">&quot;Confirmed&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;integer&quot;</span>
+      <span class="s2">&quot;Deaths&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;integer&quot;</span>
+      <span class="s2">&quot;LastUpdate&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;date_time&quot;</span>
+      <span class="s2">&quot;Recovered&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;integer&quot;</span>
+      <span class="s2">&quot;Longitude&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;float&quot;</span>
+      <span class="s2">&quot;Latitude&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;float&quot;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="n">mutate</span> <span class="p">{</span>
+    <span class="n">rename</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="s2">&quot;Longitude&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;[Location][lon]&quot;</span>
+      <span class="s2">&quot;Latitude&quot;</span>  <span class="o">=&gt;</span> <span class="s2">&quot;[Location][lat]&quot;</span>
+    <span class="p">}</span>
+    <span class="n">remove_field</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s2">&quot;message&quot;</span><span class="p">,</span><span class="s2">&quot;host&quot;</span><span class="p">,</span><span class="s2">&quot;path&quot;</span><span class="p">,</span><span class="s2">&quot;@timestamp&quot;</span><span class="p">,</span><span class="s2">&quot;@version&quot;</span><span class="o">]</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+<p>The <span class="caps">CSV</span> block simply decodes each line and turns all of the records into Key-Value pairs, then uses the custom headers I wanted to name those keys. The second part turns some of the fields into integers and dates, I do want to point out that this didn&#8217;t work 100% of the time so I had to do a workaround at Elasticsearch which will be posted in here as well.
+The mutate block creates a &#8220;geo_point&#8221; object that is a nested object that contains a latitude and longitude. It also removes some fields I didn&#8217;t feel were&nbsp;needed.</p>
+<div class="highlight"><pre><span></span><code><span class="n">output</span> <span class="p">{</span>
+  <span class="n">elasticsearch</span> <span class="p">{</span>
+      <span class="n">hosts</span> <span class="o">=&gt;</span> <span class="s1">&#39;http://localhost:9200&#39;</span>
+      <span class="n">index</span> <span class="o">=&gt;</span> <span class="s1">&#39;covid&#39;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+<p>Finally, we push out the data to Elasticsearch to an index called&nbsp;&#8220;covid&#8221;.</p>
+<h3 id="adjust-the-data-in-elasticsearch">Adjust the data in&nbsp;Elasticsearch</h3>
+<p>As mentioned above, I kept running into issues where some records could not be indexed cause of data type mismatch so after trying for couple hours ended up forcing Elasticsearch to do what I wanted by creating the mapping directly and applying it to the &#8220;covid&#8221; index. Templates are an Elasticsearch concept that&#8217;s incredibly powerful and everyone using it should know about&nbsp;it.</p>
+<p>My template ends up looking&nbsp;like&#8230;</p>
+<div class="highlight"><pre><span></span><code><span class="err">PUT</span> <span class="err">_template/covid</span>
+<span class="p">{</span>
+  <span class="nt">&quot;order&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+  <span class="nt">&quot;index_patterns&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;covid&quot;</span>
+  <span class="p">],</span>
+  <span class="nt">&quot;settings&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;number_of_replicas&quot;</span><span class="p">:</span><span class="mi">0</span>
+  <span class="p">},</span>
+  <span class="nt">&quot;mappings&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;properties&quot;</span><span class="p">:{</span>
+      <span class="nt">&quot;Location&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;geo_point&quot;</span>
+      <span class="p">},</span>
+      <span class="nt">&quot;Confirmed&quot;</span><span class="p">:{</span>
+        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;double&quot;</span>
+      <span class="p">},</span>
+      <span class="nt">&quot;Deaths&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;double&quot;</span>
+      <span class="p">},</span>
+      <span class="nt">&quot;LastUpdate&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;date&quot;</span>
+      <span class="p">},</span>
+      <span class="nt">&quot;Recovered&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;double&quot;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+<p>As you can see I&#8217;m merely indicating how the data should look like in terms of the&nbsp;types.</p>
+<p>With that in place, it was time to run Logstash and start pushing all 3k+ records, each record ended up looking&nbsp;like.</p>
+<div class="highlight"><pre><span></span><code><span class="s2">&quot;_index&quot;</span> <span class="err">:</span> <span class="s2">&quot;covid&quot;</span><span class="err">,</span>
+<span class="s2">&quot;_type&quot;</span> <span class="err">:</span> <span class="s2">&quot;_doc&quot;</span><span class="err">,</span>
+<span class="s2">&quot;_id&quot;</span> <span class="err">:</span> <span class="s2">&quot;9O8I73ABTHN1r9G_vStK&quot;</span><span class="err">,</span>
+<span class="s2">&quot;_score&quot;</span> <span class="err">:</span> <span class="mf">1.0</span><span class="err">,</span>
+<span class="s2">&quot;_source&quot;</span> <span class="err">:</span> <span class="p">{</span>
+  <span class="nt">&quot;Confirmed&quot;</span> <span class="p">:</span> <span class="mi">990</span><span class="p">,</span>
+  <span class="nt">&quot;Recovered&quot;</span> <span class="p">:</span> <span class="mi">917</span><span class="p">,</span>
+  <span class="nt">&quot;State&quot;</span> <span class="p">:</span> <span class="s2">&quot;Anhui&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;Deaths&quot;</span> <span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+  <span class="nt">&quot;LastUpdate&quot;</span> <span class="p">:</span> <span class="s2">&quot;2020-03-02T15:03:23&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;tags&quot;</span> <span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;covid&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;dataset&quot;</span>
+  <span class="p">],</span>
+  <span class="nt">&quot;Country&quot;</span> <span class="p">:</span> <span class="s2">&quot;Mainland China&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;Location&quot;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;lat&quot;</span> <span class="p">:</span> <span class="mf">31.8257</span><span class="p">,</span>
+    <span class="nt">&quot;lon&quot;</span> <span class="p">:</span> <span class="mf">117.2264</span>
+  <span class="p">}</span>
+</code></pre></div>
+
+
+<h2 id="exploring-the-data">Exploring the&nbsp;data</h2>
+<p>With all of March records so far we can now start exploring the data, in my case I consume things visually so the first thing I did was to start plotting.
+I was curious to see how the number of confirmed cases spike in Italy so why not put it in a line chart?. It took off incredibly&nbsp;fast.</p>
+<p><img alt="coivd-italy" src="https://mvaldes14.github.io/blog/static/posts/covid-italy.png"></p>
+<p>I know that most of the casualties occurred in Washington State so the data in a&nbsp;heatmap.</p>
+<p><img alt="covid-deaths" src="https://mvaldes14.github.io/blog/static/posts/covid-deaths.png"></p>
+<p>Finally, since we have coordinate we could, in theory, replicate some of the dashboards from Johns Hopkins, I&#8217;m aware the data needs tweaking to fully be a copy but this sort of gives us an&nbsp;idea.</p>
+<p><img alt="covid-map" src="https://mvaldes14.github.io/blog/static/posts/covid-map.png"></p>
+<p>With all records, you can explore further and ask all sorts of questions on which states have more cases, which ones are &#8220;safe&#8221; or quiet. If you are smart you could, use the data to start predicting how the numbers will look like in the coming&nbsp;weeks.</p>
+<h1 id="conclusion">Conclusion</h1>
+<p>As always, hoped this kept you busy for a bit, I know it took me a couple hours to bootstrap this whole thing and play with the&nbsp;data/script.</p>
+<p>If you have any questions reach out on social media - the repo for everything in this post can be found in <a href="[https://github.com/mvaldes14/covid-dashboard](https://github.com/mvaldes14/covid-dashboard)">Github</a></p>
+<p>One last thing&#8230; <strong>Stay at home folks and tend to your families, don&#8217;t be a&nbsp;dick.</strong></p>
+  </article>
+  <hr />
+</div>
+
+
+    <footer>
+      <div class="has-text-centered">
+        <a href="https://github.com/mvaldes14" target="blank">
+          <img
+            class="footer-icon"
+            src="https://mvaldes14.github.io/blog/static/images/github-circle.png"
+            width="50px"
+          />
+        </a>
+        <a href="https://twitter.com/rorixrebel" target="blank">
+          <img
+            class="footer-icon"
+            src="https://mvaldes14.github.io/blog/static/images/twitter-circle.png"
+            width="50px"
+          />
+        </a>
+        <a
+          href="https://www.linkedin.com/in/miguel-valdes-0476155b/"
+          target="blank"
+        >
+          <img
+            class="footer-icon"
+            src="https://mvaldes14.github.io/blog/static/images/linkedin-box.png"
+            width="50px"
+          />
+        </a>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Get all "navbar-burger" elements
+        const navbarBurgers = Array.prototype.slice.call(
+          document.querySelectorAll(".navbar-burger"),
+          0
+        );
+
+        // Check if there are any navbar burgers
+        if (navbarBurgers.length > 0) {
+          // Add a click event on each of them
+          navbarBurgers.forEach(el => {
+            el.addEventListener("click", () => {
+              // Get the target from the "data-target" attribute
+              const target = el.dataset.target;
+              const $target = document.getElementById(target);
+
+              // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+              el.classList.toggle("is-active");
+              $target.classList.toggle("is-active");
+            });
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
