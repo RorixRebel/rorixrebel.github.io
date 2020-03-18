@@ -155,11 +155,11 @@ The mutate block creates a &amp;#8220;geo_point&amp;#8221; object that is a nest
 &lt;h2 id="exploring-the-data"&gt;Exploring the&amp;nbsp;data&lt;/h2&gt;
 &lt;p&gt;With all of March records so far we can now start exploring the data, in my case I consume things visually so the first thing I did was to start plotting.
 I was curious to see how the number of confirmed cases spike in Italy so why not put it in a line chart?. It took off incredibly&amp;nbsp;fast.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="coivd-italy" src="https://mvaldes14.github.io/blog/static/posts/covid-italy.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="covid-italy" src="https://mvaldes14.github.io/blog/images/posts/covid-italy.png"&gt;&lt;/p&gt;
 &lt;p&gt;I know that most of the casualties occurred in Washington State so the data in a&amp;nbsp;heatmap.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="covid-deaths" src="https://mvaldes14.github.io/blog/static/posts/covid-deaths.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="covid-deaths" src="https://mvaldes14.github.io/blog/images/posts/covid-deaths.png"&gt;&lt;/p&gt;
 &lt;p&gt;Finally, since we have coordinate we could, in theory, replicate some of the dashboards from Johns Hopkins, I&amp;#8217;m aware the data needs tweaking to fully be a copy but this sort of gives us an&amp;nbsp;idea.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="covid-map" src="https://mvaldes14.github.io/blog/static/posts/covid-map.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="covid-map" src="https://mvaldes14.github.io/blog/images/posts/covid-map.png"&gt;&lt;/p&gt;
 &lt;p&gt;With all records, you can explore further and ask all sorts of questions on which states have more cases, which ones are &amp;#8220;safe&amp;#8221; or quiet. If you are smart you could, use the data to start predicting how the numbers will look like in the coming&amp;nbsp;weeks.&lt;/p&gt;
 &lt;h1 id="conclusion"&gt;Conclusion&lt;/h1&gt;
 &lt;p&gt;As always, hoped this kept you busy for a bit, I know it took me a couple hours to bootstrap this whole thing and play with the&amp;nbsp;data/script.&lt;/p&gt;
