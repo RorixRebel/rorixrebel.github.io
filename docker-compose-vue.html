@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://mvaldes14.github.io/blog/static/css/styles.css"
+    />
+    <link
+      rel="shortcut icon"
+      href="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
+      type="image/x-icon"
+    />
+    <title>Dev-Mex</title>
+  </head>
+
+  <body>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a class="navbar-title" href="https://mvaldes14.github.io/blog">
+          <strong class="title">
+            <img
+              src="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
+              width="25px"
+            />
+            Dev-Mex
+          </strong>
+          <span>
+            <p class="subtitle">IT Things.</p>
+          </span>
+        </a>
+        <a
+          role="button"
+          class="navbar-burger"
+          data-target="navMenu"
+          aria-label="menu"
+          aria-expanded="false"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div class="navbar-menu" id="navMenu">
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <a
+              class="button is-dark has-text-success"
+              href="https://mvaldes14.github.io/blog/category/devops.html"
+            >
+              <strong> devops</strong>
+            </a>
+          </div>
+          <div class="navbar-item">
+            <a
+              class="button is-dark has-text-success"
+              href="https://mvaldes14.github.io/blog/category/python.html"
+            >
+              <strong> python</strong>
+            </a>
+          </div>
+          <div class="navbar-item">
+            <a
+              class="button is-dark has-text-success"
+              href="https://mvaldes14.github.io/blog/category/root.html"
+            >
+              <strong> root</strong>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+
+<div class="container article-page">
+  <hr />
+  <h1 class="title">Docker-Compose online with&nbsp;vue</h1>
+  <div class="breadcrumb">
+    <ul>
+      <strong>
+        <span>In:&nbsp</span>
+      </strong>
+      <li>Devops</li>
+      <li class="is-active">June 02, 2020</li>
+    </ul>
+  </div>
+  <article class="content">
+    <p>Due to <span class="caps">COVID19</span> I finally had time to finish some of my outstanding courses, one of those was VueJs so figured i would apply it to something useful instead of doing the regular to-do apps. Which have nothing bad but they are repetitive and well, not fun to be&nbsp;honest.</p>
+<p>So that being said, had a fun idea of what if I could assemble my basic docker-compose files using a web <span class="caps">UI</span>. I know there&#8217;s plugins and things that help you template out the file but I wanted something that you could stack upon and copy to deploy to your docker swarm cluster, so vue composer was&nbsp;born.</p>
+<h2 id="the-setup">The&nbsp;Setup</h2>
+<p><strong><span class="caps">DISCLAIMER</span></strong>: I&#8217;m Terrible at design or <span class="caps">UX</span> for that matter and also a bit lazy so when I saw how vuetify styles the components look super nice and how easy they were to manipulate, figured why&nbsp;not?</p>
+<ol>
+<li>Install&nbsp;vue-cli</li>
+<li>Install&nbsp;Vuetify</li>
+<li>Spin up a project and lets get&nbsp;started.</li>
+</ol>
+<h2 id="the-components">The&nbsp;components</h2>
+<p>The application basically uses 6&nbsp;components.</p>
+<ol>
+<li>The Home component, that just holds everything&nbsp;below.</li>
+<li>The Navbar, self&nbsp;explanatory</li>
+<li>The Footer, same&nbsp;deal</li>
+<li>The Main Card component that holds 2 sub-components which are the smaller&nbsp;cards</li>
+<li>The form component that collects the data from the&nbsp;user</li>
+<li>The display component that shows what the user decided to&nbsp;save</li>
+</ol>
+<p>The first 3 are sort of plain and boring so i&#8217;ll skip them over, if you are curious you can checkout the code in the repo <a href="[https://github.com/mvaldes14/vue-composer](https://github.com/mvaldes14/vue-composer)">Github</a></p>
+<h3 id="mainvue">Main.vue</h3>
+<p>Component to simple display a 2 column pane that shows the form for users to enter their data in and the results once they click on &#8220;Add&#8221;. The <span class="caps">HTML</span> portion is making use of Vuetify components and the main logic just acts as a middleman to pass data between&nbsp;components.</p>
+<p>Do want to point out that by the time i created this project I was unaware of things like the Vue Data bus or Vuex so i didn&#8217;t make use of&nbsp;them.</p>
+<p>Here we simply register the components and create this middleman object along with a function to populate it so it can be&nbsp;passed.</p>
+<div class="highlight"><pre><span></span><code><span class="o">&lt;</span><span class="nx">script</span><span class="o">&gt;</span>
+<span class="kr">import</span> <span class="nx">Service</span> <span class="nx">from</span> <span class="s2">&quot;./Service&quot;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">Compose</span> <span class="nx">from</span> <span class="s2">&quot;./Compose&quot;</span><span class="p">;</span>
+<span class="kr">export</span> <span class="k">default</span> <span class="p">{</span>
+<span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Services&quot;</span><span class="p">,</span>
+<span class="nx">components</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">Service</span><span class="p">,</span>
+    <span class="nx">Compose</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="nx">data</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+    <span class="nx">newService</span><span class="o">:</span> <span class="p">{},</span>
+    <span class="p">};</span>
+<span class="p">},</span>
+<span class="nx">methods</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">addService</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">newService</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">assign</span><span class="p">({},</span> <span class="nx">data</span><span class="p">);</span>
+    <span class="p">},</span>
+<span class="p">},</span>
+<span class="p">};</span>
+<span class="o">&lt;</span><span class="err">/script&gt;</span>
+</code></pre></div>
+
+
+<h3 id="servicevue">Service.vue</h3>
+<p>This component captures the user input, it leverages Vuetify to render nicely and we simply tie in the input boxes to objects using&nbsp;vue-directives.</p>
+<p>In here we initially declare the number of services, dependencies, ports, etc. As well as create the main object that will be passed to the parent Main component. Also adding some methods to push and clear the data so the user could add new service&nbsp;objects.</p>
+<div class="highlight"><pre><span></span><code><span class="o">&lt;</span><span class="nx">script</span><span class="o">&gt;</span>
+<span class="kr">export</span> <span class="k">default</span> <span class="p">{</span>
+<span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Service&quot;</span><span class="p">,</span>
+<span class="nx">data</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+    <span class="nx">numberOfDependencies</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nx">numberOfPorts</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nx">numberOfVolumes</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nx">numberOfEnvironment</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nx">serviceObject</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">serviceName</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="nx">imageName</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="nx">containerName</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="nx">dependsOn</span><span class="o">:</span> <span class="p">[],</span>
+        <span class="nx">environment</span><span class="o">:</span> <span class="p">[],</span>
+        <span class="nx">ports</span><span class="o">:</span> <span class="p">[],</span>
+        <span class="nx">volumes</span><span class="o">:</span> <span class="p">[],</span>
+    <span class="p">},</span>
+    <span class="p">};</span>
+<span class="p">},</span>
+<span class="nx">methods</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">add</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">$emit</span><span class="p">(</span><span class="s2">&quot;service-added&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">serviceObject</span><span class="p">);</span>
+    <span class="p">},</span>
+    <span class="nx">clear</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">serviceObject</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">prop</span> <span class="k">of</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">getOwnPropertyNames</span><span class="p">(</span><span class="nx">obj</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nx">obj</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">obj</span><span class="p">[</span><span class="s2">&quot;dependsOn&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="nx">obj</span><span class="p">[</span><span class="s2">&quot;environment&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="nx">obj</span><span class="p">[</span><span class="s2">&quot;ports&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="nx">obj</span><span class="p">[</span><span class="s2">&quot;volumes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="p">},</span>
+<span class="p">},</span>
+<span class="p">};</span>
+</code></pre></div>
+
+
+<p>The tricky part here for me as a novice was on how to make the value of the property object actually clear on its own so when a user pushes the button to clear the data it would do that without removing the actual object. This was something I had to learn the hard way as the data was simply being passed by reference, meaning the value in memory/cache or whatever JavaScript uses and a new object was not being instantiated again so yeah&#8230; next time make sure that you make a copy of the object instead of passing it around like i&nbsp;did.</p>
+<h3 id="composevue">Compose.vue</h3>
+<p>The last component simply render the object that is passed to it as the user formed it. This component is mostly a bunch of <code>v-for</code> iterating over the number of arguments in the object as the user defined them. Example of how the dependencies are&nbsp;rendered.</p>
+<div class="highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">div</span> <span class="na">v-if</span><span class="o">=</span><span class="s">&quot;serv.dependsOn.length &gt; 0&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">strong</span><span class="p">&gt;</span>
+    depends_on:
+<span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span>
+    <span class="na">class</span><span class="o">=</span><span class="s">&quot;sublist&quot;</span>
+    <span class="na">:key</span><span class="o">=</span><span class="s">&quot;dep&quot;</span>
+    <span class="na">v-for</span><span class="o">=</span><span class="s">&quot;dep in serv.dependsOn&quot;</span>
+    <span class="na">style</span><span class="o">=</span><span class="s">&quot;color:white&quot;</span><span class="p">&gt;</span>
+    - {{ dep }}
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</code></pre></div>
+
+
+<p>The logic for this one is quite simple, it just pushes the object it receives from the parent Main.vue component and pushes it to the&nbsp;list.</p>
+<div class="highlight"><pre><span></span><code><span class="o">&lt;</span><span class="nx">script</span><span class="o">&gt;</span>
+    <span class="kr">export</span> <span class="k">default</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Compose&quot;</span><span class="p">,</span>
+    <span class="nx">props</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">newService</span><span class="o">:</span> <span class="nb">Object</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">{</span>
+        <span class="nx">serviceList</span><span class="o">:</span> <span class="p">[],</span>
+        <span class="p">};</span>
+    <span class="p">},</span>
+    <span class="nx">watch</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">newService</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">serviceList</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">newService</span><span class="p">);</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="p">};</span>
+<span class="o">&lt;</span><span class="err">/script&gt;</span>
+</code></pre></div>
+
+
+<h2 id="in-conclusion">In&nbsp;Conclusion</h2>
+<p>This was a fun little project that helped me realize that I&#8217;m not that lost in terms of JavaScript, I&#8217;m no expert of course but i believe I&#8217;m slowly getting decent at it. Also VueJs has been on my radar for quite a while so this was a great opportunity for me to try it, now i need to wrap up the course, starting playing with Vuex and Vue router&#8230;. and maybe, just maybe even try some ReactJs i know that most people love it but i guess at the time i was reading documentation my overall JavaScript knowledge was so poor and <span class="caps">JSX</span> looked so complicated it honestly freaked me out a&nbsp;bit.</p>
+<p>Another cool thing I had the chance to play with was deploying the application to a free service like Netlify as well as using the Github Registry to push the actual image so it can be pulled and used as a container in Docker or&nbsp;K8s.</p>
+<p><a href="[https://github.com/mvaldes14/vue-composer/packages/246204](https://github.com/mvaldes14/vue-composer/packages/246204)">Vue-composer Docker&nbsp;Image</a></p>
+<p><a href="[https://github.com/mvaldes14/vue-composer](https://github.com/mvaldes14/vue-composer)">Github Repo for this&nbsp;post</a></p>
+<p>Finally, down the road i would like to improve on the little tool. For instance i would like to do validation so when a user enters data the tools makes sure it is in the proper format for things like ports and volumes. If Dockerhub offers an <span class="caps">API</span> maybe even check if the image exists, etc. Lots of things that could be done but for a novice like myself this was a good&nbsp;start.</p>
+<p>Hope you liked it, see ya on the next&nbsp;one.</p>
+  </article>
+  <hr />
+</div>
+
+
+    <footer>
+      <div class="has-text-centered">
+        <a href="https://github.com/mvaldes14" target="blank">
+          <img
+            class="footer-icon"
+            src="https://mvaldes14.github.io/blog/static/images/github-circle.png"
+            width="50px"
+          />
+        </a>
+        <a href="https://twitter.com/rorixrebel" target="blank">
+          <img
+            class="footer-icon"
+            src="https://mvaldes14.github.io/blog/static/images/twitter-circle.png"
+            width="50px"
+          />
+        </a>
+        <a
+          href="https://www.linkedin.com/in/miguel-valdes-0476155b/"
+          target="blank"
+        >
+          <img
+            class="footer-icon"
+            src="https://mvaldes14.github.io/blog/static/images/linkedin-box.png"
+            width="50px"
+          />
+        </a>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Get all "navbar-burger" elements
+        const navbarBurgers = Array.prototype.slice.call(
+          document.querySelectorAll(".navbar-burger"),
+          0
+        );
+
+        // Check if there are any navbar burgers
+        if (navbarBurgers.length > 0) {
+          // Add a click event on each of them
+          navbarBurgers.forEach(el => {
+            el.addEventListener("click", () => {
+              // Get the target from the "data-target" attribute
+              const target = el.dataset.target;
+              const $target = document.getElementById(target);
+
+              // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+              el.classList.toggle("is-active");
+              $target.classList.toggle("is-active");
+            });
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
