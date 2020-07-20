@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://mvaldes14.github.io/blog/static/css/styles.css"
+    />
+    <link
+      rel="shortcut icon"
+      href="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
+      type="image/x-icon"
+    />
+    <title>Dev-Mex</title>
+  </head>
+
+  <body>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a class="navbar-title" href="https://mvaldes14.github.io/blog">
+          <strong class="title">
+            <img
+              src="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
+              width="25px"
+            />
+            Dev-Mex
+          </strong>
+          <span>
+            <p class="subtitle">IT Things.</p>
+          </span>
+        </a>
+        <a
+          role="button"
+          class="navbar-burger"
+          data-target="navMenu"
+          aria-label="menu"
+          aria-expanded="false"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div class="navbar-menu" id="navMenu">
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <a
+              class="button is-dark has-text-success"
+              href="https://mvaldes14.github.io/blog/category/devops.html"
+            >
+              <strong> devops</strong>
+            </a>
+          </div>
+          <div class="navbar-item">
+            <a
+              class="button is-dark has-text-success"
+              href="https://mvaldes14.github.io/blog/category/python.html"
+            >
+              <strong> python</strong>
+            </a>
+          </div>
+          <div class="navbar-item">
+            <a
+              class="button is-dark has-text-success"
+              href="https://mvaldes14.github.io/blog/category/root.html"
+            >
+              <strong> root</strong>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+
+<div class="container article-page">
+  <hr />
+  <h1 class="title">Windows is decent&nbsp;again?</h1>
+  <div class="breadcrumb">
+    <ul>
+      <strong>
+        <span>In:&nbsp</span>
+      </strong>
+      <li>Root</li>
+      <li class="is-active">July 19, 2020</li>
+    </ul>
+  </div>
+  <article class="content">
+    <p><img alt="winfetch" src="https://mvaldes14.github.io/blog/images/posts/winfetch.png"></p>
+<p>Been using windows again for almost 2 months now and I gotta hand it to them, it has improved <strong>quite a lot</strong>. Last time I had it installed on my system was around 2017 when at some point I wanted and needed to play more with the <span class="caps">LINUX</span> operating system for work purposes so I could understand it more and honestly I was a bit tired of the constant updates that took forever&#8230; additionally had always been tempted to make the switch so I backed up everything and kissed goodbye to my old <span class="caps">OS</span>.</p>
+<p>I did miss the one windows perk which was playing <span class="caps">AAA</span> games, at the time I was super into <span class="caps">PUBG</span> and it was and I believe still is unplayable in Linux but soon after something called <strong>Proton</strong>&#8230;started to pop up more and more, turns out at the beginning of 2020 I could play almost *everything* in my Steam library using my Linux <span class="caps">OS</span> except couple new and fancy games that I was dying to play and couldn’t be emulated properly, so I entirely blame the switch on Doom Eternal and <span class="caps">COD</span>&nbsp;Warzone.</p>
+<p>So I downloaded a copy of windows and created the image on a boot drive and so it began… wiping the drives and installing Windows once again, it took almost 30 minutes including the number of restarts it has to do to make sure everything is done properly and setting up the accounts and whatever else it does, finally it was complete and I was presented with a fresh copy of Windows, it still had a bunch of bloatware I did not need and I still feel it shouldn’t even be installed on the system to begin with but that’s for another day. Now I do have to add, I kept using the Windows at work and with new additions like <span class="caps">WSL</span> the switch was even more tempting cause I could use it without being blocked by company policies in the work&nbsp;equipment.</p>
+<p>One of the great perks of Linux distributions is the package managers (yum, apt, pacman, etc) which is something that I always wished windows would have so I could <a href="https://mvaldes14.github.io/blog/ansible-boostrap.html">automate everything like I did before</a>. So googling around I found that windows is already working on it’s own <a href="https://docs.microsoft.com/en-us/windows/package-manager/">package manager</a> which was awesome but for the meantime I also found chocolatey so I quickly looked up my most common apps and installed them incredibly easy, no need to download a bunch of installers or to get them from dubious sites, again in a matter of minutes my system was&nbsp;ready.</p>
+<p>An extra item I did not expect was that the Windows Terminal was <strong>pretty decent</strong>, I mean it&#8217;s not going to compete against Konsole in <span class="caps">KDE</span> but for being their first try it&#8217;s damn good, you can blur the background, change the colorscheme, use custom fonts and it has tabs that take you directly into a <span class="caps">WSL</span> distro, once again, very impressed. I have uploaded my personal configuration file to my <a href="https://github.com/mvaldes14/dotfiles/tree/master/windows-terminal">dotfiles</a> in case you are&nbsp;curious.</p>
+<p>The cherry on top was installing <span class="caps">WSL</span>, by the time I switched <span class="caps">WSL2</span> had just come out so I enabled it and installed it, got docker running on top of it and got 2 distros to play with (Ubuntu 20.04 and Kali), hell I even ran my ansible playbooks against one of the distros just to install some software as well and everything was working as expected, I was honestly shocked at how good the performance was, I mean I’m not doing hardcore stuff but to have my containers running over and all of my software dev kit installed and running from <span class="caps">WSL2</span> into windows was just magnificent. This post was written in Vscode running in Windows but connected to a <span class="caps">WSL2</span> backend, how crazy is&nbsp;that!?</p>
+<p>At the end I had it <strong>all</strong>:</p>
+<ol>
+<li>I could play my <span class="caps">AAA</span> games like Doom and <span class="caps">CODWZ</span></li>
+<li>I could quickly jump into my <span class="caps">WSL2</span> Distros to play and try new&nbsp;technology.</li>
+<li>I can install a lot of things from the <span class="caps">CLI</span> using chocolatey and I&#8217;ll be waiting for the Windows official&nbsp;version.</li>
+<li>I have a pretty good looking&nbsp;terminal.</li>
+</ol>
+<p>I’m honestly very pleased with it now and with the amount of things coming down the pipeline for windows I am for once excited about the future of it, like running <span class="caps">GUI</span> apps from within <span class="caps">WSL</span>, the package manager and if they clean up their privacy stuff I believe it could start pulling some of the market of users like me that want to develop things but also enjoy playing some good&nbsp;games.</p>
+  </article>
+  <hr />
+</div>
+
+
+    <footer>
+      <div class="has-text-centered">
+        <a href="https://github.com/mvaldes14" target="blank">
+          <img
+            class="footer-icon"
+            src="https://mvaldes14.github.io/blog/static/images/github-circle.png"
+            width="50px"
+          />
+        </a>
+        <a href="https://twitter.com/rorixrebel" target="blank">
+          <img
+            class="footer-icon"
+            src="https://mvaldes14.github.io/blog/static/images/twitter-circle.png"
+            width="50px"
+          />
+        </a>
+        <a
+          href="https://www.linkedin.com/in/miguel-valdes-0476155b/"
+          target="blank"
+        >
+          <img
+            class="footer-icon"
+            src="https://mvaldes14.github.io/blog/static/images/linkedin-box.png"
+            width="50px"
+          />
+        </a>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Get all "navbar-burger" elements
+        const navbarBurgers = Array.prototype.slice.call(
+          document.querySelectorAll(".navbar-burger"),
+          0
+        );
+
+        // Check if there are any navbar burgers
+        if (navbarBurgers.length > 0) {
+          // Add a click event on each of them
+          navbarBurgers.forEach(el => {
+            el.addEventListener("click", () => {
+              // Get the target from the "data-target" attribute
+              const target = el.dataset.target;
+              const $target = document.getElementById(target);
+
+              // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+              el.classList.toggle("is-active");
+              $target.classList.toggle("is-active");
+            });
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
