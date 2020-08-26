@@ -43,12 +43,12 @@
     &lt;span class="o"&gt;#&lt;/span&gt;   &lt;span class="n"&gt;https&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;//&lt;/span&gt;&lt;span class="n"&gt;github&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;com&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;hole&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;docker&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;hole&lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="n"&gt;note&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="k"&gt;on&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;capabilities&lt;/span&gt;
     &lt;span class="n"&gt;cap_add&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
       &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;NET_ADMIN&lt;/span&gt;
-    &lt;span class="k"&gt;restart&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;unless&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;stoppe&lt;/span&gt;
+    &lt;span class="k"&gt;restart&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;unless&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;stopped&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;With the package or container running, you can visit the web interface at port 80, you should see something like&amp;nbsp;this.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="pihole-panel" src="https://mvaldes14.github.io/blog/images/posts/pihole-panel.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="pihole-panel" src="https://mvaldes14.github.io/blog/images/posts/pihole-panel.PNG"&gt;&lt;/p&gt;
 &lt;p&gt;Now its time to send all of your &lt;span class="caps"&gt;DNS&lt;/span&gt; traffic to the pihole, the easiest way is to tell your router to send all traffic to the &lt;span class="caps"&gt;IP&lt;/span&gt; of the machine/device running the service but I&amp;#8217;ve found that most of the times the actual computers in your network might not want to really send the traffic via pihole so its easier to force&amp;nbsp;them.&lt;/p&gt;
 &lt;p&gt;If you have couple &lt;span class="caps"&gt;UNIX&lt;/span&gt; machines simply modify your &lt;code&gt;/etc/resolv/conf&lt;/code&gt; and add the&amp;nbsp;nameserver&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;# /etc/resolv.conf&lt;/span&gt;
