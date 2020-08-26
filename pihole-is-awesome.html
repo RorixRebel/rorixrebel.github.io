@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://mvaldes14.github.io/blog/static/css/styles.css"
+    />
+    <link
+      rel="shortcut icon"
+      href="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
+      type="image/x-icon"
+    />
+    <title>Dev-Mex</title>
+  </head>
+
+  <body>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a class="navbar-title" href="https://mvaldes14.github.io/blog">
+          <strong class="title">
+            <img
+              src="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
+              width="25px"
+            />
+            Dev-Mex
+          </strong>
+          <span>
+            <p class="subtitle">IT Things.</p>
+          </span>
+        </a>
+        <a
+          role="button"
+          class="navbar-burger"
+          data-target="navMenu"
+          aria-label="menu"
+          aria-expanded="false"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div class="navbar-menu" id="navMenu">
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <a
+              class="button is-dark has-text-success"
+              href="https://mvaldes14.github.io/blog/category/devops.html"
+            >
+              <strong> devops</strong>
+            </a>
+          </div>
+          <div class="navbar-item">
+            <a
+              class="button is-dark has-text-success"
+              href="https://mvaldes14.github.io/blog/category/python.html"
+            >
+              <strong> python</strong>
+            </a>
+          </div>
+          <div class="navbar-item">
+            <a
+              class="button is-dark has-text-success"
+              href="https://mvaldes14.github.io/blog/category/root.html"
+            >
+              <strong> root</strong>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+
+<div class="container article-page">
+  <hr />
+  <h1 class="title">Pihole is pure&nbsp;awesomeness</h1>
+  <div class="breadcrumb">
+    <ul>
+      <strong>
+        <span>In:&nbsp</span>
+      </strong>
+      <li>Root</li>
+      <li class="is-active">August 26, 2020</li>
+    </ul>
+  </div>
+  <article class="content">
+    <p>Its been months ever since I setup my pihole and I never noticed how much it helps reduce the number of ads and spam I used to see in the webpages until one day the <span class="caps">SD</span> card on my raspberry pi was at 100% so everything running in there stopped responding and I never noticed it&#8230;. dont be like me and monitor your devices, anyways I started seeing a bunch of pop ups, modals and ads everywhere&#8230; That&#8217;s when I realized once again how much everyone needs a pihole in their Network and also how infected the internet is&#8230; of just so much random stuff that tracks you and serves&nbsp;trash.</p>
+<p>So figured since I ended up adding a second pihole to my network as a contingency in case the main one runs into issues again I should tell you how awesome the pihole is and why you need&nbsp;one.</p>
+<p>The concept of a pihole is quite simple, to block all <span class="caps">DNS</span> requests to known malicious and ad provider endpoints, giving you virtually an ad free and safe browsing experience. This is accomplished by turning a device (machine/vm/container) into a <span class="caps">DNS</span> server and pointing all your devices to use it as an&nbsp;upstream.</p>
+<p>One thing to note is that there are certain sites like YouTube that basically inject the ad into the video feed so blocking it might effectively block you from watching videos so do keep that in mind if your sole purpose was to stop YouTube from serving you ads, this won&#8217;t work. A shame but <span class="caps">FYI</span>.</p>
+<p>Another fantastic thing of this project is that the ad lists are maintained by the community so if you notice that a device of yours is doing some extraneous calls and block it you can contribute that domain for everyone to benefit. Trust me once you have a pihole running and you review your traffic from your devices you will notice how much certain things like smart TVs and WiFi cameras make requests every couple minutes or seconds to weird&nbsp;domains.</p>
+<p>Easier to show you the benefits, like a good ol&#8217; before and after type of&nbsp;deal&#8230;</p>
+<p><img alt="pihole-before" src="https://mvaldes14.github.io/blog/images/posts/pihole-before.png"></p>
+<p>Aaaaaaand they&#8217;re&nbsp;gone.</p>
+<p><img alt="pihole-after" src="https://mvaldes14.github.io/blog/images/posts/pihole-after.png"></p>
+<p>So you are convinced how do you get started, you ask?. Well following the installation depending on the device you want to run it&nbsp;on.</p>
+<ol>
+<li>Lazy one line&nbsp;installer</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="err">curl -sSL https://install.pi-hole.net | bash</span>
+</code></pre></div>
+
+
+<ol>
+<li>Via docker-compose, in my case I do not use my pihole as <span class="caps">DHCP</span> but you can do that if you want&nbsp;to.</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="k">version</span><span class="p">:</span> <span class="ss">&quot;3&quot;</span>
+
+<span class="o">#</span> <span class="k">More</span> <span class="n">info</span> <span class="k">at</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">pi</span><span class="o">-</span><span class="n">hole</span><span class="o">/</span><span class="n">docker</span><span class="o">-</span><span class="n">pi</span><span class="o">-</span><span class="n">hole</span><span class="o">/</span> <span class="k">and</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">docs</span><span class="p">.</span><span class="n">pi</span><span class="o">-</span><span class="n">hole</span><span class="p">.</span><span class="n">net</span><span class="o">/</span>
+<span class="n">services</span><span class="p">:</span>
+  <span class="n">pihole</span><span class="p">:</span>
+    <span class="n">container_name</span><span class="p">:</span> <span class="n">pihole</span>
+    <span class="n">image</span><span class="p">:</span> <span class="n">pihole</span><span class="o">/</span><span class="n">pihole</span><span class="p">:</span><span class="n">latest</span>
+    <span class="n">ports</span><span class="p">:</span>
+      <span class="o">-</span> <span class="ss">&quot;53:53/tcp&quot;</span>
+      <span class="o">-</span> <span class="ss">&quot;53:53/udp&quot;</span>
+      <span class="o">-</span> <span class="ss">&quot;67:67/udp&quot;</span>
+      <span class="o">-</span> <span class="ss">&quot;80:80/tcp&quot;</span>
+      <span class="o">-</span> <span class="ss">&quot;443:443/tcp&quot;</span>
+    <span class="n">environment</span><span class="p">:</span>
+      <span class="n">TZ</span><span class="p">:</span> <span class="s1">&#39;America/Chicago&#39;</span>
+      <span class="o">#</span> <span class="n">WEBPASSWORD</span><span class="p">:</span> <span class="s1">&#39;set a secure password here or it will be random&#39;</span>
+    <span class="o">#</span> <span class="n">Volumes</span> <span class="n">store</span> <span class="n">your</span> <span class="k">data</span> <span class="k">between</span> <span class="n">container</span> <span class="n">upgrades</span>
+    <span class="n">volumes</span><span class="p">:</span>
+      <span class="o">-</span> <span class="s1">&#39;./etc-pihole/:/etc/pihole/&#39;</span>
+      <span class="o">-</span> <span class="s1">&#39;./etc-dnsmasq.d/:/etc/dnsmasq.d/&#39;</span>
+    <span class="o">#</span> <span class="n">Recommended</span> <span class="n">but</span> <span class="k">not</span> <span class="n">required</span> <span class="p">(</span><span class="n">DHCP</span> <span class="n">needs</span> <span class="n">NET_ADMIN</span><span class="p">)</span>
+    <span class="o">#</span>   <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">pi</span><span class="o">-</span><span class="n">hole</span><span class="o">/</span><span class="n">docker</span><span class="o">-</span><span class="n">pi</span><span class="o">-</span><span class="n">hole</span><span class="o">#</span><span class="n">note</span><span class="o">-</span><span class="k">on</span><span class="o">-</span><span class="n">capabilities</span>
+    <span class="n">cap_add</span><span class="p">:</span>
+      <span class="o">-</span> <span class="n">NET_ADMIN</span>
+    <span class="k">restart</span><span class="p">:</span> <span class="n">unless</span><span class="o">-</span><span class="n">stoppe</span>
+</code></pre></div>
+
+
+<p>With the package or container running, you can visit the web interface at port 80, you should see something like&nbsp;this.</p>
+<p><img alt="pihole-panel" src="https://mvaldes14.github.io/blog/images/posts/pihole-panel.png"></p>
+<p>Now its time to send all of your <span class="caps">DNS</span> traffic to the pihole, the easiest way is to tell your router to send all traffic to the <span class="caps">IP</span> of the machine/device running the service but I&#8217;ve found that most of the times the actual computers in your network might not want to really send the traffic via pihole so its easier to force&nbsp;them.</p>
+<p>If you have couple <span class="caps">UNIX</span> machines simply modify your <code>/etc/resolv/conf</code> and add the&nbsp;nameserver</p>
+<div class="highlight"><pre><span></span><code><span class="err"># /etc/resolv.conf</span>
+<span class="err">nameserver &lt;ip-device-or-container&gt;</span>
+</code></pre></div>
+
+
+<p>On windows you have to do it using the ipv4 settings in the network panel as shown&nbsp;below.</p>
+<p><img alt="pihole-dns-setup" src="https://mvaldes14.github.io/blog/images/posts/pihole-dns-setup.png"></p>
+<p>If everything is done right you should see something similar to mine that indicates that most of the devices are sending traffic to the PiHole, a quick way to ensure it&#8217;s really working is to visit any site you want and see if that domain appears in your log. So if I visit my own blog I&#8217;d end up seeing&nbsp;this.</p>
+<p><img alt="pihole-test" src="https://mvaldes14.github.io/blog/images/posts/pihole-test.png"></p>
+<p>The final and fun part is adding domains you want to block to your PiHole, so inside your admin panel go to <code>Group Management &gt; Adlists</code> and start adding away, one great place to get lists is reddit or this <a href="[https://firebog.net/](https://firebog.net/)">site</a>. Do not forget to update your settings after adding some lists by going to <code>Tools &gt; Update Gravity</code> which effectively reads those Adlists and adds them to your local PiHole. It is recommended you update your lists frequently in case the owners or maintainers add more stuff to it. I&#8217;m quite happy with mine that contains 860K domains and I rarely see issues while loading pages with&nbsp;those.</p>
+<p><strong><span class="caps">BONUS</span></strong>: If you ever want to mess around with your family go ahead and block facebook and instagram, let me know how that played out for&nbsp;you.</p>
+<p>Anyways, hope this all made sense, if not please feel free to tell me why this sucked on my social media that you can find down below. See ya next&nbsp;time!</p>
+  </article>
+  <hr />
+</div>
+
+
+    <footer>
+      <div class="has-text-centered">
+        <a href="https://github.com/mvaldes14" target="blank">
+          <img
+            class="footer-icon"
+            src="https://mvaldes14.github.io/blog/static/images/github-circle.png"
+            width="50px"
+          />
+        </a>
+        <a href="https://twitter.com/rorixrebel" target="blank">
+          <img
+            class="footer-icon"
+            src="https://mvaldes14.github.io/blog/static/images/twitter-circle.png"
+            width="50px"
+          />
+        </a>
+        <a
+          href="https://www.linkedin.com/in/miguel-valdes-0476155b/"
+          target="blank"
+        >
+          <img
+            class="footer-icon"
+            src="https://mvaldes14.github.io/blog/static/images/linkedin-box.png"
+            width="50px"
+          />
+        </a>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Get all "navbar-burger" elements
+        const navbarBurgers = Array.prototype.slice.call(
+          document.querySelectorAll(".navbar-burger"),
+          0
+        );
+
+        // Check if there are any navbar burgers
+        if (navbarBurgers.length > 0) {
+          // Add a click event on each of them
+          navbarBurgers.forEach(el => {
+            el.addEventListener("click", () => {
+              // Get the target from the "data-target" attribute
+              const target = el.dataset.target;
+              const $target = document.getElementById(target);
+
+              // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+              el.classList.toggle("is-active");
+              $target.classList.toggle("is-active");
+            });
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
