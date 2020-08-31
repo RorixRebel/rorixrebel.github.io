@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Dev-Mex - tool</title><link href="https://mvaldes14.github.io/blog/" rel="alternate"></link><link href="https://mvaldes14.github.io/blog/feeds/tool.atom.xml" rel="self"></link><id>https://mvaldes14.github.io/blog/</id><updated>2020-08-26T00:00:00-05:00</updated><subtitle>IT Things.</subtitle><entry><title>Pihole is pure awesomeness</title><link href="https://mvaldes14.github.io/blog/pihole-is-awesome.html" rel="alternate"></link><published>2020-08-26T00:00:00-05:00</published><updated>2020-08-26T00:00:00-05:00</updated><author><name>Miguel Valdes</name></author><id>tag:mvaldes14.github.io,2020-08-26:/blog/pihole-is-awesome.html</id><summary type="html">&lt;p&gt;Pihole is a great must have in your &lt;span class="caps"&gt;LAN&lt;/span&gt; to block ads and malicious&amp;nbsp;sites.&lt;/p&gt;</summary><content type="html">&lt;p&gt;Its been months ever since I setup my pihole and I never noticed how much it helps reduce the number of ads and spam I used to see in the webpages until one day the &lt;span class="caps"&gt;SD&lt;/span&gt; card on my raspberry pi was at 100% so everything running in there stopped responding and I never noticed it&amp;#8230;. dont be like me and monitor your devices, anyways I started seeing a bunch of pop ups, modals and ads everywhere&amp;#8230; That&amp;#8217;s when I realized once again how much everyone needs a pihole in their Network and also how infected the internet is&amp;#8230; of just so much random stuff that tracks you and serves&amp;nbsp;trash.&lt;/p&gt;
+&lt;p&gt;So figured since I ended up adding a second pihole to my network as a contingency in case the main one runs into issues again I should tell you how awesome the pihole is and why you need&amp;nbsp;one.&lt;/p&gt;
+&lt;p&gt;The concept of a pihole is quite simple, to block all &lt;span class="caps"&gt;DNS&lt;/span&gt; requests to known malicious and ad provider endpoints, giving you virtually an ad free and safe browsing experience. This is accomplished by turning a device (machine/vm/container) into a &lt;span class="caps"&gt;DNS&lt;/span&gt; server and pointing all your devices to use it as an&amp;nbsp;upstream.&lt;/p&gt;
+&lt;p&gt;One thing to note is that there are certain sites like YouTube that basically inject the ad into the video feed so blocking it might effectively block you from watching videos so do keep that in mind if your sole purpose was to stop YouTube from serving you ads, this won&amp;#8217;t work. A shame but &lt;span class="caps"&gt;FYI&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;Another fantastic thing of this project is that the ad lists are maintained by the community so if you notice that a device of yours is doing some extraneous calls and block it you can contribute that domain for everyone to benefit. Trust me once you have a pihole running and you review your traffic from your devices you will notice how much certain things like smart TVs and WiFi cameras make requests every couple minutes or seconds to weird&amp;nbsp;domains.&lt;/p&gt;
+&lt;p&gt;Easier to show you the benefits, like a good ol&amp;#8217; before and after type of&amp;nbsp;deal&amp;#8230;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="pihole-before" src="https://mvaldes14.github.io/blog/images/posts/pihole-before.png"&gt;&lt;/p&gt;
+&lt;p&gt;Aaaaaaand they&amp;#8217;re&amp;nbsp;gone.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="pihole-after" src="https://mvaldes14.github.io/blog/images/posts/pihole-after.png"&gt;&lt;/p&gt;
+&lt;p&gt;So you are convinced how do you get started, you ask?. Well following the installation depending on the device you want to run it&amp;nbsp;on.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Lazy one line&amp;nbsp;installer&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;curl -sSL https://install.pi-hole.net | bash&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ol&gt;
+&lt;li&gt;Via docker-compose, in my case I do not use my pihole as &lt;span class="caps"&gt;DHCP&lt;/span&gt; but you can do that if you want&amp;nbsp;to.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="k"&gt;version&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;3&amp;quot;&lt;/span&gt;
+
+&lt;span class="o"&gt;#&lt;/span&gt; &lt;span class="k"&gt;More&lt;/span&gt; &lt;span class="n"&gt;info&lt;/span&gt; &lt;span class="k"&gt;at&lt;/span&gt; &lt;span class="n"&gt;https&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;//&lt;/span&gt;&lt;span class="n"&gt;github&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;com&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;hole&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;docker&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;hole&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="k"&gt;and&lt;/span&gt; &lt;span class="n"&gt;https&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;//&lt;/span&gt;&lt;span class="n"&gt;docs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;hole&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;net&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;
+&lt;span class="n"&gt;services&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+  &lt;span class="n"&gt;pihole&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;container_name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;pihole&lt;/span&gt;
+    &lt;span class="n"&gt;image&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;pihole&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;pihole&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;latest&lt;/span&gt;
+    &lt;span class="n"&gt;ports&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;53:53/tcp&amp;quot;&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;53:53/udp&amp;quot;&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;67:67/udp&amp;quot;&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;80:80/tcp&amp;quot;&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;443:443/tcp&amp;quot;&lt;/span&gt;
+    &lt;span class="n"&gt;environment&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="n"&gt;TZ&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;America/Chicago&amp;#39;&lt;/span&gt;
+      &lt;span class="o"&gt;#&lt;/span&gt; &lt;span class="n"&gt;WEBPASSWORD&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;set a secure password here or it will be random&amp;#39;&lt;/span&gt;
+    &lt;span class="o"&gt;#&lt;/span&gt; &lt;span class="n"&gt;Volumes&lt;/span&gt; &lt;span class="n"&gt;store&lt;/span&gt; &lt;span class="n"&gt;your&lt;/span&gt; &lt;span class="k"&gt;data&lt;/span&gt; &lt;span class="k"&gt;between&lt;/span&gt; &lt;span class="n"&gt;container&lt;/span&gt; &lt;span class="n"&gt;upgrades&lt;/span&gt;
+    &lt;span class="n"&gt;volumes&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;./etc-pihole/:/etc/pihole/&amp;#39;&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;./etc-dnsmasq.d/:/etc/dnsmasq.d/&amp;#39;&lt;/span&gt;&lt;span class="n"&gt;PN&lt;/span&gt;
+    &lt;span class="o"&gt;#&lt;/span&gt; &lt;span class="n"&gt;Recommended&lt;/span&gt; &lt;span class="n"&gt;but&lt;/span&gt; &lt;span class="k"&gt;not&lt;/span&gt; &lt;span class="n"&gt;required&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;DHCP&lt;/span&gt; &lt;span class="n"&gt;needs&lt;/span&gt; &lt;span class="n"&gt;NET_ADMIN&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="o"&gt;#&lt;/span&gt;   &lt;span class="n"&gt;https&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;//&lt;/span&gt;&lt;span class="n"&gt;github&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;com&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;hole&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;docker&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;hole&lt;/span&gt;&lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="n"&gt;note&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="k"&gt;on&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;capabilities&lt;/span&gt;
+    &lt;span class="n"&gt;cap_add&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;NET_ADMIN&lt;/span&gt;
+    &lt;span class="k"&gt;restart&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;unless&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;stopped&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;With the package or container running, you can visit the web interface at port 80, you should see something like&amp;nbsp;this.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="pihole-panel" src="https://mvaldes14.github.io/blog/images/posts/pihole-panel.png"&gt;&lt;/p&gt;
+&lt;p&gt;Now its time to send all of your &lt;span class="caps"&gt;DNS&lt;/span&gt; traffic to the pihole, the easiest way is to tell your router to send all traffic to the &lt;span class="caps"&gt;IP&lt;/span&gt; of the machine/device running the service but I&amp;#8217;ve found that most of the times the actual computers in your network might not want to really send the traffic via pihole so its easier to force&amp;nbsp;them.&lt;/p&gt;
+&lt;p&gt;If you have couple &lt;span class="caps"&gt;UNIX&lt;/span&gt; machines simply modify your &lt;code&gt;/etc/resolv/conf&lt;/code&gt; and add the&amp;nbsp;nameserver&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;# /etc/resolv.conf&lt;/span&gt;
+&lt;span class="err"&gt;nameserver &amp;lt;ip-device-or-container&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;On windows you have to do it using the ipv4 settings in the network panel as shown&amp;nbsp;below.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="pihole-dns-setup" src="https://mvaldes14.github.io/blog/images/posts/pihole-dns-setup.png"&gt;&lt;/p&gt;
+&lt;p&gt;If everything is done right you should see something similar to mine that indicates that most of the devices are sending traffic to the PiHole, a quick way to ensure it&amp;#8217;s really working is to visit any site you want and see if that domain appears in your log. So if I visit my own blog I&amp;#8217;d end up seeing&amp;nbsp;this.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="pihole-test" src="https://mvaldes14.github.io/blog/images/posts/pihole-test.png"&gt;&lt;/p&gt;
+&lt;p&gt;The final and fun part is adding domains you want to block to your PiHole, so inside your admin panel go to &lt;code&gt;Group Management &amp;gt; Adlists&lt;/code&gt; and start adding away, one great place to get lists is reddit or this &lt;a href="[https://firebog.net/](https://firebog.net/)"&gt;site&lt;/a&gt;. Do not forget to update your settings after adding some lists by going to &lt;code&gt;Tools &amp;gt; Update Gravity&lt;/code&gt; which effectively reads those Adlists and adds them to your local PiHole. It is recommended you update your lists frequently in case the owners or maintainers add more stuff to it. I&amp;#8217;m quite happy with mine that contains 860K domains and I rarely see issues while loading pages with&amp;nbsp;those.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;span class="caps"&gt;BONUS&lt;/span&gt;&lt;/strong&gt;: If you ever want to mess around with your family go ahead and block facebook and instagram, let me know how that played out for&amp;nbsp;you.&lt;/p&gt;
+&lt;p&gt;Anyways, hope this all made sense, if not please feel free to tell me why this sucked on my social media that you can find down below. See ya next&amp;nbsp;time!&lt;/p&gt;</content><category term="tool"></category><category term="pihole"></category><category term="container"></category><category term="tool"></category></entry><entry><title>Traefik Quick Start</title><link href="https://mvaldes14.github.io/blog/traefik-quickstart.html" rel="alternate"></link><published>2020-03-13T00:00:00-05:00</published><updated>2020-03-13T00:00:00-05:00</updated><author><name>Miguel Valdes</name></author><id>tag:mvaldes14.github.io,2020-03-13:/blog/traefik-quickstart.html</id><summary type="html">&lt;p&gt;In my previous post talked about how I ended up using Traefik instead of the good ol&amp;#8217; reliable &lt;span class="caps"&gt;NGINX&lt;/span&gt;, so wanted to expand a bit more for people that may want to test this out and not want to spend hours as i did testing and reading documentation, not saying you shouldn&amp;#8217;t cause you definitely will but if you want something quick, then this guide is for&amp;nbsp;you.&lt;/p&gt;</summary><content type="html">&lt;p&gt;In my previous &lt;a href="https://mvaldes14.github.io/blog/docker-home-setup.html"&gt;post&lt;/a&gt; talked about how i ended up using Traefik instead of the good ol&amp;#8217; reliable &lt;span class="caps"&gt;NGINX&lt;/span&gt;, so wanted to expand a bit more for people that may want to test this out and not want to spend hours like i did testing and reading documentation, not saying you shouldn&amp;#8217;t cause you definitely will but if you want something quick, then this guide is for&amp;nbsp;you.&lt;/p&gt;
+&lt;h2 id="create-your-network"&gt;Create your&amp;nbsp;network&lt;/h2&gt;
+&lt;p&gt;All containers that Traefik will expose need to be on the same network so if you are using something like swarm or compose, make sure you have an &amp;#8220;external&amp;#8221; network that all containers can&amp;nbsp;reach.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;span class="caps"&gt;NOTE&lt;/span&gt;&lt;/strong&gt;: By default, all compose files that do not define a network will end up generating a network that will have the name of the first service in your file, this is useful so that everything in that compose file can talk to each other but in our case, it just pollutes our docker engine with more stuff to&amp;nbsp;manage.&lt;/p&gt;
+&lt;p&gt;Create your overlay or bridged&amp;nbsp;network&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="o"&gt;#&lt;/span&gt; &lt;span class="n"&gt;SWARM&lt;/span&gt;
+&lt;span class="n"&gt;docker&lt;/span&gt; &lt;span class="n"&gt;network&lt;/span&gt; &lt;span class="k"&gt;create&lt;/span&gt; &lt;span class="n"&gt;traefik&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;proxy&lt;/span&gt; &lt;span class="c1"&gt;--driver overlay&lt;/span&gt;
+
+&lt;span class="o"&gt;#&lt;/span&gt; &lt;span class="k"&gt;No&lt;/span&gt; &lt;span class="n"&gt;SWARM&lt;/span&gt;
+&lt;span class="n"&gt;docker&lt;/span&gt; &lt;span class="n"&gt;network&lt;/span&gt; &lt;span class="k"&gt;create&lt;/span&gt; &lt;span class="n"&gt;traefik&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;proxy&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2 id="setup-traefik"&gt;Setup&amp;nbsp;Traefik&lt;/h2&gt;
+&lt;p&gt;Traefik relies heavily configurations on either a static file that you can mount to it or by using labels, which I honestly prefer (this is referred to as dynamic configuration by&amp;nbsp;them).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="k"&gt;version&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;3.7&amp;quot;&lt;/span&gt;
+&lt;span class="n"&gt;services&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+  &lt;span class="n"&gt;traefik&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;image&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;traefik&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;v2&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;
+    &lt;span class="n"&gt;networks&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;traefik&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;proxy&lt;/span&gt;
+    &lt;span class="n"&gt;command&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="c1"&gt;--entrypoints.metrics.address=:8082&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="c1"&gt;--entrypoints.http.address=:80&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="c1"&gt;--api.dashboard=true&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="c1"&gt;--api.insecure=true&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="c1"&gt;--providers.docker&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="c1"&gt;--providers.docker.swarmMode=true&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="c1"&gt;--providers.docker.exposedByDefault=false&lt;/span&gt;
+    &lt;span class="n"&gt;ports&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;80&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;80&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;8080&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;8080&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;8082&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;8082&lt;/span&gt;
+    &lt;span class="n"&gt;volumes&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;var&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;docker&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sock&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;var&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;docker&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sock&lt;/span&gt;
+    &lt;span class="n"&gt;deploy&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="n"&gt;placement&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="k"&gt;constraints&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+          &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;node&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="k"&gt;role&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;manager&lt;/span&gt;
+
+&lt;span class="n"&gt;networks&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+  &lt;span class="n"&gt;traefik&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;proxy&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="k"&gt;external&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="k"&gt;true&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;A quick breakdown of what these mean. A more detailed explanation can be found on the documentation - &lt;a href="https://docs.traefik.io/"&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Indicates that the service will use the network called&amp;nbsp;&amp;#8220;traefik-proxy&amp;#8221;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="c"&gt;networks: - traefik-proxy&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;We define an &amp;#8220;entrypoint&amp;#8221; aka a port that we can hit to reach a service, and we name it &amp;#8220;http&amp;#8221; since its using port&amp;nbsp;80.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;- --entrypoints.http.address=:80&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Traefik comes with a nice dashboard that helps you visualize what is running and the health of the services behind it, I recommend using it. So this line just enables it and allows you to reach it without using&amp;nbsp;authentication&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;- --api.dashboard=true`&lt;/span&gt;
+&lt;span class="err"&gt;- --api.insecure=true`&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Since we are running this in a docker container we need to tell traefik to listen to events in the engine, so we enable&amp;nbsp;it.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;- --providers.docker&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;In my case I run everything in &lt;span class="caps"&gt;SWARM&lt;/span&gt; mode so I need to enable the mode, if you are not, you can skip&amp;nbsp;it.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;- --providers.docker.swarmMode=true&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Finally, by default Traefik will try to match the containers against certain rules so it can expose those services, and since I didn&amp;#8217;t want to expose everything I had to turn this off. If you don&amp;#8217;t do this you will see warning messages in your container logs about not having default rules set for every&amp;nbsp;service.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;- --providers.docker.exposedByDefault=false&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;To allow Traefik to listen in to the events for all of your containers we need to share the docker&amp;nbsp;socket.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="c"&gt;volumes: - /var/run/docker.sock:/var/run/docker.sock&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Finally since we have an external network created we need to indicate that we want to use&amp;nbsp;it.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;networks&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;traefik&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;proxy&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;external&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;With that, we have our configuration set, now to configure a&amp;nbsp;service&lt;/p&gt;
+&lt;h2 id="setup-your-services"&gt;Setup your&amp;nbsp;services&lt;/h2&gt;
+&lt;p&gt;In the example, we will be setting up a Grafana&amp;nbsp;instance.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="k"&gt;version&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;3.3&amp;quot;&lt;/span&gt;
+&lt;span class="n"&gt;services&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+  &lt;span class="n"&gt;grafana&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;image&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;grafana&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;grafana&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;latest&lt;/span&gt;
+    &lt;span class="n"&gt;environment&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;GF_SECURITY_ADMIN_PASSWORD=SuperSecretPasswordMan&amp;quot;&lt;/span&gt;
+    &lt;span class="n"&gt;networks&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;traefik&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;proxy&lt;/span&gt;
+    &lt;span class="n"&gt;volumes&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;opt&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;grafana&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;var&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;grafana&lt;/span&gt;
+    &lt;span class="n"&gt;deploy&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="n"&gt;placement&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="k"&gt;constraints&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+          &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;node&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;labels&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;pi&lt;/span&gt;
+      &lt;span class="n"&gt;labels&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;traefik.enable=true&amp;quot;&lt;/span&gt;
+        &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;traefik.http.routers.grafana.entrypoints=http&amp;quot;&lt;/span&gt;
+        &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;traefik.http.routers.grafana.rule=Host(`grafana.local.net`)&amp;quot;&lt;/span&gt;
+        &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;traefik.http.services.grafana.loadbalancer.server.port=3000&amp;quot;&lt;/span&gt;
+        &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="ss"&gt;&amp;quot;traefik.docker.network=traefik-proxy&amp;quot;&lt;/span&gt;
+
+&lt;span class="n"&gt;networks&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+  &lt;span class="n"&gt;traefik&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;proxy&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="k"&gt;external&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="k"&gt;true&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Another breakdown. Same as before all of the configuration can be done via labels, which makes traefik so cool to&amp;nbsp;use.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;First thing, we run the service in the network where traefik can reach&amp;nbsp;it.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="c"&gt;networks: - traefik-proxy&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;We allow traefik to route the traffic for this&amp;nbsp;service.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;- &amp;quot;traefik.enable=true&amp;quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Indicate which entrypoint your service will use, do note that each route you define must be unique, in the example I called the route &amp;#8220;grafana&amp;#8221; so replace it in your configuration as&amp;nbsp;needed.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;&amp;quot;traefik.http.routers.grafana.entrypoints=http&amp;quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;The name of the route that will be used to redirect your request to the service, in my case i have a &amp;#8220;local.net&amp;#8221; domain running so i ended up just giving each service a naming convention of&amp;nbsp;&amp;#8220;service_name.local.net&amp;#8221;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;&amp;quot;traefik.http.routers.grafana.rule=Host(`grafana.local.net`)&amp;quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Most services expose a port so we have to tell traefik which port will be used to redirect the traffic to, Grafana does it at port&amp;nbsp;3000.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;&amp;quot;traefik.http.services.grafana.loadbalancer.server.port=3000&amp;quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;A bit redundant but we indicate the network we are using this one as a&amp;nbsp;label.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;&amp;quot;traefik.docker.network=traefik-proxy&amp;quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Finally, force the entire service to use an already defined external&amp;nbsp;network.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;networks&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;traefik&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;proxy&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;external&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="validation"&gt;Validation&lt;/h2&gt;
+&lt;p&gt;With traefik and our grafana service deployed and running, we can now validate with the built-in dashboard to see if our instance was picked up properly as&amp;nbsp;below.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="traefik-dashboard" src="https://mvaldes14.github.io/blog/images/posts/traefik-dashboard.png"&gt;&lt;/p&gt;
+&lt;p&gt;Our service in detail, the route and the&amp;nbsp;service.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="grafana-traefik" src="https://mvaldes14.github.io/blog/images/posts/grafana-traefik.png"&gt;&lt;/p&gt;
+&lt;p&gt;In our browser, if we navigate to &lt;code&gt;http://grafana.local.net&lt;/code&gt; we should in theory now be presented with the default grafana setup. In case you don&amp;#8217;t see it you might have &lt;span class="caps"&gt;DNS&lt;/span&gt; problems, the easy workaround is to add the name of the site to your &lt;code&gt;http://localhost&lt;/code&gt; so it resolves the&amp;nbsp;traffic.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;# /etc/hosts&lt;/span&gt;
+&lt;span class="err"&gt;127.0.0.1 localhost grafana.local.net&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;If you run your own &lt;span class="caps"&gt;DNS&lt;/span&gt; server like me you can simply add a &lt;span class="caps"&gt;CNAME&lt;/span&gt; record that points to the server that hosts the service, done properly you should&amp;nbsp;see.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="grafana-dashboard" src="https://mvaldes14.github.io/blog/images/posts/grafana-dashboard.png"&gt;&lt;/p&gt;
+&lt;h2 id="conclusion"&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;Hope the mini-guide helped you out on how to set up your services, once you have one running it should be easy to replicate by simply copying the configuration and replacing couple values. The traefik documentation also provides a couple of examples in case you wanted to have your routes setup like &lt;code&gt;domain-name.com/grafana&lt;/code&gt;. Finally, you could also have some middleware for your services in case you want to put some authentication before a user can get to your service which is always a good idea if you end up running things for a bigger group or &lt;span class="caps"&gt;PROD&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;Then again I&amp;#8217;m the only one that uses these at home so why bother&amp;nbsp;right?&lt;/p&gt;
+&lt;p&gt;As always if you have questions you can reach out to me on social&amp;nbsp;media.&lt;/p&gt;</content><category term="tool"></category><category term="docker"></category></entry><entry><title>Ansible 101</title><link href="https://mvaldes14.github.io/blog/ansible-101.html" rel="alternate"></link><published>2019-01-18T00:00:00-06:00</published><updated>2019-01-18T00:00:00-06:00</updated><author><name>Miguel Valdes</name></author><id>tag:mvaldes14.github.io,2019-01-18:/blog/ansible-101.html</id><summary type="html">&lt;p&gt;Ansible is my favorite configuration management tool, its uses &lt;span class="caps"&gt;YAML&lt;/span&gt; and Python, so you have a winning combo to begin with. One of the main things of why i enjoy using it, is basically that it doesn’t require an installation on the target servers and that is a big factor that in my opinion defeats other management tools like Chef or&amp;nbsp;Puppet&amp;#8230;..&lt;/p&gt;</summary><content type="html">&lt;p&gt;Ansible is my favorite configuration management tool, its uses &lt;span class="caps"&gt;YAML&lt;/span&gt; and Python, so you have a winning combo to begin with. One of the main things of why i enjoy using it, is basically that it doesn’t require an installation on the target servers and that is a big factor that in my opinion defeats other management tools like Chef or&amp;nbsp;Puppet.&lt;/p&gt;
+&lt;p&gt;The fact that you can run and configure servers without anything installed on them besides python (which is almost now standard on every single virtual/physical&amp;nbsp;machine).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Few things to&amp;nbsp;note:&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Requires python on both master and client&amp;nbsp;machine&lt;/li&gt;
+&lt;li&gt;Connects mostly over &lt;span class="caps"&gt;SSH&lt;/span&gt; so credential setup is&amp;nbsp;needed&lt;/li&gt;
+&lt;li&gt;Uses or executes in sequence (top to&amp;nbsp;bottom)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;As we talked before, Ansible relies on &lt;span class="caps"&gt;YAML&lt;/span&gt;.
+Yaml Aint Markup&amp;nbsp;Language&lt;/p&gt;
+&lt;p&gt;Meant to be “human readable” Perfect for the simplicity that involves ansible/python &lt;span class="caps"&gt;YAML&lt;/span&gt; uses a dictionary type of input information eg: key:value Name:&amp;nbsp;Mike&lt;/p&gt;
+&lt;p&gt;&lt;span class="caps"&gt;YAML&lt;/span&gt; Examples (not directly &lt;span class="caps"&gt;ANSIBLE&lt;/span&gt;&amp;nbsp;examples)&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nn"&gt;---&lt;/span&gt; &lt;span class="c1"&gt;#Pending Items&lt;/span&gt;
+&lt;span class="p p-Indicator"&gt;-&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;Visa Renewal&lt;/span&gt;
+&lt;span class="nt"&gt;Description&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;This is needed to renew your visa and this contains all of the information needed&lt;/span&gt;
+&lt;span class="nt"&gt;Type&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;Important&lt;/span&gt;
+&lt;span class="nt"&gt;Due&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;Today&lt;/span&gt;
+&lt;span class="nt"&gt;Followups&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="p p-Indicator"&gt;-&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;CAS Appointment&lt;/span&gt;
+        &lt;span class="l l-Scalar l-Scalar-Plain"&gt;Date&lt;/span&gt;&lt;span class="p p-Indicator"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;April 30th&lt;/span&gt;
+&lt;span class="p p-Indicator"&gt;-&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;Consulate&lt;/span&gt;
+        &lt;span class="l l-Scalar l-Scalar-Plain"&gt;Date&lt;/span&gt;&lt;span class="p p-Indicator"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;April 31st&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Same as with Python, indentation is critical for your &lt;span class="caps"&gt;YAML&lt;/span&gt;&amp;nbsp;files.&lt;/p&gt;
+&lt;p&gt;To use ansible its as simple as: (process may be different based on your&amp;nbsp;distribution)&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;sudo apt-get install ansible
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Once installed you can start creating what we call “playbooks”, which is basically &lt;span class="caps"&gt;YAML&lt;/span&gt; instructions for Ansible to execute something. We will begin with the classic hello word. Create a file named&amp;nbsp;hello.yml.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="l l-Scalar l-Scalar-Plain"&gt;hello.yml&lt;/span&gt;
+
+&lt;span class="nn"&gt;---&lt;/span&gt; &lt;span class="c1"&gt;# Hello World&lt;/span&gt;
+&lt;span class="p p-Indicator"&gt;-&lt;/span&gt; &lt;span class="nt"&gt;hosts&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;localhost&lt;/span&gt;
+&lt;span class="nt"&gt;tasks&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="p p-Indicator"&gt;-&lt;/span&gt; &lt;span class="nt"&gt;debug&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="nt"&gt;msg&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;Hello&lt;/span&gt;&lt;span class="nv"&gt; &lt;/span&gt;&lt;span class="s"&gt;World&amp;quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;To run your playbook execute the following&amp;nbsp;command:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="l l-Scalar l-Scalar-Plain"&gt;ansible-playbook hello.yml&lt;/span&gt;
+
+&lt;span class="l l-Scalar l-Scalar-Plain"&gt;Will produce the following output&lt;/span&gt;&lt;span class="p p-Indicator"&gt;:&lt;/span&gt;
+
+&lt;span class="l l-Scalar l-Scalar-Plain"&gt;PLAY [localhost] *****************************************************************&lt;/span&gt;
+
+&lt;span class="l l-Scalar l-Scalar-Plain"&gt;TASK [Gathering Facts] ***********************************************************&lt;/span&gt;
+&lt;span class="nt"&gt;ok&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p p-Indicator"&gt;[&lt;/span&gt;&lt;span class="nv"&gt;localhost&lt;/span&gt;&lt;span class="p p-Indicator"&gt;]&lt;/span&gt;
+
+&lt;span class="l l-Scalar l-Scalar-Plain"&gt;TASK [debug] *********************************************************************&lt;/span&gt;
+&lt;span class="nt"&gt;ok&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p p-Indicator"&gt;[&lt;/span&gt;&lt;span class="nv"&gt;localhost&lt;/span&gt;&lt;span class="p p-Indicator"&gt;]&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;=&amp;gt; {&lt;/span&gt;
+    &lt;span class="l l-Scalar l-Scalar-Plain"&gt;&amp;quot;msg&amp;quot;&lt;/span&gt;&lt;span class="p p-Indicator"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;Hello&lt;/span&gt;&lt;span class="nv"&gt; &lt;/span&gt;&lt;span class="s"&gt;World&amp;quot;&lt;/span&gt;
+&lt;span class="err"&gt;}&lt;/span&gt;
+
+&lt;span class="l l-Scalar l-Scalar-Plain"&gt;PLAY RECAP ***********************************************************************&lt;/span&gt;
+&lt;span class="nt"&gt;localhost                  &lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;ok=2    changed=0    unreachable=0    failed=0&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;As you can see, running ansible playbooks is incredibly easy and of course there a lot more topics to cover for Ansible basics. If you want keep learning more, head over to the Ansible&amp;nbsp;Documentation.&lt;/p&gt;</content><category term="tool"></category><category term="ansible"></category><category term="devops"></category><category term="automation"></category></entry></feed>

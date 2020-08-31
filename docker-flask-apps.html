@@ -54,9 +54,33 @@
           <div class="navbar-item">
             <a
               class="button is-dark has-text-success"
-              href="https://mvaldes14.github.io/blog/category/devops.html"
+              href="https://mvaldes14.github.io/blog/category/containers.html"
             >
-              <strong> devops</strong>
+              <strong> containers</strong>
+            </a>
+          </div>
+          <div class="navbar-item">
+            <a
+              class="button is-dark has-text-success"
+              href="https://mvaldes14.github.io/blog/category/elk.html"
+            >
+              <strong> elk</strong>
+            </a>
+          </div>
+          <div class="navbar-item">
+            <a
+              class="button is-dark has-text-success"
+              href="https://mvaldes14.github.io/blog/category/elk-containers.html"
+            >
+              <strong> elk, containers</strong>
+            </a>
+          </div>
+          <div class="navbar-item">
+            <a
+              class="button is-dark has-text-success"
+              href="https://mvaldes14.github.io/blog/category/javascript.html"
+            >
+              <strong> javascript</strong>
             </a>
           </div>
           <div class="navbar-item">
@@ -70,9 +94,41 @@
           <div class="navbar-item">
             <a
               class="button is-dark has-text-success"
+              href="https://mvaldes14.github.io/blog/category/python-containers.html"
+            >
+              <strong> python, containers</strong>
+            </a>
+          </div>
+          <div class="navbar-item">
+            <a
+              class="button is-dark has-text-success"
+              href="https://mvaldes14.github.io/blog/category/python-elk.html"
+            >
+              <strong> python, elk</strong>
+            </a>
+          </div>
+          <div class="navbar-item">
+            <a
+              class="button is-dark has-text-success"
               href="https://mvaldes14.github.io/blog/category/root.html"
             >
               <strong> root</strong>
+            </a>
+          </div>
+          <div class="navbar-item">
+            <a
+              class="button is-dark has-text-success"
+              href="https://mvaldes14.github.io/blog/category/tool.html"
+            >
+              <strong> tool</strong>
+            </a>
+          </div>
+          <div class="navbar-item">
+            <a
+              class="button is-dark has-text-success"
+              href="https://mvaldes14.github.io/blog/category/tools-automation.html"
+            >
+              <strong> tools, automation</strong>
             </a>
           </div>
         </div>
@@ -88,7 +144,7 @@
       <strong>
         <span>In:&nbsp</span>
       </strong>
-      <li>Devops</li>
+      <li>Python, containers</li>
       <li class="is-active">December 07, 2018</li>
     </ul>
   </div>
@@ -198,7 +254,7 @@ In this new <span class="caps">IT</span> world where everything is moving toward
 
 
 <p>We run it at this point since the files were just copied a line above. Remember our requirements.txt was inside the application folder. You can modify the structure and alter the layers but you need to install your requirements at some&nbsp;point.</p>
-<p>Once everything is copied and installed we need to tell Docker where we will run our things, so we make use of <span class="caps">WORKDIR</span>. It basically sets the directory where you will run your commands from. If you are running a binary that is available in your $<span class="caps">PATH</span> then you may not need this but since i want to make sure my application launches and uses the code we copied above, I force the&nbsp;location.</p>
+<p>Once everything is copied and installed we need to tell Docker where we will run our things, so we make use of <span class="caps">WORKDIR</span>. It basically sets the directory where you will run your commands from. If you are running a binary that is available in your \$<span class="caps">PATH</span> then you may not need this but since i want to make sure my application launches and uses the code we copied above, I force the&nbsp;location.</p>
 <div class="highlight"><pre><span></span><code><span class="err">WORKDIR /usr/src/app</span>
 </code></pre></div>
 

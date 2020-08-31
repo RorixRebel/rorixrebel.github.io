@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Dev-Mex - elk</title><link href="https://mvaldes14.github.io/blog/" rel="alternate"></link><link href="https://mvaldes14.github.io/blog/feeds/elk.atom.xml" rel="self"></link><id>https://mvaldes14.github.io/blog/</id><updated>2020-08-30T00:00:00-05:00</updated><subtitle>IT Things.</subtitle><entry><title>Monitor your ISP Speed in Kibana</title><link href="https://mvaldes14.github.io/blog/speedtest-kibana.html" rel="alternate"></link><published>2020-08-30T00:00:00-05:00</published><updated>2020-08-30T00:00:00-05:00</updated><author><name>Miguel Valdes</name></author><id>tag:mvaldes14.github.io,2020-08-30:/blog/speedtest-kibana.html</id><summary type="html">&lt;p&gt;Monitor your &lt;span class="caps"&gt;ISP&lt;/span&gt; download and upload speed using Elasticsearch &lt;span class="amp"&gt;&amp;amp;&lt;/span&gt;&amp;nbsp;Kibana.&lt;/p&gt;</summary><content type="html">&lt;p&gt;With the working from home situation my wife has been complaining that the internet is somewhat slower which makes sense since we now have more devices on and streaming content&amp;#8230; I have watched Frozen 1 and 2 over 30 times now&amp;#8230;.. but figured I should double check to see the actual numbers, so I consulted the good ol&amp;#8217; site &lt;a href="http://speedtest.net"&gt;speedtest.net&lt;/a&gt; and ran couple tests and noticed that I am indeed getting sometimes half of what I&amp;#8217;m paying for and some other times I do get more than I should. As &lt;span class="caps"&gt;FYI&lt;/span&gt; I&amp;#8217;m paying \$45 for 100 mbps which is pretty nice in my&amp;nbsp;opinion.&lt;/p&gt;
+&lt;p&gt;Either way, I had no intention to keep visiting the site every so often and when my wife said it was slow I didn&amp;#8217;t want to check if my &lt;span class="caps"&gt;ISP&lt;/span&gt; was working properly so I discovered there&amp;#8217;s a &lt;span class="caps"&gt;CLI&lt;/span&gt; that executes that test we all know and love in the site and displays the results in machine readable formats. So here&amp;#8217;s when the engineer (lazy) part of my brain kicked in and gave me an obvious solution&amp;#8230;. automate the whole thing. So overall here&amp;#8217;s what I said I would&amp;nbsp;do.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;First step, get the &lt;span class="caps"&gt;CLI&lt;/span&gt; and run it couple times to know what the parameters you are looking for do, in my case i wanted something that would execute the test against a not so local server since it&amp;#8217;s not realistic that most of my internet requests end up couple miles from where i&amp;nbsp;live.&lt;/li&gt;
+&lt;li&gt;Second step, dump the data into a file that can be easily parsed and ingested into a system, in this case my preference is Elasticsearch since I can keep the data and I&amp;#8217;m quite familiar with it so building the mapping and visualizations is super simple. The ingestion can be done by either writing a script to push it out or you can do it the lazy way and setup a filebeat agent that will simply collect the data from the results file in json format and will push that directly into my existing Elasticsearch&amp;nbsp;cluster.&lt;/li&gt;
+&lt;li&gt;Third step, generate some graphs to visualize how my &lt;span class="caps"&gt;ISP&lt;/span&gt; is treating&amp;nbsp;me.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I won&amp;#8217;t go much into detail as this is supposed to be a quick post, but do let me know if you get stuck somewhere, social media details at the&amp;nbsp;bottom.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Download the &lt;span class="caps"&gt;CLI&lt;/span&gt; from the official site - &lt;a href="https://www.speedtest.net/apps/cli"&gt;https://www.speedtest.net/apps/cli&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Either create a cron task to run the script every X minutes or use a systemd timer unit (this depends on your preference completely). Here&amp;#8217;s my systemd timer and service files in case you want to copy it. Got place it in &lt;code&gt;/etc/systemd/system/&lt;/code&gt; and start &lt;span class="amp"&gt;&amp;amp;&lt;/span&gt; enable it using &lt;code&gt;sudo systemctl enable speedtest.timer&lt;/code&gt; this should take care of calling the service every 10 minutes which is plenty for my&amp;nbsp;case.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Speedtest&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;service&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;Unit&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="n"&gt;Description&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;Run&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;the&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;speed&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;test&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;cli&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;Service&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="k"&gt;User&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="k"&gt;USER&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="k"&gt;Group&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="k"&gt;USER&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="n"&gt;ExecStart&lt;/span&gt;&lt;span class="o"&gt;=/&lt;/span&gt;&lt;span class="n"&gt;home&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="k"&gt;USER&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;speedtest&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;speedtest&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="c1"&gt;--server-id=2917 --format=json -u MiB/s&lt;/span&gt;
+&lt;span class="n"&gt;StandardOutput&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nl"&gt;append&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;home&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="k"&gt;USER&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;speedtest&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;speedtest&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;log&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="n"&gt;Type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;oneshot&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;Install&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="n"&gt;WantedBy&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;default&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;target&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Speedtest&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;timer&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;Unit&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="n"&gt;Description&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;Runs&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;speedtest&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;every&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;minutes&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;Timer&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="n"&gt;OnCalendar&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="err"&gt;\&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="n"&gt;Unit&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;speedtest&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;service&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;Install&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="n"&gt;WantedBy&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;default&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;target&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;With that in place the script should place the output of the file under your home folder so make sure it&amp;nbsp;exists.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Next, you need to have filebeat running and configured to keep tabs in that &lt;code&gt;speedtest.log&lt;/code&gt; file. Here&amp;#8217;s again a snippet of my configuration for both &lt;code&gt;filebeat.yml&lt;/code&gt; and the service file that runs&amp;nbsp;it.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;filebeat&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;service&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;Unit&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Description&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;Filebeat&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Documentation&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nl"&gt;https&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;//&lt;/span&gt;&lt;span class="n"&gt;www&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;elastic&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;co&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;guide&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;After&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;network&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;target&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;Service&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;simple&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Restart&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;always&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;User&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="k"&gt;USER&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;Group&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="k"&gt;USER&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ExecStart&lt;/span&gt;&lt;span class="o"&gt;=/&lt;/span&gt;&lt;span class="n"&gt;home&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="k"&gt;USER&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;apps&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;filebeat&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mf"&gt;7.5.2&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;linux&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;x86_64&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;filebeat&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;home&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="k"&gt;USER&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;apps&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;filebeat&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mf"&gt;7.5.2&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;linux&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;x86_64&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;filebeat&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;yml&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;Install&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;WantedBy&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;multi&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="k"&gt;user&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;target&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Since the file is already formatted as &lt;span class="caps"&gt;JSON&lt;/span&gt; we will tell filebeat we want to decode it as is and place the keys under root so we can search them, also I&amp;#8217;m adding a field for those events so I can filter as needed. It&amp;#8217;s always a good idea and practice to &amp;#8220;tag&amp;#8221; your&amp;nbsp;data.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;# filebeat.yml&lt;/span&gt;
+&lt;span class="err"&gt;filebeat.inputs:&lt;/span&gt;
+&lt;span class="err"&gt;- type: log&lt;/span&gt;
+&lt;span class="err"&gt;  enabled: true&lt;/span&gt;
+&lt;span class="err"&gt;  paths:&lt;/span&gt;
+&lt;span class="err"&gt;  - /home/$USER/speedtest/speedtest.log&lt;/span&gt;
+&lt;span class="err"&gt;     fields:&lt;/span&gt;
+&lt;span class="err"&gt;         source_system: speedtest&lt;/span&gt;
+&lt;span class="err"&gt;     fields_under_root: true&lt;/span&gt;
+&lt;span class="err"&gt;     json.keys_under_root: true&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;With the data inside the cluster, all you got to do next is just build up some visualizations. Here&amp;#8217;s some of the ones I built using those details. Now I got a holistic view of how my &lt;span class="caps"&gt;ISP&lt;/span&gt; is treating me, can get historic data on how it behaved, the number of packets and ping I&amp;#8217;m getting, it&amp;#8217;s quite&amp;nbsp;nice.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img alt="Kibana-Dashboard" src="https://mvaldes14.github.io/blog/images/posts/speedtest-kibana.png"&gt;&lt;/p&gt;
+&lt;p&gt;As you can tell data is beautiful and with Kibana it&amp;#8217;s quite easy to visualize, this was a quick on how to ingest something from a script and use it to your advantage. I would like to also collect all of the packets coming in and out for all of my devices so I could measure my usage as well but that requires custom devices used as gateways and more complex&amp;nbsp;setups.&lt;/p&gt;
+&lt;p&gt;See you in the next&amp;nbsp;one.&lt;/p&gt;</content><category term="elk"></category><category term="speedtest"></category><category term="elasticsearch"></category></entry></feed>
