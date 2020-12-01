@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css"
     />
     <link
       rel="stylesheet"
@@ -18,7 +18,12 @@
       href="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
       type="image/x-icon"
     />
-    <title>Dev-Mex</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap"
+      rel="stylesheet"
+    />
+    <title>Dev Mex</title>
   </head>
 
   <body>
@@ -30,7 +35,7 @@
               src="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
               width="25px"
             />
-            Dev-Mex
+            Dev Mex
           </strong>
           <span>
             <p class="subtitle">IT Things.</p>
@@ -48,57 +53,32 @@
           <span aria-hidden="true"></span>
         </a>
       </div>
-
-      <div class="navbar-menu" id="navMenu">
-        <div class="navbar-end">
-          <div class="navbar-item">
-            <a
-              class="button is-dark has-text-success"
-              href="https://mvaldes14.github.io/blog/category/containers.html"
-            >
-              <strong> containers</strong>
-            </a>
-          </div>
-          <div class="navbar-item">
-            <a
-              class="button is-dark has-text-success"
-              href="https://mvaldes14.github.io/blog/category/elk.html"
-            >
-              <strong> elk</strong>
-            </a>
-          </div>
-          <div class="navbar-item">
-            <a
-              class="button is-dark has-text-success"
-              href="https://mvaldes14.github.io/blog/category/javascript.html"
-            >
-              <strong> javascript</strong>
-            </a>
-          </div>
-          <div class="navbar-item">
-            <a
-              class="button is-dark has-text-success"
-              href="https://mvaldes14.github.io/blog/category/python.html"
-            >
-              <strong> python</strong>
-            </a>
-          </div>
-          <div class="navbar-item">
-            <a
-              class="button is-dark has-text-success"
-              href="https://mvaldes14.github.io/blog/category/root.html"
-            >
-              <strong> root</strong>
-            </a>
-          </div>
-          <div class="navbar-item">
-            <a
-              class="button is-dark has-text-success"
-              href="https://mvaldes14.github.io/blog/category/tool.html"
-            >
-              <strong> tool</strong>
-            </a>
-          </div>
+      <div class="navbar-end">
+        <div class="has-text-centered">
+          <a href="https://github.com/mvaldes14" target="blank">
+            <img
+              class="navbar-icon"
+              src="https://mvaldes14.github.io/blog/static/images/github-circle.png"
+              width="50px"
+            />
+          </a>
+          <a href="https://twitter.com/rorixrebel" target="blank">
+            <img
+              class="navbar-icon"
+              src="https://mvaldes14.github.io/blog/static/images/twitter-circle.png"
+              width="50px"
+            />
+          </a>
+          <a
+            href="https://www.linkedin.com/in/miguel-valdes-0476155b/"
+            target="blank"
+          >
+            <img
+              class="navbar-icon"
+              src="https://mvaldes14.github.io/blog/static/images/linkedin-box.png"
+              width="50px"
+            />
+          </a>
         </div>
       </div>
     </nav>
@@ -189,35 +169,6 @@
   </div>
 </article>
 
-    <footer>
-      <div class="has-text-centered">
-        <a href="https://github.com/mvaldes14" target="blank">
-          <img
-            class="footer-icon"
-            src="https://mvaldes14.github.io/blog/static/images/github-circle.png"
-            width="50px"
-          />
-        </a>
-        <a href="https://twitter.com/rorixrebel" target="blank">
-          <img
-            class="footer-icon"
-            src="https://mvaldes14.github.io/blog/static/images/twitter-circle.png"
-            width="50px"
-          />
-        </a>
-        <a
-          href="https://www.linkedin.com/in/miguel-valdes-0476155b/"
-          target="blank"
-        >
-          <img
-            class="footer-icon"
-            src="https://mvaldes14.github.io/blog/static/images/linkedin-box.png"
-            width="50px"
-          />
-        </a>
-      </div>
-    </footer>
-
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         // Get all "navbar-burger" elements
@@ -229,7 +180,7 @@
         // Check if there are any navbar burgers
         if (navbarBurgers.length > 0) {
           // Add a click event on each of them
-          navbarBurgers.forEach(el => {
+          navbarBurgers.forEach((el) => {
             el.addEventListener("click", () => {
               // Get the target from the "data-target" attribute
               const target = el.dataset.target;

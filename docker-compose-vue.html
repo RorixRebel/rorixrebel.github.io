@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css"
     />
     <link
       rel="stylesheet"
@@ -18,7 +18,12 @@
       href="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
       type="image/x-icon"
     />
-    <title>Dev-Mex</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap"
+      rel="stylesheet"
+    />
+    <title>Dev Mex</title>
   </head>
 
   <body>
@@ -30,7 +35,7 @@
               src="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
               width="25px"
             />
-            Dev-Mex
+            Dev Mex
           </strong>
           <span>
             <p class="subtitle">IT Things.</p>
@@ -48,57 +53,32 @@
           <span aria-hidden="true"></span>
         </a>
       </div>
-
-      <div class="navbar-menu" id="navMenu">
-        <div class="navbar-end">
-          <div class="navbar-item">
-            <a
-              class="button is-dark has-text-success"
-              href="https://mvaldes14.github.io/blog/category/containers.html"
-            >
-              <strong> containers</strong>
-            </a>
-          </div>
-          <div class="navbar-item">
-            <a
-              class="button is-dark has-text-success"
-              href="https://mvaldes14.github.io/blog/category/elk.html"
-            >
-              <strong> elk</strong>
-            </a>
-          </div>
-          <div class="navbar-item">
-            <a
-              class="button is-dark has-text-success"
-              href="https://mvaldes14.github.io/blog/category/javascript.html"
-            >
-              <strong> javascript</strong>
-            </a>
-          </div>
-          <div class="navbar-item">
-            <a
-              class="button is-dark has-text-success"
-              href="https://mvaldes14.github.io/blog/category/python.html"
-            >
-              <strong> python</strong>
-            </a>
-          </div>
-          <div class="navbar-item">
-            <a
-              class="button is-dark has-text-success"
-              href="https://mvaldes14.github.io/blog/category/root.html"
-            >
-              <strong> root</strong>
-            </a>
-          </div>
-          <div class="navbar-item">
-            <a
-              class="button is-dark has-text-success"
-              href="https://mvaldes14.github.io/blog/category/tool.html"
-            >
-              <strong> tool</strong>
-            </a>
-          </div>
+      <div class="navbar-end">
+        <div class="has-text-centered">
+          <a href="https://github.com/mvaldes14" target="blank">
+            <img
+              class="navbar-icon"
+              src="https://mvaldes14.github.io/blog/static/images/github-circle.png"
+              width="50px"
+            />
+          </a>
+          <a href="https://twitter.com/rorixrebel" target="blank">
+            <img
+              class="navbar-icon"
+              src="https://mvaldes14.github.io/blog/static/images/twitter-circle.png"
+              width="50px"
+            />
+          </a>
+          <a
+            href="https://www.linkedin.com/in/miguel-valdes-0476155b/"
+            target="blank"
+          >
+            <img
+              class="navbar-icon"
+              src="https://mvaldes14.github.io/blog/static/images/linkedin-box.png"
+              width="50px"
+            />
+          </a>
         </div>
       </div>
     </nav>
@@ -115,9 +95,10 @@
       <li>Javascript</li>
       <li class="is-active">June 02, 2020</li>
     </ul>
+    <span class="tag is-small is-dark"> vue </span>
+    <span class="tag is-small is-dark"> docker </span>
   </div>
-  <article class="content">
-    <p>Due to <span class="caps">COVID19</span> I finally had time to finish some of my outstanding courses, one of those was VueJs so figured i would apply it to something useful instead of doing the regular to-do apps. Which have nothing bad but they are repetitive and well, not fun to be&nbsp;honest.</p>
+  <article class="content"><p>Due to <span class="caps">COVID19</span> I finally had time to finish some of my outstanding courses, one of those was VueJs so figured i would apply it to something useful instead of doing the regular to-do apps. Which have nothing bad but they are repetitive and well, not fun to be&nbsp;honest.</p>
 <p>So that being said, had a fun idea of what if I could assemble my basic docker-compose files using a web <span class="caps">UI</span>. I know there&#8217;s plugins and things that help you template out the file but I wanted something that you could stack upon and copy to deploy to your docker swarm cluster, so vue composer was&nbsp;born.</p>
 <h2 id="the-setup">The&nbsp;Setup</h2>
 <p><strong><span class="caps">DISCLAIMER</span></strong>: I&#8217;m Terrible at design or <span class="caps">UX</span> for that matter and also a bit lazy so when I saw how vuetify styles the components look super nice and how easy they were to manipulate, figured why&nbsp;not?</p>
@@ -253,40 +234,10 @@
 <p><a href="[https://github.com/mvaldes14/vue-composer/packages/246204](https://github.com/mvaldes14/vue-composer/packages/246204)">Vue-composer Docker&nbsp;Image</a></p>
 <p><a href="[https://github.com/mvaldes14/vue-composer](https://github.com/mvaldes14/vue-composer)">Github Repo for this&nbsp;post</a></p>
 <p>Finally, down the road i would like to improve on the little tool. For instance i would like to do validation so when a user enters data the tools makes sure it is in the proper format for things like ports and volumes. If Dockerhub offers an <span class="caps">API</span> maybe even check if the image exists, etc. Lots of things that could be done but for a novice like myself this was a good&nbsp;start.</p>
-<p>Hope you liked it, see ya on the next&nbsp;one.</p>
-  </article>
+<p>Hope you liked it, see ya on the next&nbsp;one.</p></article>
   <hr />
 </div>
 
-
-    <footer>
-      <div class="has-text-centered">
-        <a href="https://github.com/mvaldes14" target="blank">
-          <img
-            class="footer-icon"
-            src="https://mvaldes14.github.io/blog/static/images/github-circle.png"
-            width="50px"
-          />
-        </a>
-        <a href="https://twitter.com/rorixrebel" target="blank">
-          <img
-            class="footer-icon"
-            src="https://mvaldes14.github.io/blog/static/images/twitter-circle.png"
-            width="50px"
-          />
-        </a>
-        <a
-          href="https://www.linkedin.com/in/miguel-valdes-0476155b/"
-          target="blank"
-        >
-          <img
-            class="footer-icon"
-            src="https://mvaldes14.github.io/blog/static/images/linkedin-box.png"
-            width="50px"
-          />
-        </a>
-      </div>
-    </footer>
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
@@ -299,7 +250,7 @@
         // Check if there are any navbar burgers
         if (navbarBurgers.length > 0) {
           // Add a click event on each of them
-          navbarBurgers.forEach(el => {
+          navbarBurgers.forEach((el) => {
             el.addEventListener("click", () => {
               // Get the target from the "data-target" attribute
               const target = el.dataset.target;

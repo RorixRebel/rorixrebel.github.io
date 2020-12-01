@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css"
     />
     <link
       rel="stylesheet"
@@ -18,7 +18,12 @@
       href="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
       type="image/x-icon"
     />
-    <title>Dev-Mex</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap"
+      rel="stylesheet"
+    />
+    <title>Dev Mex</title>
   </head>
 
   <body>
@@ -30,7 +35,7 @@
               src="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
               width="25px"
             />
-            Dev-Mex
+            Dev Mex
           </strong>
           <span>
             <p class="subtitle">IT Things.</p>
@@ -48,57 +53,32 @@
           <span aria-hidden="true"></span>
         </a>
       </div>
-
-      <div class="navbar-menu" id="navMenu">
-        <div class="navbar-end">
-          <div class="navbar-item">
-            <a
-              class="button is-dark has-text-success"
-              href="https://mvaldes14.github.io/blog/category/containers.html"
-            >
-              <strong> containers</strong>
-            </a>
-          </div>
-          <div class="navbar-item">
-            <a
-              class="button is-dark has-text-success"
-              href="https://mvaldes14.github.io/blog/category/elk.html"
-            >
-              <strong> elk</strong>
-            </a>
-          </div>
-          <div class="navbar-item">
-            <a
-              class="button is-dark has-text-success"
-              href="https://mvaldes14.github.io/blog/category/javascript.html"
-            >
-              <strong> javascript</strong>
-            </a>
-          </div>
-          <div class="navbar-item">
-            <a
-              class="button is-dark has-text-success"
-              href="https://mvaldes14.github.io/blog/category/python.html"
-            >
-              <strong> python</strong>
-            </a>
-          </div>
-          <div class="navbar-item">
-            <a
-              class="button is-dark has-text-success"
-              href="https://mvaldes14.github.io/blog/category/root.html"
-            >
-              <strong> root</strong>
-            </a>
-          </div>
-          <div class="navbar-item">
-            <a
-              class="button is-dark has-text-success"
-              href="https://mvaldes14.github.io/blog/category/tool.html"
-            >
-              <strong> tool</strong>
-            </a>
-          </div>
+      <div class="navbar-end">
+        <div class="has-text-centered">
+          <a href="https://github.com/mvaldes14" target="blank">
+            <img
+              class="navbar-icon"
+              src="https://mvaldes14.github.io/blog/static/images/github-circle.png"
+              width="50px"
+            />
+          </a>
+          <a href="https://twitter.com/rorixrebel" target="blank">
+            <img
+              class="navbar-icon"
+              src="https://mvaldes14.github.io/blog/static/images/twitter-circle.png"
+              width="50px"
+            />
+          </a>
+          <a
+            href="https://www.linkedin.com/in/miguel-valdes-0476155b/"
+            target="blank"
+          >
+            <img
+              class="navbar-icon"
+              src="https://mvaldes14.github.io/blog/static/images/linkedin-box.png"
+              width="50px"
+            />
+          </a>
         </div>
       </div>
     </nav>
@@ -115,9 +95,9 @@
       <li>Containers</li>
       <li class="is-active">March 04, 2020</li>
     </ul>
+    <span class="tag is-small is-dark"> docker </span>
   </div>
-  <article class="content">
-    <p>Recently decided to migrate all of the things that I run on my personal computer and a little server I got for Xmas (originally for <span class="caps">PLEX</span>) as well as my raspberry pi to docker containers so that I could experiment more with it and boy, not as easy as I thought it was going to&nbsp;be.</p>
+  <article class="content"><p>Recently decided to migrate all of the things that I run on my personal computer and a little server I got for Xmas (originally for <span class="caps">PLEX</span>) as well as my raspberry pi to docker containers so that I could experiment more with it and boy, not as easy as I thought it was going to&nbsp;be.</p>
 <p>Most of the applications had specific configuration files in a location that needed to be mounted somewhere, then I had to think of which apps to move to which node cause of the resources on each node, setup the permissions and respective volumes depending on the usage, all in all, it was fun and I learned a&nbsp;lot.</p>
 <p>One last thing was that I knew very little how the networking aspect worked so I had to create networks between some of these so that I could have communication between them. For instance, the Kibana instance for my elastic cluster has a cross-cluster search so I can visualize the data from both clusters in a single pane so I had to figure out how to make these connections to each&nbsp;other.</p>
 <p><strong><span class="caps">NOTE</span>: Everything in here is using Docker <span class="caps">SWARM</span>, so make sure you have your swarm&nbsp;setup.</strong></p>
@@ -262,40 +242,10 @@ $ docker node inspect pi <span class="p">|</span> jq .<span class="o">[</span><s
 <h2 id="conclusion">Conclusion</h2>
 <p>With a couple compose files pushed to a private <span class="caps">GIT</span> repo (mostly for sensitive data on the configurations, need to learn how to use docker secrets) my stack is fully automated, now with an ansible playbook I can have the same setup in&nbsp;minutes.</p>
 <p>Again, this was a long task and I did learn a lot on how to debug and troubleshoot mostly networking problems with containers and being my first real project that used docker-compose it was good&nbsp;fun.</p>
-<p>I hope you liked it, until next time,&nbsp;Adios.</p>
-  </article>
+<p>I hope you liked it, until next time,&nbsp;Adios.</p></article>
   <hr />
 </div>
 
-
-    <footer>
-      <div class="has-text-centered">
-        <a href="https://github.com/mvaldes14" target="blank">
-          <img
-            class="footer-icon"
-            src="https://mvaldes14.github.io/blog/static/images/github-circle.png"
-            width="50px"
-          />
-        </a>
-        <a href="https://twitter.com/rorixrebel" target="blank">
-          <img
-            class="footer-icon"
-            src="https://mvaldes14.github.io/blog/static/images/twitter-circle.png"
-            width="50px"
-          />
-        </a>
-        <a
-          href="https://www.linkedin.com/in/miguel-valdes-0476155b/"
-          target="blank"
-        >
-          <img
-            class="footer-icon"
-            src="https://mvaldes14.github.io/blog/static/images/linkedin-box.png"
-            width="50px"
-          />
-        </a>
-      </div>
-    </footer>
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
@@ -308,7 +258,7 @@ $ docker node inspect pi <span class="p">|</span> jq .<span class="o">[</span><s
         // Check if there are any navbar burgers
         if (navbarBurgers.length > 0) {
           // Add a click event on each of them
-          navbarBurgers.forEach(el => {
+          navbarBurgers.forEach((el) => {
             el.addEventListener("click", () => {
               // Get the target from the "data-target" attribute
               const target = el.dataset.target;

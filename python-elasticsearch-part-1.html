@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css"
     />
     <link
       rel="stylesheet"
@@ -18,7 +18,12 @@
       href="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
       type="image/x-icon"
     />
-    <title>Dev-Mex</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap"
+      rel="stylesheet"
+    />
+    <title>Dev Mex</title>
   </head>
 
   <body>
@@ -30,7 +35,7 @@
               src="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
               width="25px"
             />
-            Dev-Mex
+            Dev Mex
           </strong>
           <span>
             <p class="subtitle">IT Things.</p>
@@ -48,57 +53,32 @@
           <span aria-hidden="true"></span>
         </a>
       </div>
-
-      <div class="navbar-menu" id="navMenu">
-        <div class="navbar-end">
-          <div class="navbar-item">
-            <a
-              class="button is-dark has-text-success"
-              href="https://mvaldes14.github.io/blog/category/containers.html"
-            >
-              <strong> containers</strong>
-            </a>
-          </div>
-          <div class="navbar-item">
-            <a
-              class="button is-dark has-text-success"
-              href="https://mvaldes14.github.io/blog/category/elk.html"
-            >
-              <strong> elk</strong>
-            </a>
-          </div>
-          <div class="navbar-item">
-            <a
-              class="button is-dark has-text-success"
-              href="https://mvaldes14.github.io/blog/category/javascript.html"
-            >
-              <strong> javascript</strong>
-            </a>
-          </div>
-          <div class="navbar-item">
-            <a
-              class="button is-dark has-text-success"
-              href="https://mvaldes14.github.io/blog/category/python.html"
-            >
-              <strong> python</strong>
-            </a>
-          </div>
-          <div class="navbar-item">
-            <a
-              class="button is-dark has-text-success"
-              href="https://mvaldes14.github.io/blog/category/root.html"
-            >
-              <strong> root</strong>
-            </a>
-          </div>
-          <div class="navbar-item">
-            <a
-              class="button is-dark has-text-success"
-              href="https://mvaldes14.github.io/blog/category/tool.html"
-            >
-              <strong> tool</strong>
-            </a>
-          </div>
+      <div class="navbar-end">
+        <div class="has-text-centered">
+          <a href="https://github.com/mvaldes14" target="blank">
+            <img
+              class="navbar-icon"
+              src="https://mvaldes14.github.io/blog/static/images/github-circle.png"
+              width="50px"
+            />
+          </a>
+          <a href="https://twitter.com/rorixrebel" target="blank">
+            <img
+              class="navbar-icon"
+              src="https://mvaldes14.github.io/blog/static/images/twitter-circle.png"
+              width="50px"
+            />
+          </a>
+          <a
+            href="https://www.linkedin.com/in/miguel-valdes-0476155b/"
+            target="blank"
+          >
+            <img
+              class="navbar-icon"
+              src="https://mvaldes14.github.io/blog/static/images/linkedin-box.png"
+              width="50px"
+            />
+          </a>
         </div>
       </div>
     </nav>
@@ -115,9 +95,10 @@
       <li>Python</li>
       <li class="is-active">May 19, 2019</li>
     </ul>
+    <span class="tag is-small is-dark"> python </span>
+    <span class="tag is-small is-dark"> elasticsearch </span>
   </div>
-  <article class="content">
-    <p>Elasticsearch has become part of my daily routine so the more I use it, the more I think of ways of using it outside work so came up with the idea of why not creating my own ingestion with sentiment analysis so that data can be processed and tagged before being indexed into&nbsp;Elastic?.</p>
+  <article class="content"><p>Elasticsearch has become part of my daily routine so the more I use it, the more I think of ways of using it outside work so came up with the idea of why not creating my own ingestion with sentiment analysis so that data can be processed and tagged before being indexed into&nbsp;Elastic?.</p>
 <p>I know Logstash has already a plugin to ingest data from twitter but since i also wanted to add a bit of polarity to each tweet and also wanted to control the process since I truly don&#8217;t want to ingest a lot of data as I don&#8217;t have unlimited storage so i decided to make my own and turns out it was quite&nbsp;simple.</p>
 <p>Now to being, the dependencies I used for this&nbsp;were:</p>
 <ol>
@@ -327,40 +308,10 @@ AQ<span class="o">}{</span><span class="m">127</span>.0.0.1<span class="o">}{</s
 </code></pre></div>
 
 
-<p>In the next part we will start playing around with the data. If you have any questions, hit me up on social&nbsp;media.</p>
-  </article>
+<p>In the next part we will start playing around with the data. If you have any questions, hit me up on social&nbsp;media.</p></article>
   <hr />
 </div>
 
-
-    <footer>
-      <div class="has-text-centered">
-        <a href="https://github.com/mvaldes14" target="blank">
-          <img
-            class="footer-icon"
-            src="https://mvaldes14.github.io/blog/static/images/github-circle.png"
-            width="50px"
-          />
-        </a>
-        <a href="https://twitter.com/rorixrebel" target="blank">
-          <img
-            class="footer-icon"
-            src="https://mvaldes14.github.io/blog/static/images/twitter-circle.png"
-            width="50px"
-          />
-        </a>
-        <a
-          href="https://www.linkedin.com/in/miguel-valdes-0476155b/"
-          target="blank"
-        >
-          <img
-            class="footer-icon"
-            src="https://mvaldes14.github.io/blog/static/images/linkedin-box.png"
-            width="50px"
-          />
-        </a>
-      </div>
-    </footer>
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
@@ -373,7 +324,7 @@ AQ<span class="o">}{</span><span class="m">127</span>.0.0.1<span class="o">}{</s
         // Check if there are any navbar burgers
         if (navbarBurgers.length > 0) {
           // Add a click event on each of them
-          navbarBurgers.forEach(el => {
+          navbarBurgers.forEach((el) => {
             el.addEventListener("click", () => {
               // Get the target from the "data-target" attribute
               const target = el.dataset.target;

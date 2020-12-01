@@ -1,21 +1,11 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto')
 @import url("./pygments.css")
 
 body
     font-family: 'Roboto', sans-serif
     margin: 0
     padding: 0
-    a:hover, a:link, a:visited, a:active    
+    a:hover, a:link, a:visited, a:active
         color: #3ab058
-
-footer
-    background-color: #282A36 !important
-    padding: 20px
-    margin-top: 20px
-    color: #50fa7b
-    .footer-icon
-        color: white
-        padding: 5px
 
 nav
     background-color: #282A36 !important
@@ -27,6 +17,11 @@ nav
         color: #50fa7b
     .navbar-menu
         background-color: #282A36
+    .navbar-brand
+        padding-left: 10px
+    .navbar-icon
+        color: white
+        padding: 5px
 
 nav > .pagination
     text-align: center
@@ -34,45 +29,52 @@ nav > .pagination
         float: left
     a.next
         float: right
-    
-
-.container > .title > .tag
-    a:hover, a:link, a:visited
-        color: white
-
-.navbar-title, .navbar-end
-    padding: 10px
-
-.articles > .hero
-    background-color: #282A36
-    width: 80%
-    margin: auto
-    border: 3px solid #49D970
 
 .articles
-    padding: 20px
-    margin: 0px
+    padding-top: 50px
+    margin: 50px
     font-size: 20px
+    color: black
+    padding-bottom: 50px
 
-.article-summary
+.article-block
+    padding: 50px
+    display: flex
+
+.article-image
+    width: auto
+    height: auto
+    padding-right: 20px
+
+.article-text
+    width: auto
+    height: auto
+
+.categories
+    display: flex
+    flex-flow: column wrap
+    justify-content: space-evenly
+
+.pagination
+    background-color: #282A36 !important
+    margin: 0
+    padding: 0
+    width: auto
+    height: auto
     color: white
 
-.hero
-
-
-.pagination-next, .pagination-previous 
-    padding-left: .75em;
-    padding-right: .75em;
-    white-space: nowrap;
-    margin-right: .75em;
-    margin-left: .75em;
-
+.pagination-next, .pagination-previous
+    padding-left: .75em
+    padding-right: .75em
+    white-space: nowrap
+    margin-right: .75em
+    margin-left: .75em
 
 @media screen and (max-width: 768px)
-    .articles > .hero
+    .articles
         background-color: #282A36
         width: 100%
         margin: auto
         border: 3px solid #49D970
     .article-page
-        width: 90%
+        width: 100%
