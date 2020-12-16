@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://mvaldes14.github.io/blog/static/css/styles.css"
+    />
+    <link
+      rel="shortcut icon"
+      href="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
+      type="image/x-icon"
+    />
+    <title>Dev Mex</title>
+  </head>
+
+  <body>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a class="navbar-title" href="https://mvaldes14.github.io/blog">
+          <strong class="title">
+            <img
+              src="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
+              width="25px"
+            />
+            Dev Mex
+          </strong>
+          <span>
+            <p class="subtitle">IT Things.</p>
+          </span>
+        </a>
+      </div>
+      <div class="navbar-end">
+        <div class="has-text-centered">
+          <a href="https://github.com/mvaldes14" target="blank">
+            <img
+              class="navbar-icon"
+              src="https://mvaldes14.github.io/blog/static/images/github-circle.png"
+              width="50px"
+            />
+          </a>
+          <a href="https://twitter.com/rorixrebel" target="blank">
+            <img
+              class="navbar-icon"
+              src="https://mvaldes14.github.io/blog/static/images/twitter-circle.png"
+              width="50px"
+            />
+          </a>
+          <a
+            href="https://www.linkedin.com/in/miguel-valdes-0476155b/"
+            target="blank"
+          >
+            <img
+              class="navbar-icon"
+              src="https://mvaldes14.github.io/blog/static/images/linkedin-box.png"
+              width="50px"
+            />
+          </a>
+        </div>
+      </div>
+    </nav>
+
+
+<div class="container article-page">
+  <hr />
+  <h1 class="title">Splunk Quickstart Guide&nbsp;[Docker]</h1>
+  <div class="breadcrumb">
+    <ul>
+      <strong>
+        <span>In:&nbsp</span>
+      </strong>
+      <li>Tool</li>
+      <li class="is-active">December 16, 2020</li>
+    </ul>
+    <span class="tag is-small is-dark"> splunk </span>
+    <span class="tag is-small is-dark"> containers </span>
+  </div>
+  <article class="content"><p>An opportunity came up at work for me to expand my tool set into another logging solution that is quite popular,&nbsp;Splunk.</p>
+<p>Known to be a bit expensive cause of the license fees and the model they implement for enterprise solutions I was pretty amazed on what it can do and given the experience I have with the competition <strong>Elasticsearch</strong> 
+it was a complete 360 on how I knew data was pushed into the system and leveraged some components and functionality have their similar set of functions comparing it to Elastic but the main difference to me is how Splunk 
+manages a <strong>schema on read</strong> which sort of translates to&#8230;there are not a lot of fields and you have to create them on your own when&nbsp;searching.</p>
+<p>For an actual detailed explanation you can take a peek at the docs, in here we do hands on type of posts. 
+This demo is made using the free license that allows us to push up to 500 <span class="caps">MB</span> to the Splunk instance before incurring into license problems which for most cases should&nbsp;suffice.</p>
+<h2 id="the-setup">The&nbsp;Setup</h2>
+<p>Since I&#8217;m not a fan of downloading tarballs and setting up a lot of things (users, permissions, service files) I&#8217;m going to leverage containers that are packaged with all of the goodies so here&#8217;s what I&#8217;ll be&nbsp;using.</p>
+<div class="highlight"><pre><span></span><code>version: <span class="s1">&#39;3&#39;</span>
+services:
+    splunk:
+        image: splunk/splunk
+        environment:
+         - <span class="nv">SPLUNK_START_ARGS</span><span class="o">=</span>--accept-license
+         - <span class="nv">SPLUNK_PASSWORD</span><span class="o">=</span>mysuperstrongadminpassword
+        ports:
+         - <span class="s2">&quot;9997:9997&quot;</span>
+         - <span class="s2">&quot;8000:8000&quot;</span>
+        volumes:
+         - /opt/splunk/var:/opt/splunk/var
+         - /opt/splunk/etc:/opt/splunk/etc
+</code></pre></div>
+
+
+<p>The only thing I&#8217;ve setup was the <code>/opt/splunk/var</code> and <code>/opt/splunk/etc/</code> mount points in my local server so I could have those configurations easily accessible for me to adjust and tweak.
+We also need a port so we can push the data into Splunk via agents called <code>forwarders</code> that need a port to connect to so we are mapping <code>9997</code> which is the default.
+The last piece is that we need a port so that we can connect to our instance via the web <span class="caps">UI</span> so we have <code>8000</code> mapped as&nbsp;well.</p>
+<p>Once you download the big image and it does all of the checks it needs to, hop over to <code>[http://localhost:8000](http://localhost:8000)</code> and you should be greeted by the login page in here you will use username <code>admin</code> and the <code>superstrongpassword</code> you setup in your environment&nbsp;variables.</p>
+<h2 id="pushing-data-in">Pushing data&nbsp;in</h2>
+<p>There are multiple ways to push data into Splunk, you&nbsp;have&#8230;.</p>
+<ul>
+<li>Agents (heavy and universal&nbsp;forwarders)</li>
+<li>The <span class="caps">HEC</span>( <span class="caps">HTTP</span> Event&nbsp;Collector)</li>
+<li><span class="caps">TCP</span> <span class="amp">&amp;</span> <span class="caps">UDP</span></li>
+<li>Scripts</li>
+</ul>
+<p>For this post we are going to leverage the Universal Forwarder&nbsp;agents.</p>
+<p>By default the Splunk installation can read files from its local setup meaning it has a forwarder built in but since we have it trapped in a container we can&#8217;t get much out of&nbsp;it.</p>
+<p>The goal in this post is to have the instance read logs from 2 different machines, my local server where I run all of my containers and my gaming rig running windows,for both of these I will use the universal forwarder that you can download 
+from <a href="https://www.splunk.com/en_us/download/universal-forwarder.html">Forwarders</a> keep in mind you need to create an account with Splunk. 
+Make sure you pick the right agent for the <span class="caps">OS</span> you will be working with again in my case I&#8217;ve downloaded both tarballs and the Windows <span class="caps">MSI</span>.</p>
+<p>Before actually pushing data in we have to setup the receiving functionality in Splunk so head over to the Nav Top Menu and go to Settings. In the drop down you should see a &#8220;Forwarding and receiving&#8221; link,click on that and then go to &#8220;Configure&nbsp;receiving&#8221;.</p>
+<p><img alt="Forwarding" src="https://mvaldes14.github.io/blog/images/posts/splunk-1.png"></p>
+<p>Inside that menu you will click on &#8220;New Receiving Port&#8221; and all that you will need is to define the same port we mapped over in our container <code>9997</code>.</p>
+<p><img alt="Receive" src="https://mvaldes14.github.io/blog/images/posts/splunk-2.png"></p>
+<p>Now before we get the agents setup we have to do one final but critical step, create the indices that will receive the data, this is something i wasn&#8217;t fully aware of that in <span class="caps">SPLUNK</span> <strong>you need to create the indices <span class="caps">FIRST</span> and then setup your agents, the indexes are <span class="caps">NOT</span> <span class="caps">AUTO</span>-<span class="caps">GENERATED</span> unlike Elastic</strong>. Had setup my agents and I couldn&#8217;t see any data&#8230;. couldn&#8217;t figure it out, suffice to say&#8230; wasted couple hours learning this the hard&nbsp;way.</p>
+<p>Go to Settings → Indexes and create those Index, in my case I&#8217;m going to do one for all of my windows events and one for&nbsp;linux.</p>
+<p><img alt="Index" src="https://mvaldes14.github.io/blog/images/posts/splunk-3.png"></p>
+<h3 id="now-the-agents">Now the&nbsp;agents</h3>
+<p>The installation is windows is pretty straightforward, you click on Next until its done using the default settings. For the configuration of the inputs and outputs we will make use of the <span class="caps">CLI</span>.</p>
+<p>For installing the agent on linux you simply unpack the tarball and place it somewhere you like, I personally always dump everything out to <code>/opt</code>. Same as with above we will configure this agent via the <span class="caps">CLI</span>.</p>
+<p>These commands work the same regardless of the <span class="caps">OS</span> the agent runs on. We will assume your agents are installed in&nbsp;locations:</p>
+<ul>
+<li>C:\Program&nbsp;Files\SplunkUniversalForwarder</li>
+<li>/opt/splunkforwarder</li>
+</ul>
+<p>In both cases you can get to the binary by going to the &#8230;. bin&nbsp;folder</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Start the service, you will be asked to setup a user and password for the local agent, remember those credentials</span>
+./splunk start --accept-license
+
+<span class="c1"># Add the forwarding server that will receive your events, you will need to know the &lt;IP-of-your-host-running-splunk&gt;</span>
+./splunk add forward-server &lt;IP&gt;:9997
+
+<span class="c1"># Confirm the forward server, you should see something like</span>
+./splunk list forward-server
+Active forwards:
+        <span class="m">192</span>.168.0.22:9997
+Configured but inactive forwards:
+        None
+<span class="c1"># To tell it to &quot;monitor&quot; some files, you just pass in your path or filename</span>
+./splunk add monitor <span class="s2">&quot;/var/log/*&quot;</span> -index linux
+
+<span class="c1"># To verify the monitored files and folders</span>
+<span class="c1"># Splunk monitors itself so you will see a big list of files in here but yours should be there too</span>
+./splunk list monitor
+   /var/log/*
+                /var/log/audit
+                /var/log/btmp
+                /var/log/btmp.1
+                /var/log/fluentd
+                /var/log/gssproxy
+                /var/log/journal
+                /var/log/lastlog
+                /var/log/lighttpd
+                /var/log/nextcloud
+                /var/log/nextcloud/audit.log
+                /var/log/old
+                /var/log/pacman.log
+                /var/log/private
+                /var/log/squid
+                /var/log/wtmp
+</code></pre></div>
+
+
+<p>By default these commands generated a set of files that are <span class="caps">CRITICAL</span> to how the agents work&#8230;. the <code>inputs.conf</code> and the <code>outputs.conf</code> which are the list of what it will monitor and where it will send it to. Since we have custom indices we can validate that the files contain the same <code>stanzas</code> that we declared in the <span class="caps">CLI</span>.</p>
+<p>The files are usually located inside the respective <code>etc/system/local/</code> folders</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># inputs.conf</span>
+<span class="o">[</span>monitor:///var/log/*<span class="o">]</span>
+<span class="nv">index</span><span class="o">=</span>linux
+
+<span class="c1"># outputs.conf</span>
+<span class="o">[</span>tcpout:default-autolb-group<span class="o">]</span>
+<span class="nv">disabled</span> <span class="o">=</span> <span class="nb">false</span>
+<span class="nv">server</span> <span class="o">=</span> localhost:9997
+
+<span class="o">[</span>tcpout-server://localhost:9997<span class="o">]</span>
+</code></pre></div>
+
+
+<p>For windows, most of the relevant things I wanted to monitor reside inside the windows event logs so I manually created the <code>inputs.conf</code> with the following stanza. Pretty simple it will read from these 3 facilities and ignore everything older than 3 days and push those into my custom&nbsp;index.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># windows inputs.conf</span>
+<span class="o">[</span>WinEventLog://Application<span class="o">]</span>
+<span class="nv">index</span><span class="o">=</span>windows
+<span class="nv">ignoreOlderThan</span><span class="o">=</span>3d
+
+<span class="o">[</span>WinEventLog://Security<span class="o">]</span>
+<span class="nv">index</span><span class="o">=</span>windows
+<span class="nv">ignoreOlderThan</span><span class="o">=</span>3d
+
+<span class="o">[</span>WinEventLog://System<span class="o">]</span>
+<span class="nv">index</span><span class="o">=</span>windows
+<span class="nv">ignoreOlderThan</span><span class="o">=</span>3d
+</code></pre></div>
+
+
+<p>With everything setup we may now restart the agents <code>./splunk restart</code> and we should see data in&nbsp;Splunk.</p>
+<p><img alt="Splunk" src="https://mvaldes14.github.io/blog/images/posts/splunk-4.png"></p>
+<h2 id="conclusion">Conclusion</h2>
+<p>I hope this post guided you on how the ingestion setup works in Splunk, the multiple components that are involved in the flow and the overall functionality of it all. My next project is going to be pushing my docker logs into Splunk and of course learning the extensive language that Splunk uses to extract, graph and visualize the data. Because remember that unless you create a very specific parsing pattern using sourcetypes you will not see default&nbsp;fields.</p>
+<p>If you have any questions or comments, hit me up on twitter, linkedin,&nbsp;etc.</p></article>
+  <hr />
+</div>
+
+  </body>
+</html>
