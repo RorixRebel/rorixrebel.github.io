@@ -121,7 +121,7 @@ cat <span class="s">&lt;&lt;EOF | curl --data-binary @- http://localhost:9091/me
 </code></pre></div>
 
 
-<p>To Grab the number of current blocked domains in each pihole, we could interact with the sqlite3 database that ships with the tool and we will simply query the gravity table that holds all domains and export a base count, save that on a variable and push to the gateway&#8230;.but since the tool also comes with a nice way to export a lot of the good stats for people that plug in LCDs to their Raspbery Pi we will explode that&#8230;.who wants to do <span class="caps">SQL</span> anyway&#8230;. <code>sqlite3 /etc/pihole/gravity.db "select count(*) from gravity"</code>. For &#8220;parsing&#8221; the data exported in <span class="caps">JSON</span> we will also use <code>jq</code>.</p>
+<p>To Grab the number of current blocked domains in each pihole, we could interact with the sqlite3 database that ships with the tool and we will simply query the gravity table that holds all domains and export a base count, save that on a variable and push to the gateway&#8230;.but since the tool also comes with a nice way to export a lot of the good stats for people that plug in LCDs to their Raspberry Pi we will explode that&#8230;.who wants to do <span class="caps">SQL</span> anyway&#8230;. <code>sqlite3 /etc/pihole/gravity.db "select count(*) from gravity"</code>. For &#8220;parsing&#8221; the data exported in <span class="caps">JSON</span> we will also use <code>jq</code>.</p>
 <div class="highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
 <span class="c1"># Set variables</span>
 <span class="nv">JOB_NAME</span><span class="o">=</span>pihole
