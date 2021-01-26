@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://mvaldes14.github.io/blog/static/css/styles.css"
+    />
+    <link
+      rel="shortcut icon"
+      href="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
+      type="image/x-icon"
+    />
+    <title>Dev Mex</title>
+  </head>
+
+  <body>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a class="navbar-title" href="https://mvaldes14.github.io/blog">
+          <strong class="title">
+            <img
+              src="https://mvaldes14.github.io/blog/static/images/blog_logo.png"
+              width="25px"
+            />
+            Dev Mex
+          </strong>
+          <span>
+            <p class="subtitle">IT Things.</p>
+          </span>
+        </a>
+      </div>
+      <div class="navbar-end">
+        <div class="has-text-centered">
+          <a href="https://github.com/mvaldes14" target="blank">
+            <img
+              class="navbar-icon"
+              src="https://mvaldes14.github.io/blog/static/images/github-circle.png"
+              width="50px"
+            />
+          </a>
+          <a href="https://twitter.com/rorixrebel" target="blank">
+            <img
+              class="navbar-icon"
+              src="https://mvaldes14.github.io/blog/static/images/twitter-circle.png"
+              width="50px"
+            />
+          </a>
+          <a
+            href="https://www.linkedin.com/in/miguel-valdes-0476155b/"
+            target="blank"
+          >
+            <img
+              class="navbar-icon"
+              src="https://mvaldes14.github.io/blog/static/images/linkedin-box.png"
+              width="50px"
+            />
+          </a>
+        </div>
+      </div>
+    </nav>
+
+
+<div class="container article-page">
+  <hr />
+  <h1 class="title">Pihole and <span class="caps">ISP</span> Metrics in&nbsp;Prometheus</h1>
+  <div class="breadcrumb">
+    <ul>
+      <strong>
+        <span>In:&nbsp</span>
+      </strong>
+      <li>Tool</li>
+      <li class="is-active">January 25, 2021</li>
+    </ul>
+    <span class="tag is-small is-dark"> prometheus </span>
+    <span class="tag is-small is-dark"> metrics </span>
+    <span class="tag is-small is-dark"> pihole </span>
+    <span class="tag is-small is-dark"> speedtest </span>
+  </div>
+  <article class="content"><p>In a previous <a href="https:/mvaldes.dev/speedtest-kibana.html">post</a> I show cased how you could start collecting some of the metrics that scripts like <code>speedtest</code> can dump out and you can leverage that data by ingesting into an Elasticseach cluster so you can later visualize in Kibana dashboards and while that is super nice, the more and more I keep playing with Time Series Databases the more I start to think that full blown logging systems like Elastic and Splunk are simply an overkill for simple numerical metrics like values at specific points in time. Not to stay the tools can&#8217;t handle it but its like using a jackhammer to hang a picture in your&nbsp;wall.</p>
+<p>Out of all the TSDBs I&#8217;ve played with, the one I enjoy the most is Prometheus. It&#8217;s simple to use, light weight, can be run in a container and it has a lot of mechanisms to push data into it. Right now my current instance is collecting metrics from my docker daemon runnning all of the containers in swarm mode, my system metrics from 2 computers and my reliable Raspberry Pi and with a Grafana instance on top of it I have visibility on everything my small homelab might&nbsp;need.</p>
+<h2 id="the-problem">The&nbsp;&#8220;Problem&#8221;</h2>
+<p>You might ask, well why move what is already working on Elastic to a new system?. Well I was bored and also had the need to add some custom &#8220;metrics&#8221; I wanted to keep track off and wanted to use an actual <span class="caps">TSDB</span> for some actual metrics so here&#8217;s the problems im trying to solve. Adding these to something like Elastic would&#8217;ve been easy as well but the need to try something new won me over. Here&#8217;s what I intend to&nbsp;add.</p>
+<ol>
+<li>My Piholes for some reason stop responding to <span class="caps">DNS</span> queries after some point, I need to sit down and figure out why but meanwhile doing a <code>restartdns</code> works, so it&#8217;s scheduled in a cron job but I would like to know the number of resets i&#8217;ve done on&nbsp;each.</li>
+<li>The number of clients on each Pihole tends to change over time so I would like to visualize which one is taking more&nbsp;traffic.</li>
+<li>The number of block elements on each pihole should be in sync but since there&#8217;s no clustering availble yet, I have to manually keep them alligned so if the number of block pages is not the same on each I can easily see it in a&nbsp;graph.</li>
+<li>Finally, move all of the <span class="caps">ISP</span> metrics I was collecting before and pushing into elastic will now go to Prometheus (download/upload speed, lattency,&nbsp;etc.)</li>
+</ol>
+<h2 id="the-solution">The&nbsp;&#8220;Solution&#8221;</h2>
+<p>One of the downsides is that Prometheus doesn&#8217;t directly let you <span class="caps">POST</span> data into it with something like <code>curl</code> cause it works on a &#8220;pull model&#8221; meaning it only reads from external, it doesnt actually receive anything from the ouside unlike other tools like <span class="caps">ES</span> or Splunk, you could potentially use a client library to collect said metrics and generate an endpoint Prometheus can read&#8230;. but I am not that bored&#8230;.. so we have to leverage a separate component called &#8220;PushGateway&#8221; that will basically work as a sink to collect everything you push into it and then your Prometheus instance will scrape all of the metrics it finds and store them into the <span class="caps">TSDB</span>. In my case since everything I run is &#8220;dockerized&#8221; I will use the container version of&nbsp;it.</p>
+<p>The full documentation on how to instrument and push data into it can be found here <a href="https://github.com/prometheus/pushgateway">https://github.com/prometheus/pushgateway</a></p>
+<p>So let&#8217;s start the&nbsp;gateway.</p>
+<div class="highlight"><pre><span></span><code>docker run -d -p <span class="m">9091</span>:9091 prom/pushgateway
+</code></pre></div>
+
+
+<p>With that listening you can navigate to <a href="http://localhost:9091">http://localhost:9091</a> and you should see a basic <span class="caps">UI</span>.</p>
+<p>When you push the data you have to be mindful on how you name it and what other properties you pass to it like instance or labels if&nbsp;applicable. </p>
+<p>All of your metrics must follow the pattern <code>url:port/metrics/job/&lt;job_name&gt;/instance/&lt;instance_name&gt;</code></p>
+<p>Now we will do a very simple sets of bash scripts that will be running via cron or systemd timers to basically collect data and then push those metrics into the gateway. First one will restart the <span class="caps">DNS</span> service and increase the&nbsp;counter.</p>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
+<span class="c1"># Set variables</span>
+<span class="nv">JOB_NAME</span><span class="o">=</span>pihole
+<span class="nv">INSTANCE_NAME</span><span class="o">=</span>pi
+
+<span class="c1"># Execute Action</span>
+pihole restartdns
+
+<span class="c1"># Post to Gateway</span>
+cat <span class="s">&lt;&lt;EOF | curl --data-binary @- http://localhost:9091/metrics/job/$JOB_NAME/instance/$INSTANCE_NAME</span>
+<span class="s">  pihole_reset_counter 1</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+
+<p>To Grab the number of current blocked domains in each pihole, we could interact with the sqlite3 database that ships with the tool and we will simply query the gravity table that holds all domains and export a base count, save that on a variable and push to the gateway&#8230;.but since the tool also comes with a nice way to export a lot of the good stats for people that plug in LCDs to their Raspbery Pi we will explode that&#8230;.who wants to do <span class="caps">SQL</span> anyway&#8230;. <code>sqlite3 /etc/pihole/gravity.db "select count(*) from gravity"</code>. For &#8220;parsing&#8221; the data exported in <span class="caps">JSON</span> we will also use <code>jq</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
+<span class="c1"># Set variables</span>
+<span class="nv">JOB_NAME</span><span class="o">=</span>pihole
+<span class="nv">INSTANCE_NAME</span><span class="o">=</span>pi
+
+<span class="c1"># Execute Action</span>
+<span class="nv">PIHOLE_STATS</span><span class="o">=</span><span class="k">$(</span>pihole -c -j<span class="k">)</span>
+<span class="nv">PIHOLE_DOMAINS_BLOCKED</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$PIHOLE_STATS</span> <span class="p">|</span> jq .domains_being_blocked<span class="k">)</span>
+<span class="nv">PIHOLE_DNS_QUERIES</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$PIHOLE_STATS</span> <span class="p">|</span> jq .dns_queries_today<span class="k">)</span>
+<span class="nv">PIHOLE_BLOCKED_QUERIES</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$PIHOLE_STATS</span> <span class="p">|</span> jq .ads_blocked_today<span class="k">)</span>
+
+<span class="c1"># Post to Gateway</span>
+cat <span class="s">&lt;&lt;EOF | curl --data-binary @- http://localhost:9091/metrics/job/$JOB_NAME/instance/$INSTANCE_NAME</span>
+<span class="s">    pihole_blocked_domains $PIHOLE_DOMAINS_BLOCKED</span>
+<span class="s">    pihole_dns_queries $PIHOLE_DNS_QUERIES</span>
+<span class="s">    pihole_blocked_queries $PIHOLE_BLOCKED_QUERIES</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+
+<p>Finally for the <span class="caps">ISP</span> metrics I will reuse the speedtest-cli to output the data needed in <span class="caps">JSON</span> and parse it with <code>jq</code>. Quite simple&nbsp;right?.</p>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
+<span class="c1"># Set variables</span>
+<span class="nv">JOB_NAME</span><span class="o">=</span>speedtest
+<span class="nv">INSTANCE_NAME</span><span class="o">=</span>pi
+
+<span class="c1"># Execute Action</span>
+<span class="nv">SPEEDTEST_DATA</span><span class="o">=</span><span class="k">$(</span>speedtest --json --single<span class="k">)</span>
+<span class="nv">SPEEDTEST_PING</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$SPEEDTEST_DATA</span> <span class="p">|</span> jq .ping<span class="k">)</span>
+<span class="nv">SPEEDTEST_LATENCY</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$SPEEDTEST_DATA</span> <span class="p">|</span> jq .server.latency<span class="k">)</span>
+<span class="nv">SPEEDTEST_UPLOAD</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$SPEEDTEST_DATA</span> <span class="p">|</span> jq .download<span class="k">)</span>
+<span class="nv">SPEEDTEST_DOWNLOAD</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$SPEEDTEST_DATA</span> <span class="p">|</span> jq .upload<span class="k">)</span>
+
+<span class="c1"># Post to Gateway</span>
+cat <span class="s">&lt;&lt;EOF | curl --data-binary @- http://localhost:9091/metrics/job/$JOB_NAME/instance/$INSTANCE_NAME</span>
+<span class="s">    speedtest_ping $SPEEDTEST_PING</span>
+<span class="s">    speedtest_latency $SPEEDTEST_LATENCY</span>
+<span class="s">    speedtest_upload $SPEEDTEST_UPLOAD</span>
+<span class="s">    speedtest_download $SPEEDTEST_DOWNLOAD</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+
+<p>When these scripts are executed manually or by systemd/cron you should now see your metrics show up in the pushgateway <span class="caps">UI</span>.  All that is left is to configure your Prometheus instance to scrape the Pushgateway&#8230; if you are curious you can see the metrics in&nbsp;http://localhost:9091/metrics.</p>
+<p>Here&#8217;s how mine look for the one test host&#8230;the idea is to copy the same set of scripts to my machines running pihole and just modify the variables as needed to use a different instance&nbsp;name.</p>
+<p><img alt="PushGateway" src="https://mvaldes14.github.io/blog/images/posts/pushgateway.png"></p>
+<p><strong><span class="caps">NOTE</span></strong>: The pushgateway is ideal for short dumb things like this, in a <span class="caps">PROD</span> environment you might want to consider using something else since this becomes a single point of failure as the documentation says so only use it for fooling around like me or consult with some professionals with more experience using&nbsp;it.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Prometheus is a great <span class="caps">TSDB</span> and it&#8217;s super simple to run, quite popular and the default time series database for big projects like Kubernetes&#8230;. not to mention it&#8217;s a &#8220;graduated&#8221; project from the <span class="caps">CNCF</span>. You can pair it with something like Grafana and you can go crazy with the amount of things you can create. Again, for <span class="caps">PROD</span> usage you might want to have multiple instances and in federated mode for that High Availability, but since these posts are mostly me playing around with tech you can replicate the single node point of failure model and it will work great until it&nbsp;doesn&#8217;t.</p>
+<p>I do wish that Prometheus would let you push data in directly but that completely breaks the pull model so we will have to live with the pushgateway and the multiple client libraries that emulate a mini webserver that your Prometheus instance can&nbsp;scrape.</p>
+<p>At the end of this I&#8217;ve tackled all of the &#8220;problems&#8221; I created for myself and the next step is getting those cool dashboards&#8230;.On my next spring of boredoom I will generate those in Grafana and share them in the&nbsp;post.</p></article>
+  <hr />
+</div>
+
+  </body>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script
+    async
+    src="https://www.googletagmanager.com/gtag/js?id=UA-108511211-1"
+  ></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+
+    gtag("config", "UA-108511211-1");
+  </script>
+</html>
